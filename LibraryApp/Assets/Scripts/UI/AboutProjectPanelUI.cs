@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SearchBookPanelUI : MonoBehaviour
+public class AboutProjectPanelUI : MonoBehaviour
 {
-    public static SearchBookPanelUI Instance { get; private set; }
+    public static AboutProjectPanelUI Instance { get; private set; }
 
     [SerializeField] private Button closeButton;
 

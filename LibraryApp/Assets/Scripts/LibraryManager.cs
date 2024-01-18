@@ -18,6 +18,7 @@ public class LibraryManager : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         bookDataList = new List<BookData>();
 
     }
