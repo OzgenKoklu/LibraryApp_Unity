@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using UnityEngine;
 
@@ -12,15 +13,14 @@ public class LibraryManager : MonoBehaviour
     public event EventHandler<OnErrorEncounteredEventArgs> OnErrorEncountered;
     public class OnErrorEncounteredEventArgs : EventArgs { public string errorMessage; }
 
-    private List<BookData> bookDataList;
+    [SerializeField] private LibraryData libraryData;
+
     private Dictionary<BookData, List<LendingInfo>> bookLendingInfoPairs;
     private BookData selectedBookData;
 
     private void Awake()
     {
         Instance = this;
-        bookDataList = new List<BookData>();
-
     }
 
     // Start is called before the first frame update
@@ -35,6 +35,27 @@ public class LibraryManager : MonoBehaviour
 
     }
 
+    public BookData CreateBookData(string bookTitle, string bookAuthor, string bookIsbn)
+    {
+        BookData newBookData = new BookData
+        {
+            bookTitle = bookTitle, 
+            bookAuthor = bookAuthor,
+            bookIsbn = bookIsbn,
+            bookCount = 1
+        };
+
+        return newBookData;
+    }
+
+    private void SaveLibraryData()
+    {
+        // Saving the ScriptableObject asset
+        UnityEditor.EditorUtility.SetDirty(libraryData);
+        UnityEditor.AssetDatabase.SaveAssets();
+    }
+
+
     public void AddBookToLibrary(BookData bookData) {
         if (IsBookListedinLibraryAlready(bookData))
         {
@@ -42,8 +63,9 @@ public class LibraryManager : MonoBehaviour
         }
         else
         {
-            bookDataList.Add(bookData);
-            IncreaseBookCountByOne(bookData);
+            libraryData.books.Add(bookData);
+            SaveLibraryData();
+            Debug.Log(libraryData.books.Count);
         }
     }
 
@@ -51,10 +73,8 @@ public class LibraryManager : MonoBehaviour
     {
         if (IsBookListedinLibraryAlready(bookData))
         {
-            int bookDataIndex = bookDataList.IndexOf(bookData);
-            BookData updatedBookData = bookDataList[bookDataIndex];
-            updatedBookData.bookCount++;
-            bookDataList[bookDataIndex] = updatedBookData;
+            int bookDataIndex = GetIndexOfExistingBook(bookData);
+            libraryData.books[bookDataIndex].bookCount++;
         }
     }
 
@@ -70,12 +90,11 @@ public class LibraryManager : MonoBehaviour
     {
         if (IsBookListedinLibraryAlready(bookData))
         {
-            int bookDataIndex = bookDataList.IndexOf(bookData);
-            BookData updatedBookData = bookDataList[bookDataIndex];
-            if (updatedBookData.bookCount >= 1)
+            int bookDataIndex = libraryData.books.IndexOf(bookData);
+            if (libraryData.books[bookDataIndex].bookCount >= 1)
             {
-                updatedBookData.bookCount--;
-                bookDataList[bookDataIndex] = updatedBookData;
+                libraryData.books[bookDataIndex].bookCount--;
+
             }
             else
             {
@@ -116,20 +135,39 @@ public class LibraryManager : MonoBehaviour
     public void SearchBookByAuthor() { }
 
 
-    public void ListBooksWithPassedDueDate() { } 
+    public void ListBooksWithPassedDueDate() { }
+
+    public int GetIndexOfExistingBook(BookData bookData)
+    {
+        if (libraryData != null && libraryData.books != null)
+        {
+            return libraryData.books.FindIndex(existingBook =>
+                existingBook.bookTitle == bookData.bookTitle &&
+                existingBook.bookAuthor == bookData.bookAuthor &&
+                existingBook.bookIsbn == bookData.bookIsbn);
+        }
+
+        return -1; 
+    }
 
     public bool IsBookListedinLibraryAlready(BookData bookData)
     {
-        return bookDataList.Contains(bookData);
+        if (libraryData != null && libraryData.books != null)
+        {
+            return libraryData.books.Any(existingBook =>
+                existingBook.bookTitle == bookData.bookTitle &&
+                existingBook.bookAuthor == bookData.bookAuthor &&
+                existingBook.bookIsbn == bookData.bookIsbn);
+        }
+        return false;
     }
 
 
     public bool IsBookAvailable(BookData bookData) {
         if (IsBookListedinLibraryAlready(bookData))
         {
-            int bookDataIndex = bookDataList.IndexOf(bookData);
-            selectedBookData = bookDataList[bookDataIndex];
-            if(selectedBookData.bookCount > 0)
+            int bookDataIndex = libraryData.books.IndexOf(bookData);
+            if (libraryData.books[bookDataIndex].bookCount > 0)
             {
                 return true;
             }
@@ -148,7 +186,7 @@ public class LibraryManager : MonoBehaviour
 
     public int GetBookDataIndex(BookData bookData)
     {
-        return bookDataList.IndexOf(bookData);
+        return libraryData.books.IndexOf(bookData);
     }
 
     private void LoadDataFromPlayerPrefs()
