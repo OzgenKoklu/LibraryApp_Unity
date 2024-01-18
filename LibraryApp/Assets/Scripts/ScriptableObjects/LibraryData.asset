@@ -15,9 +15,13 @@ MonoBehaviour:
   books:
   - bookTitle: asd
     bookAuthor: asd
-    bookIsbn: asd
-    bookCount: 3
-  - bookTitle: asdf
-    bookAuthor: asdf
-    bookIsbn: asdf
+    bookIsbn: 1111111111111
+    bookCount: 6
+  - bookTitle: asd
+    bookAuthor: sad
+    bookIsbn: 1231111111111
+    bookCount: 1
+  - bookTitle: asda
+    bookAuthor: asdfa
+    bookIsbn: 1111111111111
     bookCount: 1

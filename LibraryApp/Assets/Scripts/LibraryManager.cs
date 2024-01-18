@@ -48,6 +48,7 @@ public class LibraryManager : MonoBehaviour
         return newBookData;
     }
 
+    //check where you save your data
     private void SaveLibraryData()
     {
         // Saving the ScriptableObject asset

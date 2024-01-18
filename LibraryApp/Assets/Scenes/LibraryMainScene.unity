@@ -8243,6 +8243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   closeButton: {fileID: 1226579787}
+  bookAddedMessageText: {fileID: 1159347470}
 --- !u!1 &2002742891
 GameObject:
   m_ObjectHideFlags: 0

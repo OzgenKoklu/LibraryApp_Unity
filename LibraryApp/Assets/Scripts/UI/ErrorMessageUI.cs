@@ -12,17 +12,26 @@ public class ErrorMessageUI : MonoBehaviour
     private void Awake()
     {
         closeButton.onClick.AddListener(Hide);
-        Hide();
+       
     }
     private void Start()
     {
         LibraryManager.Instance.OnErrorEncountered += LibraryManager_OnErrorEncountered;
+        AddNewBookPanelUI.Instance.OnInvalidInput += AddNewBookPanelUI_OnInvalidInput;
+        Hide();
+    }
+
+    private void AddNewBookPanelUI_OnInvalidInput(object sender, AddNewBookPanelUI.OnInvalidInputEventArgs e)
+    {
+        Show();
+        errorMessageText.text = e.invalidInputErrorMessage;
     }
 
     private void LibraryManager_OnErrorEncountered(object sender, LibraryManager.OnErrorEncounteredEventArgs e)
     {
-        errorMessageText.text = e.errorMessage;
         Show();
+        errorMessageText.text = e.errorMessage;
+      
     }
 
     private void Show()
