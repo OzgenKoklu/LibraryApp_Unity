@@ -30,6 +30,7 @@ public class SearchBookPanelUI : MonoBehaviour
         {
             OnSearchButtonClicked();
         });
+        singleBookListingTemplate.gameObject.SetActive(false);
         Hide();
     }
 
@@ -98,10 +99,17 @@ public class SearchBookPanelUI : MonoBehaviour
         return modifiedString.ToString();
     }
 
-    private void ResetTextandFields()
+    private void ResetTextFieldsAndContainer()
     {
         searchResultsDetailsText.text = "";
         searchTermInputField.text = "";
+
+        //cleans up the container
+        foreach (Transform child in searchResultsContainer)
+        {
+            if (child == singleBookListingTemplate) continue;
+            Destroy(child.gameObject);
+        }
     }
 
     public void Show()
@@ -112,7 +120,7 @@ public class SearchBookPanelUI : MonoBehaviour
 
     private void Hide()
     {
-        ResetTextandFields();
+        ResetTextFieldsAndContainer();
         gameObject.SetActive(false);
     }
 
