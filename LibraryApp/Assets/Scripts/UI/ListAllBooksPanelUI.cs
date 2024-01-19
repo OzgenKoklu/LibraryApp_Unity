@@ -11,7 +11,7 @@ public class ListAllBooksPanelUI : MonoBehaviour
     [SerializeField] private Transform container;
     [SerializeField] private Transform singleBookListingTemplate;
 
-    [SerializeField] private TextMeshProUGUI ListDetailsText;
+    [SerializeField] private TextMeshProUGUI listDetailsText;
     [SerializeField] private Button closeButton;
 
     private void Awake()
@@ -25,7 +25,7 @@ public class ListAllBooksPanelUI : MonoBehaviour
     public void Show()
     {
         gameObject.SetActive(true);
-        UpdateVisual();
+        UpdateBookList();
     }
 
     private void Hide()
@@ -35,10 +35,10 @@ public class ListAllBooksPanelUI : MonoBehaviour
 
     private void UpdateListDetailsText(int totalUniqueBookCount, int totalBookCount)
     {
-        ListDetailsText.text = $"Total Unique Books: {totalUniqueBookCount}  Total Books: {totalBookCount}";
+        listDetailsText.text = $"Total Unique Books: {totalUniqueBookCount}  Total Books: {totalBookCount}";
     }
 
-    private void UpdateVisual()
+    private void UpdateBookList()
     {
         foreach (Transform child in container)
         {
