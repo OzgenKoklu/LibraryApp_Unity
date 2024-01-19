@@ -35,6 +35,15 @@ public class LibraryManager : MonoBehaviour
 
     }
 
+    public LibraryData GetLibraryData()
+    {
+        if (libraryData == null)
+        {
+            Debug.LogWarning("Library data is null. Make sure it has been assigned.");
+            // Optionally, you can create a new instance or return a default value here.
+        }
+        return libraryData;
+    }
     public BookData CreateBookData(string bookTitle, string bookAuthor, string bookIsbn)
     {
         BookData newBookData = new BookData

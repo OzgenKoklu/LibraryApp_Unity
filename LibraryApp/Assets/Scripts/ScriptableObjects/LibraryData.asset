@@ -13,15 +13,35 @@ MonoBehaviour:
   m_Name: LibraryData
   m_EditorClassIdentifier: 
   books:
-  - bookTitle: asd
-    bookAuthor: asd
-    bookIsbn: 1111111111111
+  - bookTitle: "Pokemon Nas\u0131l Avlan\u0131r?"
+    bookAuthor: "E\u015F Ke\xE7\u0131m"
+    bookIsbn: 3424125533121
     bookCount: 6
+  - bookTitle: NintendoSwitch2Ne zaman
+    bookAuthor: sad
+    bookIsbn: 1231111111111
+    bookCount: 1
   - bookTitle: asd
     bookAuthor: sad
     bookIsbn: 1231111111111
     bookCount: 1
-  - bookTitle: asda
-    bookAuthor: asdfa
-    bookIsbn: 1111111111111
+  - bookTitle: asd
+    bookAuthor: sad
+    bookIsbn: 1231111111111
+    bookCount: 1
+  - bookTitle: asd
+    bookAuthor: sad
+    bookIsbn: 1231111111111
+    bookCount: 1
+  - bookTitle: asd
+    bookAuthor: sad
+    bookIsbn: 1231111111111
+    bookCount: 1
+  - bookTitle: asd
+    bookAuthor: sad
+    bookIsbn: 1231111111111
+    bookCount: 1
+  - bookTitle: asd
+    bookAuthor: sad
+    bookIsbn: 1231111111111
     bookCount: 1
