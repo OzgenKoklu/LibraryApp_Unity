@@ -60,7 +60,7 @@ public class SearchBookPanelUI : MonoBehaviour
             totalUniqueBookCount++;
             Transform bookListingTransform = Instantiate(singleBookListingTemplate, searchResultsContainer);
             bookListingTransform.gameObject.SetActive(true);
-            bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookData(result);
+            bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataForBasicListing(result);
         }
         searchResultsDetailsText.text = $"{totalUniqueBookCount} book(s) found.";
 

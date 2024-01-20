@@ -62,6 +62,7 @@ public class LibraryManager : MonoBehaviour
     {
         // Saving the ScriptableObject asset
         UnityEditor.EditorUtility.SetDirty(libraryData);
+        UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
         UnityEditor.AssetDatabase.SaveAssets();
     }
 
@@ -126,13 +127,52 @@ public class LibraryManager : MonoBehaviour
         }
     }
 
-    public void LendABook(BookData bookData)
+    public void LendABook(BookData bookData, string borrowerName)
     {
-        if (IsBookAvailable(bookData))
-        {
+        //Checks If bookData is already in the lendingInfoPairsSO List
+        LendingInfoPairsSO.LendingPair lendingPair = lendingInfoPairsList.lendingPairs.Find(pair => pair.book.Equals(bookData));
 
+        if (lendingPair == null)
+        {
+            // If the bookData doesn't exist, create a new lending pair
+            lendingPair = new LendingInfoPairsSO.LendingPair
+            {
+                book = bookData,
+                totalLendedBookCount = 0,
+                lendingInfoList = new List<LendingInfo>()
+            };
+
+            lendingInfoPairsList.lendingPairs.Add(lendingPair);
         }
+
+        // Generate a unique return code from the static class 
+        string returnCode;
+        do
+        {
+            returnCode = ReturnCodeGeneratorAndChecker.GenerateReturnCode();
+        } while (!ReturnCodeGeneratorAndChecker.IsReturnCodeUnused(returnCode, lendingInfoPairsList.lendingPairs));
+
+        // Create a new lending info
+        LendingInfo lendingInfo = new LendingInfo
+        {
+            borrowerName = borrowerName,
+            returnCode = returnCode,
+            bookBorrowDate = DateTime.Now,
+            expectedReturnDate = DateTime.Now.AddDays(30) // Assuming a 30-day lending period
+        };
+
+        lendingPair.lendingInfoList.Add(lendingInfo);
+        lendingPair.totalLendedBookCount++;
+
+        //this is because we check if this book is available before loading the lendable book list 
+        bookData.bookCount--;
+        // Save changes to the ScriptableObject
+        SaveLibraryData();
+
+        //CLOSE THE UI WINDOW AND GIVE FEEDBACK LIKE (YOU BORROWED X BY X ON THIS DAY YOU ARE EXPECTED TO RETURN IT BY BLA BLA 
     }
+
+
 
     public void TakeLendedBookBack() { }
 

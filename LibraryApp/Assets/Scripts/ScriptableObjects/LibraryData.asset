@@ -20,16 +20,16 @@ MonoBehaviour:
   - bookTitle: NintendoSwitch2Ne zaman
     bookAuthor: sad
     bookIsbn: 1231111111111
-    bookCount: 1
+    bookCount: 10
   - bookTitle: "Kapitalist Ger\xE7eklik"
     bookAuthor: Mark Fisher
     bookIsbn: 5421523151213
-    bookCount: 1
+    bookCount: 0
   - bookTitle: asd
     bookAuthor: asd
     bookIsbn: 1111111111111
-    bookCount: 1
+    bookCount: 2
   - bookTitle: asdf
     bookAuthor: asdf
     bookIsbn: 1111111111111
-    bookCount: 1
+    bookCount: 3

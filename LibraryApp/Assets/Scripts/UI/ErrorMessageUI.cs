@@ -18,7 +18,14 @@ public class ErrorMessageUI : MonoBehaviour
     {
         LibraryManager.Instance.OnErrorEncountered += LibraryManager_OnErrorEncountered;
         AddNewBookPanelUI.Instance.OnInvalidInput += AddNewBookPanelUI_OnInvalidInput;
+        LendABookBorrowerNamePromptPanelUI.Instance.OnInvalidBorrowerNameEntered += BorrowerNamePrompt_OnInvalidBorrowerNameEntered;
         Hide();
+    }
+
+    private void BorrowerNamePrompt_OnInvalidBorrowerNameEntered(object sender, System.EventArgs e)
+    {
+        Show();
+        errorMessageText.text = "Invalid User Name";
     }
 
     private void AddNewBookPanelUI_OnInvalidInput(object sender, AddNewBookPanelUI.OnInvalidInputEventArgs e)

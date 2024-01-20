@@ -55,7 +55,7 @@ public class ListAllBooksPanelUI : MonoBehaviour
             totalBookCount += bookData.bookCount;
             Transform bookListingTransform = Instantiate(singleBookListingTemplate, container);
             bookListingTransform.gameObject.SetActive(true);
-            bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookData(bookData);
+            bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataForBasicListing(bookData);
         }
 
         UpdateListDetailsText(totalUniqueBookCount, totalBookCount);
