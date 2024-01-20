@@ -14,12 +14,24 @@ public static class SearchManager
         ByAuthor,
     }
 
+    public static List<BookData> GetAvailableBooks(List<BookData> bookDataList)
+    {
+        List<BookData> availableBooks = new List<BookData>();
+        
+        foreach (BookData book in bookDataList)
+        {
+            if (book.bookCount > 0)
+            {
+                availableBooks.Add(book);
+            }
+        }
+        return availableBooks;
+    }
 
-
-    public static List<BookData> PerformSearch(SearchCriteria searchCriteria)
+    public static List<BookData> PerformSearch(SearchCriteriaSO searchCriteria)
     {
         List<BookData> searchResults = new List<BookData>();
-        // Will implement the search logic here
+       
         switch (searchCriteria.searchType)
         {
             case SearchType.General:
@@ -50,9 +62,9 @@ public static class SearchManager
     }
 
     //THIS IS TOO MUCH REPETITON, WILL IMPLEMENT PROPERTY SELECTOR FUNCTION/GENERIC METHOD!
-    private static void PerformSearchGeneral(SearchCriteria searchCriteria, List<BookData> searchResults)
+    private static void PerformSearchGeneral(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
-        LibraryData libraryData = LibraryManager.Instance.GetLibraryData();
+        LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
         List<BookData> allBooks = libraryData.books;
 
         string searchTerm = searchCriteria.searchTerm.ToLower();
@@ -85,9 +97,9 @@ public static class SearchManager
         return source.ToLower().Contains(searchTerm);
     }
 
-    private static void PerformSearchByTitle(SearchCriteria searchCriteria, List<BookData> searchResults)
+    private static void PerformSearchByTitle(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
-        LibraryData libraryData = LibraryManager.Instance.GetLibraryData();
+        LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
         List<BookData> allBooks = libraryData.books;
 
         string searchTerm = searchCriteria.searchTerm.ToLower();
@@ -107,9 +119,9 @@ public static class SearchManager
         }
     }
 
-    private static void PerformSearchByISBN(SearchCriteria searchCriteria, List<BookData> searchResults)
+    private static void PerformSearchByISBN(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
-        LibraryData libraryData = LibraryManager.Instance.GetLibraryData();
+        LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
         List<BookData> allBooks = libraryData.books;
 
         string searchTerm = searchCriteria.searchTerm.ToLower();
@@ -129,9 +141,9 @@ public static class SearchManager
         }
     }
 
-    private static void PerformSearchByAuthor(SearchCriteria searchCriteria, List<BookData> searchResults)
+    private static void PerformSearchByAuthor(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
-        LibraryData libraryData = LibraryManager.Instance.GetLibraryData();
+        LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
         List<BookData> allBooks = libraryData.books;
 
         string searchTerm = searchCriteria.searchTerm.ToLower();
@@ -151,5 +163,6 @@ public static class SearchManager
         }
     }
 
+ 
 
 }

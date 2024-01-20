@@ -21,27 +21,15 @@ MonoBehaviour:
     bookAuthor: sad
     bookIsbn: 1231111111111
     bookCount: 1
-  - bookTitle: asd
-    bookAuthor: sad
-    bookIsbn: 1231111111111
+  - bookTitle: "Kapitalist Ger\xE7eklik"
+    bookAuthor: Mark Fisher
+    bookIsbn: 5421523151213
     bookCount: 1
   - bookTitle: asd
-    bookAuthor: sad
-    bookIsbn: 1231111111111
+    bookAuthor: asd
+    bookIsbn: 1111111111111
     bookCount: 1
-  - bookTitle: asd
-    bookAuthor: sad
-    bookIsbn: 1231111111111
-    bookCount: 1
-  - bookTitle: asd
-    bookAuthor: sad
-    bookIsbn: 1231111111111
-    bookCount: 1
-  - bookTitle: asd
-    bookAuthor: sad
-    bookIsbn: 1231111111111
-    bookCount: 1
-  - bookTitle: asd
-    bookAuthor: sad
-    bookIsbn: 1231111111111
+  - bookTitle: asdf
+    bookAuthor: asdf
+    bookIsbn: 1111111111111
     bookCount: 1

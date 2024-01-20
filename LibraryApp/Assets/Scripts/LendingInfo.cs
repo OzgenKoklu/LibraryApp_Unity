@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-    public struct LendingInfo
+[System.Serializable]
+public class LendingInfo
     {
-    public FixedString512Bytes bookIsbn;
-    public FixedString512Bytes borrowerName;
+    public string borrowerName;
+    public string returnCode;
     public DateTime bookBorrowDate;
     public DateTime expectedReturnDate;
     }

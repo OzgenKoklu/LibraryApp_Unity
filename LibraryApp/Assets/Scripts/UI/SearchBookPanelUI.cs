@@ -35,7 +35,7 @@ public class SearchBookPanelUI : MonoBehaviour
     }
 
     private void OnSearchButtonClicked() {
-        SearchCriteria searchCriteria = ScriptableObject.CreateInstance<SearchCriteria>();
+        SearchCriteriaSO searchCriteria = ScriptableObject.CreateInstance<SearchCriteriaSO>();
         //Now we need to remove spaces we added just for the UI.
         searchCriteria.searchType = (SearchManager.SearchType)Enum.Parse(typeof(SearchManager.SearchType), searchTypeDropdown.options[searchTypeDropdown.value].text.Replace(" ", ""));
         searchCriteria.searchTerm = searchTermInputField.text;

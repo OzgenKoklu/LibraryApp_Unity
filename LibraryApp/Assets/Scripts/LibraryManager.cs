@@ -13,9 +13,9 @@ public class LibraryManager : MonoBehaviour
     public event EventHandler<OnErrorEncounteredEventArgs> OnErrorEncountered;
     public class OnErrorEncounteredEventArgs : EventArgs { public string errorMessage; }
 
-    [SerializeField] private LibraryData libraryData;
+    [SerializeField] private LibraryDataSO libraryData;
+    [SerializeField] private LendingInfoPairsSO lendingInfoPairsList;
 
-    private Dictionary<BookData, List<LendingInfo>> bookLendingInfoPairs;
     private BookData selectedBookData;
 
     private void Awake()
@@ -35,7 +35,7 @@ public class LibraryManager : MonoBehaviour
 
     }
 
-    public LibraryData GetLibraryData()
+    public LibraryDataSO GetLibraryData()
     {
         if (libraryData == null)
         {

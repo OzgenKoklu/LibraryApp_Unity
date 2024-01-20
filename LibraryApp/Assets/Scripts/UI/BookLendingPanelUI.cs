@@ -8,11 +8,36 @@ public class BookLendingPanelUI : MonoBehaviour
     public static BookLendingPanelUI Instance { get; private set; }
 
     [SerializeField] private Button closeButton;
+    [SerializeField] private Button lendBookButton;
+    [SerializeField] private Button returnLentBookButton;
+    [SerializeField] private Button listAllLentBooksButton;
+    [SerializeField] private Button listLentBooksThatHavePassedTheirDueDatesButton;
 
     private void Awake()
     {
         Instance = this;
         closeButton.onClick.AddListener(Hide);
+
+        lendBookButton.onClick.AddListener(() =>
+        {
+            LendBookPanelUI.Instance.Show();
+        });
+
+        returnLentBookButton.onClick.AddListener(() =>
+        {
+            ReturnLentBookPanelUI.Instance.Show();
+        });
+
+        listAllLentBooksButton.onClick.AddListener(() =>
+        {
+            ListAllLentBooksPanelUI.Instance.Show();
+        });
+
+        listLentBooksThatHavePassedTheirDueDatesButton.onClick.AddListener(() =>
+        {
+            ListLentBooksThatHavePassedTheirDueDatesPanelUI.Instance.Show();
+        });
+
         Hide();
     }
 
