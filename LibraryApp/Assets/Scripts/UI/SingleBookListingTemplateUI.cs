@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class SingleBookListingTemplateUI : MonoBehaviour
 {
@@ -45,10 +46,29 @@ public class SingleBookListingTemplateUI : MonoBehaviour
     {
         LendABookBorrowerNamePromptPanelUI.Instance.Show(bookData);
     }
-    public void SetBookDataForReturningLentBook(BookData bookData)
+
+    //Index approach is there for avoiding sending 2 classes in this basic function. I didnt want to send lendingInfo as a seperate parameter.
+    public void SetBookDataForReturningLentBook(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
     {
-        
+        LendingInfo lendingInfo = lendingPair.lendingInfoList[lendingInfoListIndex];
+        bookTitleText.text = lendingPair.book.bookTitle;
+        borrowerNameText.text = lendingInfo.borrowerName;
+
+        DateTime expectedReturnDeserialized = new DateTime(lendingInfo.expectedReturnDateTicks);
+        dueDateText.text = expectedReturnDeserialized.ToString("MM/dd/yyyy");
+
+        returnButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoListIndex));
     }
 
-    
+    private void OnReturnButtonClick(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
+    {
+        string returnConfirmationMessage = $"You are about to return {lendingPair.book.bookTitle} borrowed by {lendingPair.lendingInfoList[lendingInfoListIndex].borrowerName}. Press X to cancel or Confirm to proceed.";
+      
+        //passing in function as a delegate for the next UI pop Up to trigger
+        LendAndReturnResponsePanelUI.Instance.Show(returnConfirmationMessage, () =>
+        {
+            LibraryManager.Instance.TryReturnLentBookFromTheList(lendingPair.lendingInfoList[lendingInfoListIndex]);
+        } );
+                
+    }
 }

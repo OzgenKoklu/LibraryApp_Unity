@@ -16,6 +16,7 @@ public class LibraryManager : MonoBehaviour
 
 
     public event EventHandler<EventArgs> OnBookLendingSuccessful;
+    public event EventHandler<EventArgs> OnReturnFromListSuccessful;
 
 
     public event EventHandler<OnErrorEncounteredEventArgs> OnErrorEncountered;
@@ -134,6 +135,14 @@ public class LibraryManager : MonoBehaviour
         }
     }
 
+    public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
+
+        //Debug.Log(lendingInfo.returnCode);
+        TryReturnLentBookByReturnCode(lendingInfo.returnCode);
+
+        OnReturnFromListSuccessful?.Invoke(sender, EventArgs.Empty);
+    }
+
     public void TryReturnLentBookByReturnCode(string returnCode)
     {
         LendingInfoPairsSO.LendingPair matchingPair = ReturnCodeGeneratorAndChecker.SearchForReturnCodeValidity(returnCode);
@@ -144,7 +153,7 @@ public class LibraryManager : MonoBehaviour
             BookData returnedBook = matchingPair.book;
             LendingInfo lendingInfoToRemove = matchingPair.lendingInfoList.Find(info => info.returnCode == returnCode);
 
-            BookData libraryBook = libraryData.books.Find(book => book.Equals(returnedBook));
+            BookData libraryBook = libraryData.books.Find(book => book.bookIsbn.Equals(returnedBook.bookIsbn));
 
             if (libraryBook != null)
             {
@@ -208,8 +217,7 @@ public class LibraryManager : MonoBehaviour
         {
             borrowerName = borrowerName,
             returnCode = returnCode,
-            bookBorrowDate = DateTime.Now,
-            expectedReturnDate = DateTime.Now.AddDays(30) // Assuming a 30-day lending period
+            expectedReturnDateTicks = DateTime.Now.AddDays(30).Ticks // Assuming a 30-day lending period
         };
 
         lendingPair.lendingInfoList.Add(lendingInfo);
@@ -220,13 +228,17 @@ public class LibraryManager : MonoBehaviour
         // Save changes to the ScriptableObject
         SaveLibraryData();
 
-        string lendingSuccessfulResponseMessage = $"'{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.returnCode}'\n Return Due Date: {lendingInfo.expectedReturnDate.ToString("MM/dd/yyyy")}";
+        DateTime deserializeDate = new DateTime(lendingInfo.expectedReturnDateTicks);
+
+        string lendingSuccessfulResponseMessage = $"'{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.returnCode}'\n Return Due Date: {deserializeDate.ToString("MM/dd/yyyy")}";
 
         LendAndReturnResponsePanelUI.Instance.Show(lendingSuccessfulResponseMessage);
 
         //Might change how panel reacts accordingly to events (maybe OnBookLendingUnsuccessful), rather than setting the message here
         OnBookLendingSuccessful?.Invoke(sender, EventArgs.Empty); 
     }
+
+
 
     public int GetIndexOfExistingBook(BookData bookData)
     {

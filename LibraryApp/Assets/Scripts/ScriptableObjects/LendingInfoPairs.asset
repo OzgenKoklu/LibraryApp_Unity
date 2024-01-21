@@ -12,4 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7d18fca54532354fad3d4463c4e1c1e, type: 3}
   m_Name: LendingInfoPairs
   m_EditorClassIdentifier: 
-  lendingPairs: []
+  lendingPairs:
+  - book:
+      bookTitle: "Pokemon Nas\u0131l Avlan\u0131r?"
+      bookAuthor: "E\u015F Ke\xE7\u0131m"
+      bookIsbn: 3424125533121
+      bookCount: 4
+    totalLendedBookCount: 2
+    lendingInfoList:
+    - borrowerName: "\xD6zgen K\xF6kl\xFC"
+      returnCode: 64454
+      expectedReturnDateTicks: 638440524449606731

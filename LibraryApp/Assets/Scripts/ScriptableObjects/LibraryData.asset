@@ -16,20 +16,16 @@ MonoBehaviour:
   - bookTitle: "Pokemon Nas\u0131l Avlan\u0131r?"
     bookAuthor: "E\u015F Ke\xE7\u0131m"
     bookIsbn: 3424125533121
-    bookCount: 2
-  - bookTitle: NintendoSwitch2Ne zaman
-    bookAuthor: sad
-    bookIsbn: 1231111111111
-    bookCount: 9
+    bookCount: 4
   - bookTitle: "Kapitalist Ger\xE7eklik"
     bookAuthor: Mark Fisher
-    bookIsbn: 5421523151213
-    bookCount: 0
-  - bookTitle: asd
-    bookAuthor: asd
-    bookIsbn: 1111111111111
+    bookIsbn: 1235739485723
     bookCount: 2
-  - bookTitle: asdf
-    bookAuthor: asdf
-    bookIsbn: 1111111111111
+  - bookTitle: LOTR 1
+    bookAuthor: Tolkien  JRR
+    bookIsbn: 1245650489343
+    bookCount: 2
+  - bookTitle: "hasan h\xFCseyin roman\u0131"
+    bookAuthor: "hasan h\xFCseyin"
+    bookIsbn: 1029530459243
     bookCount: 2
