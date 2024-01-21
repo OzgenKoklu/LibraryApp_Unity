@@ -2,12 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 public class LibraryManager : MonoBehaviour
 {
     public static LibraryManager Instance { get; private set; }
+
+
+    public event EventHandler<EventArgs> OnBookLendingSuccessful;
 
 
     public event EventHandler<OnErrorEncounteredEventArgs> OnErrorEncountered;
@@ -17,22 +25,20 @@ public class LibraryManager : MonoBehaviour
     [SerializeField] private LendingInfoPairsSO lendingInfoPairsList;
 
     private BookData selectedBookData;
+    private EventArgs sender;
 
     private void Awake()
     {
         Instance = this;
     }
-
-    // Start is called before the first frame update
-    void Start()
+    
+    public LendingInfoPairsSO GetLendingInfoPairs()
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        if(lendingInfoPairsList == null)
+        {
+            Debug.LogWarning("LendingInfoPairsList data is null. Make sure it has been assigned.");
+        }
+        return lendingInfoPairsList;
     }
 
     public LibraryDataSO GetLibraryData()
@@ -84,6 +90,7 @@ public class LibraryManager : MonoBehaviour
     {
         if (IsBookListedinLibraryAlready(bookData))
         {
+            //bu yapýnýn sebebi baþta bookData'yý struct olarak tutumuþtum, ref type tutmuyordum ondan birkaç satýr bu tarz iþler yapýyordum class olunca gereksiz kaçtý refactor edilmeli.
             int bookDataIndex = GetIndexOfExistingBook(bookData);
             libraryData.books[bookDataIndex].bookCount++;
         }
@@ -125,6 +132,50 @@ public class LibraryManager : MonoBehaviour
             //Buraya ayar çekilmeli, sýfýrýn altýna inmediði için errorMessage popup'ý fýrlatýp durucak. 
             DecreaseBookCountByOne(bookData);
         }
+    }
+
+    public void TryReturnLentBookByReturnCode(string returnCode)
+    {
+        LendingInfoPairsSO.LendingPair matchingPair = ReturnCodeGeneratorAndChecker.SearchForReturnCodeValidity(returnCode);
+
+
+        if (matchingPair != null)
+        {
+            BookData returnedBook = matchingPair.book;
+            LendingInfo lendingInfoToRemove = matchingPair.lendingInfoList.Find(info => info.returnCode == returnCode);
+
+            BookData libraryBook = libraryData.books.Find(book => book.Equals(returnedBook));
+
+            if (libraryBook != null)
+            {
+                libraryBook.bookCount++;
+                // Remove lending info
+                matchingPair.lendingInfoList.Remove(lendingInfoToRemove);
+
+                // If no lending info remains for the book, remove the entire LendingPair
+                if (matchingPair.lendingInfoList.Count == 0)
+                {
+                    lendingInfoPairsList.lendingPairs.Remove(matchingPair);
+                }
+
+                SaveLibraryData();
+            }
+            //Should add if due date has passed, penalty fee maybe?
+            string returnSuccessfulResponseMessage = $"'{returnedBook.bookTitle}' (ISBN: '{returnedBook.bookIsbn}') borrowed by '{lendingInfoToRemove.borrowerName}' returned successfully.";
+
+            LendAndReturnResponsePanelUI.Instance.Show(returnSuccessfulResponseMessage);
+            
+        }
+        else
+        {
+            //Not good practice to have so different panels to give some message...
+            OnErrorEncountered?.Invoke(this, new OnErrorEncounteredEventArgs
+            {
+                errorMessage = "Return Code you provided(" + returnCode + ") not found."
+            }) ;
+           
+        }
+
     }
 
     public void LendABook(BookData bookData, string borrowerName)
@@ -169,23 +220,13 @@ public class LibraryManager : MonoBehaviour
         // Save changes to the ScriptableObject
         SaveLibraryData();
 
-        //CLOSE THE UI WINDOW AND GIVE FEEDBACK LIKE (YOU BORROWED X BY X ON THIS DAY YOU ARE EXPECTED TO RETURN IT BY BLA BLA 
+        string lendingSuccessfulResponseMessage = $"'{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.returnCode}'\n Return Due Date: {lendingInfo.expectedReturnDate.ToString("MM/dd/yyyy")}";
+
+        LendAndReturnResponsePanelUI.Instance.Show(lendingSuccessfulResponseMessage);
+
+        //Might change how panel reacts accordingly to events (maybe OnBookLendingUnsuccessful), rather than setting the message here
+        OnBookLendingSuccessful?.Invoke(sender, EventArgs.Empty); 
     }
-
-
-
-    public void TakeLendedBookBack() { }
-
-
-    public void ListAllBooksInLibrary() { 
-    
-    }
-    public void SearchBookByTitle() { }
-
-    public void SearchBookByAuthor() { }
-
-
-    public void ListBooksWithPassedDueDate() { }
 
     public int GetIndexOfExistingBook(BookData bookData)
     {
@@ -237,11 +278,6 @@ public class LibraryManager : MonoBehaviour
     public int GetBookDataIndex(BookData bookData)
     {
         return libraryData.books.IndexOf(bookData);
-    }
-
-    private void LoadDataFromPlayerPrefs()
-    {
-
     }
 
 }

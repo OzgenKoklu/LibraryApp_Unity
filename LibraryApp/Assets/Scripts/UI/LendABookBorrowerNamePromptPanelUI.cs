@@ -34,6 +34,7 @@ public class LendABookBorrowerNamePromptPanelUI : MonoBehaviour
         {
             //we already lend available books so no need to check availability
             LibraryManager.Instance.LendABook(bookData, borrowerName);
+            Hide();
         }
         else
         {
@@ -50,6 +51,7 @@ public class LendABookBorrowerNamePromptPanelUI : MonoBehaviour
         borrowerNameInputField.text = "";
         SetPromptText(bookData);
 
+        //Holding a reference to the Input field so that lambda expression can work
         TMP_InputField borrowerNameInput = borrowerNameInputField;
         confirmButton.onClick.AddListener(() => OnConfirmButtonClick(bookData, borrowerNameInput.text)); ;
     }

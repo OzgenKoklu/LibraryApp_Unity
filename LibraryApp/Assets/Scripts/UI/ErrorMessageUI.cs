@@ -19,13 +19,20 @@ public class ErrorMessageUI : MonoBehaviour
         LibraryManager.Instance.OnErrorEncountered += LibraryManager_OnErrorEncountered;
         AddNewBookPanelUI.Instance.OnInvalidInput += AddNewBookPanelUI_OnInvalidInput;
         LendABookBorrowerNamePromptPanelUI.Instance.OnInvalidBorrowerNameEntered += BorrowerNamePrompt_OnInvalidBorrowerNameEntered;
+        ReturnLentBookPanelUI.Instance.OnInvalidReturnCodeEntered += ReturnCodePrompt_OnInvalidReturnCodeEntered;
         Hide();
+    }
+
+    private void ReturnCodePrompt_OnInvalidReturnCodeEntered(object sender, System.EventArgs e)
+    {
+        Show();
+        errorMessageText.text = "Your Return Code Must be a 5-Digit Number.";
     }
 
     private void BorrowerNamePrompt_OnInvalidBorrowerNameEntered(object sender, System.EventArgs e)
     {
         Show();
-        errorMessageText.text = "Invalid User Name";
+        errorMessageText.text = "Borrower Name Can't Be Empty.";
     }
 
     private void AddNewBookPanelUI_OnInvalidInput(object sender, AddNewBookPanelUI.OnInvalidInputEventArgs e)

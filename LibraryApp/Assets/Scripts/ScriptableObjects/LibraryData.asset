@@ -16,11 +16,11 @@ MonoBehaviour:
   - bookTitle: "Pokemon Nas\u0131l Avlan\u0131r?"
     bookAuthor: "E\u015F Ke\xE7\u0131m"
     bookIsbn: 3424125533121
-    bookCount: 6
+    bookCount: 2
   - bookTitle: NintendoSwitch2Ne zaman
     bookAuthor: sad
     bookIsbn: 1231111111111
-    bookCount: 10
+    bookCount: 9
   - bookTitle: "Kapitalist Ger\xE7eklik"
     bookAuthor: Mark Fisher
     bookIsbn: 5421523151213
@@ -32,4 +32,4 @@ MonoBehaviour:
   - bookTitle: asdf
     bookAuthor: asdf
     bookIsbn: 1111111111111
-    bookCount: 3
+    bookCount: 2

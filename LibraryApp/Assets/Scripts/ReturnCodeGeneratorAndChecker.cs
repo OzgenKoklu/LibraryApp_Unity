@@ -32,4 +32,25 @@ public static class ReturnCodeGeneratorAndChecker
         }
         return true; // Return code is unused
     }
+
+    public static LendingInfoPairsSO.LendingPair SearchForReturnCodeValidity(string returnCode)
+    {
+        LendingInfoPairsSO lendingInfoPairs = LibraryManager.Instance.GetLendingInfoPairs();
+
+        if (lendingInfoPairs != null)
+        {
+            foreach (var lendingPair in lendingInfoPairs.lendingPairs)
+            {
+                foreach (var lendingInfo in lendingPair.lendingInfoList)
+                {
+                    if (lendingInfo.returnCode == returnCode)
+                    {
+                        return lendingPair;
+                    }
+                }
+            }
+        }
+
+        return null; // Return null if no matching Return Code is found
+    }
 }

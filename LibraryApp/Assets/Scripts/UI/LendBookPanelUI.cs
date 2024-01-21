@@ -22,6 +22,8 @@ public class LendBookPanelUI : MonoBehaviour
         Hide();
     }
 
+
+
     //WILL REFACTOR THIS CODE, ITS ALMOST IDENTICAL TO lisAllBooksPanelUI.cs
     //WILL SEE WHATS DUPLICATION AND WHATS UNIQUE AND SHRINKDOWN AND/OR USE INTERFACE IF POSSIBLE
     private void UpdateBookList()
@@ -45,6 +47,7 @@ public class LendBookPanelUI : MonoBehaviour
         UpdateListDetailsText(totalUniqueBookCount);
     }
 
+
     private void UpdateListDetailsText(int totalUniqueBookCount)
     {
         allBooksAvailableInfoText.text = $"Total Number Of Available Unique Books: {totalUniqueBookCount}";
@@ -54,10 +57,17 @@ public class LendBookPanelUI : MonoBehaviour
     {
         gameObject.SetActive(true);
         UpdateBookList();
+        LibraryManager.Instance.OnBookLendingSuccessful += LibraryManager_OnBookLendingSuccessful;
+    }
+
+    private void LibraryManager_OnBookLendingSuccessful(object sender, System.EventArgs e)
+    {
+        UpdateBookList();
     }
 
     private void Hide()
     {
+        LibraryManager.Instance.OnBookLendingSuccessful -= LibraryManager_OnBookLendingSuccessful;
         gameObject.SetActive(false);
     }
 }
