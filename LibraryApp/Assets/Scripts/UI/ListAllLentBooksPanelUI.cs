@@ -12,6 +12,7 @@ public class ListAllLentBooksPanelUI : MonoBehaviour
     [SerializeField] private Transform singleBookListingTemplate;
 
     [SerializeField] private TextMeshProUGUI lentBooksListDetailsText;
+    [SerializeField] private Toggle expiredDueDatesToggle;
 
     [SerializeField] private Button closeButton;
 
@@ -19,8 +20,73 @@ public class ListAllLentBooksPanelUI : MonoBehaviour
     {
         Instance = this;
         closeButton.onClick.AddListener(Hide);
+        expiredDueDatesToggle.onValueChanged.AddListener(UpdateBookList);
         singleBookListingTemplate.gameObject.SetActive(false);
         Hide();
+    }
+
+    private void UpdateBookList(bool isExpired)
+    {
+
+        if (isExpired)
+        {
+            //List only the expired books
+            foreach (Transform child in lentBooksListContainer)
+            {
+                if (child == singleBookListingTemplate) continue;
+                Destroy(child.gameObject);
+            }
+
+            int totalLentEntries = 0;
+
+            //
+
+            List<LendingInfoPairsSO.LendingPair> expiredLendingPairs = SearchManager.GetExpiredBooks();
+
+            foreach (LendingInfoPairsSO.LendingPair lendingPair in expiredLendingPairs)
+            {
+                int lendInfoIndex = 0;
+                foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+                {
+                    totalLentEntries++;
+                    Transform bookListingTransform = Instantiate(singleBookListingTemplate, lentBooksListContainer);
+                    bookListingTransform.gameObject.SetActive(true);
+                    bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataForReturningLentBook(lendingPair, lendInfoIndex);
+                    lendInfoIndex++;
+                }
+            }
+
+            UpdateListDetailsText(totalLentEntries);
+        }
+        else
+        {
+            //list all the books
+            foreach (Transform child in lentBooksListContainer)
+            {
+                if (child == singleBookListingTemplate) continue;
+                Destroy(child.gameObject);
+            }
+
+            int totalLentEntries = 0;
+
+            LendingInfoPairsSO LendingInfoPairs = LibraryManager.Instance.GetLendingInfoPairs();
+
+            foreach (LendingInfoPairsSO.LendingPair lendingPair in LendingInfoPairs.lendingPairs)
+            {
+                int lendInfoIndex = 0;
+                foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+                {
+                    totalLentEntries++;
+                    Transform bookListingTransform = Instantiate(singleBookListingTemplate, lentBooksListContainer);
+                    bookListingTransform.gameObject.SetActive(true);
+                    bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataForReturningLentBook(lendingPair, lendInfoIndex);
+                    lendInfoIndex++;
+                }
+            }
+
+            UpdateListDetailsText(totalLentEntries);
+
+        }
     }
 
     private void UpdateBookList()
@@ -33,7 +99,9 @@ public class ListAllLentBooksPanelUI : MonoBehaviour
 
         int totalLentEntries = 0;
 
-        foreach (LendingInfoPairsSO.LendingPair lendingPair in LibraryManager.Instance.GetLendingInfoPairs().lendingPairs)
+        LendingInfoPairsSO LendingInfoPairs = LibraryManager.Instance.GetLendingInfoPairs();
+
+        foreach (LendingInfoPairsSO.LendingPair lendingPair in LendingInfoPairs.lendingPairs)
         {
             int lendInfoIndex = 0;
             foreach(LendingInfo lendingInfo in lendingPair.lendingInfoList)
@@ -59,6 +127,7 @@ public class ListAllLentBooksPanelUI : MonoBehaviour
     {
         LibraryManager.Instance.OnReturnFromListSuccessful += LibraryManager_OnReturnFromListSuccessful;
         gameObject.SetActive(true);
+
         UpdateBookList();
     }
 

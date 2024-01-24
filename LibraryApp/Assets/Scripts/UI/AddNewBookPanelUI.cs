@@ -33,12 +33,30 @@ public class AddNewBookPanelUI : MonoBehaviour
 
     public void TryAddBook()
     {
-        if(ValidInputChecker.IsBookNameValid(bookTitleInputField.text)
+        //if the same entry is already listed, add book to the library without further test and break from method
+        if (ValidInputChecker.IsBookAlreadyListed(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text))
+        {
+            LibraryManager.Instance.AddBookToLibrary(LibraryManager.Instance.CreateBookData(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text));
+
+            OnSuccessfulBookAddition?.Invoke(this, new OnSuccessfulBookAdditionEventArgs
+            {
+                bookTitle = bookTitleInputField.text,
+                bookAuthor = bookAuthorInputField.text
+            });
+
+            CleanInputFields();
+
+            return;
+        }
+
+        //tests for valid input and also whether the bookTitle+bookAuthor is listed with a different ISBN
+        if (ValidInputChecker.IsBookNameValid(bookTitleInputField.text)
          && ValidInputChecker.IsBookAuthorValid(bookAuthorInputField.text)
-         && ValidInputChecker.IsBookIsbnValid(bookIsbnInputField.text)){
-         
-        LibraryManager.Instance.AddBookToLibrary(LibraryManager.Instance.CreateBookData(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text));
-            
+         && ValidInputChecker.IsBookIsbnValid(bookIsbnInputField.text)
+        && !ValidInputChecker.IsThisBookListedAsADifferentEntry(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text)){
+
+            LibraryManager.Instance.AddBookToLibrary(LibraryManager.Instance.CreateBookData(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text));
+
             OnSuccessfulBookAddition?.Invoke(this, new OnSuccessfulBookAdditionEventArgs
             {
                 bookTitle = bookTitleInputField.text,
@@ -63,7 +81,11 @@ public class AddNewBookPanelUI : MonoBehaviour
 
             if (!ValidInputChecker.IsBookIsbnValid(bookIsbnInputField.text))
             {
-                errorMessages.Add("Invalid ISBN. Please enter a valid ISBN with 13-digits. ");
+                errorMessages.Add("Invalid or repeated ISBN. Please check again and enter a valid ISBN with 13-digits.");
+            }
+            if (ValidInputChecker.IsThisBookListedAsADifferentEntry(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text))
+            {
+                errorMessages.Add($"The book '{bookTitleInputField.text}' by '{bookAuthorInputField.text}' is already listed with a different ISBN, please check your ISBN entry.");
             }
 
             // Combine error messages into a single string

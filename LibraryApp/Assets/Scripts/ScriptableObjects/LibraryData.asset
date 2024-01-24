@@ -16,11 +16,11 @@ MonoBehaviour:
   - bookTitle: "Pokemon Nas\u0131l Avlan\u0131r?"
     bookAuthor: "E\u015F Ke\xE7\u0131m"
     bookIsbn: 3424125533121
-    bookCount: 4
+    bookCount: 3
   - bookTitle: "Kapitalist Ger\xE7eklik"
     bookAuthor: Mark Fisher
     bookIsbn: 1235739485723
-    bookCount: 2
+    bookCount: 1
   - bookTitle: LOTR 1
     bookAuthor: Tolkien  JRR
     bookIsbn: 1245650489343
@@ -29,3 +29,15 @@ MonoBehaviour:
     bookAuthor: "hasan h\xFCseyin"
     bookIsbn: 1029530459243
     bookCount: 2
+  - bookTitle: 'Roman 1 '
+    bookAuthor: "Roman Yazar\u0131"
+    bookIsbn: 2456453454241
+    bookCount: 1
+  - bookTitle: "R\xFCya Roman\u0131"
+    bookAuthor: Hasan Tahsin
+    bookIsbn: 1111111111111
+    bookCount: 1
+  - bookTitle: asd
+    bookAuthor: asd
+    bookIsbn: 1111111111112
+    bookCount: 3

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -26,6 +27,38 @@ public static class SearchManager
             }
         }
         return availableBooks;
+    }
+
+    public static List<LendingInfoPairsSO.LendingPair> GetExpiredBooks()
+    {
+        List<LendingInfoPairsSO.LendingPair> expiredBookLents = new List<LendingInfoPairsSO.LendingPair>();
+
+        List<LendingInfoPairsSO.LendingPair> allLentBooks = LibraryManager.Instance.GetLendingInfoPairs().lendingPairs;
+
+        foreach (LendingInfoPairsSO.LendingPair lendingPair in allLentBooks)
+        {
+            int totalNumberOfOverDue = 0;
+            LendingInfoPairsSO.LendingPair lendingPairInTest = new LendingInfoPairsSO.LendingPair();
+            lendingPairInTest.book = lendingPair.book;
+
+            foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+            {
+                // Get the expected return date as a DateTime for the lending Info
+                DateTime expectedReturnDate = new DateTime(lendingInfo.expectedReturnDateTicks);
+                Debug.Log(expectedReturnDate);
+                // Compare the expected return date with the current time to check if its exceeded
+                if (expectedReturnDate < DateTime.Now)
+                {
+                    totalNumberOfOverDue++;
+                    lendingPairInTest.lendingInfoList.Add(lendingInfo);  
+                }
+            }
+            if (totalNumberOfOverDue > 0)
+            {
+                expiredBookLents.Add(lendingPairInTest);
+            }
+        }
+        return expiredBookLents;
     }
 
 
@@ -63,6 +96,10 @@ public static class SearchManager
     }
 
     //THIS IS TOO MUCH REPETITON, WILL IMPLEMENT PROPERTY SELECTOR FUNCTION/GENERIC METHOD!
+
+    private static void LentBookSearch() { }
+
+
     private static void PerformSearchGeneral(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
         LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();

@@ -24,6 +24,9 @@ WIP - Work In progress
 <!-- Visuals -->
 ## Visuals
 
+
+21.01.2024 working build: 
+https://www.youtube.com/watch?v=DhB6S_IOklg
 ----------
 
 <!-- Technical Details -->

@@ -11,7 +11,6 @@ public class BookLendingPanelUI : MonoBehaviour
     [SerializeField] private Button lendBookButton;
     [SerializeField] private Button returnLentBookButton;
     [SerializeField] private Button listAllLentBooksButton;
-    [SerializeField] private Button listLentBooksThatHavePassedTheirDueDatesButton;
 
     private void Awake()
     {
@@ -31,11 +30,6 @@ public class BookLendingPanelUI : MonoBehaviour
         listAllLentBooksButton.onClick.AddListener(() =>
         {
             ListAllLentBooksPanelUI.Instance.Show();
-        });
-
-        listLentBooksThatHavePassedTheirDueDatesButton.onClick.AddListener(() =>
-        {
-            ListLentBooksThatHavePassedTheirDueDatesPanelUI.Instance.Show();
         });
 
         Hide();

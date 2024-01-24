@@ -189,8 +189,8 @@ public class LibraryManager : MonoBehaviour
 
     public void LendABook(BookData bookData, string borrowerName)
     {
-        //Checks If bookData is already in the lendingInfoPairsSO List
-        LendingInfoPairsSO.LendingPair lendingPair = lendingInfoPairsList.lendingPairs.Find(pair => pair.book.Equals(bookData));
+        //Checks If bookData is already in the lendingInfoPairsSO List, checks from book ISBN to avoid addition of multiple book-lendingInfoPairs
+        LendingInfoPairsSO.LendingPair lendingPair = lendingInfoPairsList.lendingPairs.Find(pair => pair.book.bookIsbn.Equals(bookData.bookIsbn));
 
         if (lendingPair == null)
         {

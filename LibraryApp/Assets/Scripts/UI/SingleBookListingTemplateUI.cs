@@ -26,6 +26,10 @@ public class SingleBookListingTemplateUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI dueDateText;
     [SerializeField] private Button returnButton;
 
+    private Color dueDatePassedColor = Color.red;
+    private Color dueDateNotPassedColor = Color.green;
+
+
     public void SetBookDataForBasicListing(BookData bookData)
     {
         bookTitleText.text = bookData.bookTitle;
@@ -55,6 +59,9 @@ public class SingleBookListingTemplateUI : MonoBehaviour
         borrowerNameText.text = lendingInfo.borrowerName;
 
         DateTime expectedReturnDeserialized = new DateTime(lendingInfo.expectedReturnDateTicks);
+
+        //change the color of the text according to due date passing or not passing 
+        dueDateText.color = (expectedReturnDeserialized <= DateTime.Now) ? dueDatePassedColor : dueDateNotPassedColor;
         dueDateText.text = expectedReturnDeserialized.ToString("MM/dd/yyyy");
 
         returnButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoListIndex));
