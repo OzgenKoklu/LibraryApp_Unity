@@ -11,6 +11,8 @@ public class MainPanelUI : MonoBehaviour
     [SerializeField] private Button searchBookButton;
     [SerializeField] private Button bookLendingButton;
     [SerializeField] private Button aboutProjectButton;
+    [SerializeField] private Button importAndExportButton;
+
 
     private void Awake()
     {
@@ -37,6 +39,11 @@ public class MainPanelUI : MonoBehaviour
         aboutProjectButton.onClick.AddListener(() =>
         {
             AboutProjectPanelUI.Instance.Show();
+        });
+
+        importAndExportButton.onClick.AddListener(() =>
+        {
+            ImportAndExportPanelUI.Instance.Show();
         });
 
     }

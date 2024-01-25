@@ -1,0 +1,89 @@
+{
+    "libraryData": {
+        "books": [
+            {
+                "bookTitle": "Pokemon Nasıl Avlanır?",
+                "bookAuthor": "Eş Keçım",
+                "bookIsbn": "3424125533121",
+                "bookCount": 3
+            },
+            {
+                "bookTitle": "Kapitalist Gerçeklik",
+                "bookAuthor": "Mark Fisher",
+                "bookIsbn": "1235739485723",
+                "bookCount": 1
+            },
+            {
+                "bookTitle": "LOTR 1",
+                "bookAuthor": "Tolkien  JRR",
+                "bookIsbn": "1245650489343",
+                "bookCount": 2
+            },
+            {
+                "bookTitle": "hasan hüseyin romanı",
+                "bookAuthor": "hasan hüseyin",
+                "bookIsbn": "1029530459243",
+                "bookCount": 2
+            },
+            {
+                "bookTitle": "Roman 1 ",
+                "bookAuthor": "Roman Yazarı",
+                "bookIsbn": "2456453454241",
+                "bookCount": 1
+            },
+            {
+                "bookTitle": "Rüya Romanı",
+                "bookAuthor": "Hasan Tahsin",
+                "bookIsbn": "1111111111111",
+                "bookCount": 1
+            },
+            {
+                "bookTitle": "asd",
+                "bookAuthor": "asd",
+                "bookIsbn": "1111111111112",
+                "bookCount": 3
+            }
+        ]
+    },
+    "lendingInfoPairs": {
+        "lendingPairs": [
+            {
+                "book": {
+                    "bookTitle": "Pokemon Nasıl Avlanır?",
+                    "bookAuthor": "Eş Keçım",
+                    "bookIsbn": "3424125533121",
+                    "bookCount": 4
+                },
+                "totalLendedBookCount": 3,
+                "lendingInfoList": [
+                    {
+                        "borrowerName": "hasan hüseyin",
+                        "returnCode": "35261",
+                        "expectedReturnDateTicks": 638443029623222761
+                    },
+                    {
+                        "borrowerName": "asdfa sada",
+                        "returnCode": "36227",
+                        "expectedReturnDateTicks": 638443104147219239
+                    }
+                ]
+            },
+            {
+                "book": {
+                    "bookTitle": "Kapitalist Gerçeklik",
+                    "bookAuthor": "Mark Fisher",
+                    "bookIsbn": "1235739485723",
+                    "bookCount": 1
+                },
+                "totalLendedBookCount": 1,
+                "lendingInfoList": [
+                    {
+                        "borrowerName": "SFD fda",
+                        "returnCode": "46368",
+                        "expectedReturnDateTicks": 638414517100000000
+                    }
+                ]
+            }
+        ]
+    }
+}

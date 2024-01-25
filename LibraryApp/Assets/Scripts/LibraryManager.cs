@@ -62,7 +62,7 @@ public class LibraryManager : MonoBehaviour
         };
 
         return newBookData;
-    }
+    } 
 
     //check where you save your data
     private void SaveLibraryData()
@@ -71,6 +71,7 @@ public class LibraryManager : MonoBehaviour
         UnityEditor.EditorUtility.SetDirty(libraryData);
         UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
         UnityEditor.AssetDatabase.SaveAssets();
+        UnityEditor.AssetDatabase.Refresh(); 
     }
 
 
@@ -135,7 +136,22 @@ public class LibraryManager : MonoBehaviour
         }
     }
 
-    public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
+    //start of json import scripts
+    public void UpdateLibraryDataFromJsonData(LibraryDataSO libraryData, LendingInfoPairsSO lendingInfoPairs)
+    {
+       // RevertToOriginalState();
+
+        //addrange method to avoic changing the reference this.libraryData = libraryData would change the reference
+        this.libraryData.books.Clear();
+        this.libraryData.books.AddRange(libraryData.books);
+
+        this.lendingInfoPairsList.lendingPairs.Clear();
+        this.lendingInfoPairsList.lendingPairs.AddRange(lendingInfoPairs.lendingPairs);
+
+        SaveLibraryData();
+    }
+
+public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
 
         //Debug.Log(lendingInfo.returnCode);
         TryReturnLentBookByReturnCode(lendingInfo.returnCode);
