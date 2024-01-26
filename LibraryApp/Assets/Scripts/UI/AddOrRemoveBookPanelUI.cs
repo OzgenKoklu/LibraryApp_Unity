@@ -6,15 +6,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using static LibraryManager;
 
-public class AddNewBookPanelUI : MonoBehaviour
+public class AddOrRemoveBookPanelUI : MonoBehaviour
 {
-    public static AddNewBookPanelUI Instance { get; private set; }
-
-    public event EventHandler<OnSuccessfulBookAdditionEventArgs> OnSuccessfulBookAddition;
-    public class OnSuccessfulBookAdditionEventArgs : EventArgs { public string bookTitle; public string bookAuthor;  }
-
-    public event EventHandler<OnInvalidInputEventArgs> OnInvalidInput;
-    public class OnInvalidInputEventArgs : EventArgs { public string invalidInputErrorMessage;}
+    public static AddOrRemoveBookPanelUI Instance { get; private set; }
 
     [SerializeField] private Button closeButton;
     [SerializeField] private Button addBookButton;
@@ -38,11 +32,9 @@ public class AddNewBookPanelUI : MonoBehaviour
         {
             LibraryManager.Instance.AddBookToLibrary(LibraryManager.Instance.CreateBookData(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text));
 
-            OnSuccessfulBookAddition?.Invoke(this, new OnSuccessfulBookAdditionEventArgs
-            {
-                bookTitle = bookTitleInputField.text,
-                bookAuthor = bookAuthorInputField.text
-            });
+            //Setting message for popup window
+            string responseMessage = bookTitleInputField.text + " by " + bookAuthorInputField.text + " is added to the library successfully.";
+            PopupPanelUI.Instance.ShowResponse(responseMessage);
 
             CleanInputFields();
 
@@ -57,11 +49,9 @@ public class AddNewBookPanelUI : MonoBehaviour
 
             LibraryManager.Instance.AddBookToLibrary(LibraryManager.Instance.CreateBookData(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text));
 
-            OnSuccessfulBookAddition?.Invoke(this, new OnSuccessfulBookAdditionEventArgs
-            {
-                bookTitle = bookTitleInputField.text,
-                bookAuthor = bookAuthorInputField.text
-            });
+            //Setting message for popup window
+            string responseMessage = bookTitleInputField.text + " by " + bookAuthorInputField.text + " is added to the library successfully.";
+            PopupPanelUI.Instance.ShowResponse(responseMessage);
 
             CleanInputFields();
         }
@@ -91,11 +81,7 @@ public class AddNewBookPanelUI : MonoBehaviour
             // Combine error messages into a single string
             string errorMessage = string.Join("\n", errorMessages);
 
-            // Trigger the OnInvalidInput event with the error message
-            OnInvalidInput?.Invoke(this, new OnInvalidInputEventArgs
-            {
-                invalidInputErrorMessage = errorMessage
-            });
+            PopupPanelUI.Instance.ShowError(errorMessage);
         }
     }
 

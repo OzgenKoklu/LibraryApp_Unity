@@ -170,7 +170,7 @@ public static class ImportExportManager
             lendingInfoPairs.lendingPairs.Add(lendingPair);
         }
         //sending them to libraryManager to set the library data accordingly and save it
-        //Debug.Log(Li)
+        
         LibraryManager.Instance.UpdateLibraryDataFromJsonData(libraryData, lendingInfoPairs);
     }
 

@@ -6,44 +6,38 @@ using UnityEngine.UI;
 
 public class MainPanelUI : MonoBehaviour
 {
-    [SerializeField] private Button addNewBookButton;
-    [SerializeField] private Button listAllBooksButton;
-    [SerializeField] private Button searchBookButton;
-    [SerializeField] private Button bookLendingButton;
+    [SerializeField] private Button addOrRemoveBookButton;
+    [SerializeField] private Button listAndSearchBooksButton;
+    [SerializeField] private Button lendingOperationsButton;
+    [SerializeField] private Button dataOperationsButton;
     [SerializeField] private Button aboutProjectButton;
-    [SerializeField] private Button importAndExportButton;
 
 
     private void Awake()
     {
-        addNewBookButton.onClick.AddListener(() =>
+        addOrRemoveBookButton.onClick.AddListener(() =>
         {
-            AddNewBookPanelUI.Instance.Show();
+            AddOrRemoveBookPanelUI.Instance.Show();
         });
 
-        listAllBooksButton.onClick.AddListener(() =>
+        listAndSearchBooksButton.onClick.AddListener(() =>
         {
-            ListAllBooksPanelUI.Instance.Show();
+            ListPanelUI.Instance.Show();
         });
 
-        searchBookButton.onClick.AddListener(() =>
+        lendingOperationsButton.onClick.AddListener(() =>
         {
-            SearchBookPanelUI.Instance.Show();
+          LendingOperationsPanelUI.Instance.Show();
         });
 
-        bookLendingButton.onClick.AddListener(() =>
+        dataOperationsButton.onClick.AddListener(() =>
         {
-            BookLendingPanelUI.Instance.Show();
+          DataOperationsPanelUI.Instance.Show();    
         });
 
         aboutProjectButton.onClick.AddListener(() =>
         {
-            AboutProjectPanelUI.Instance.Show();
-        });
-
-        importAndExportButton.onClick.AddListener(() =>
-        {
-            ImportAndExportPanelUI.Instance.Show();
+            PopupPanelUI.Instance.Show();
         });
 
     }

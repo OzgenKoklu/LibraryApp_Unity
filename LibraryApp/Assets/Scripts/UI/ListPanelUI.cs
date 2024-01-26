@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AboutProjectPanelUI : MonoBehaviour
+public class ListPanelUI : MonoBehaviour
 {
-    public static AboutProjectPanelUI Instance { get; private set; }
-
+    public static ListPanelUI Instance { get; private set; }
     [SerializeField] private Button closeButton;
 
     private void Awake()
@@ -21,7 +20,7 @@ public class AboutProjectPanelUI : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    private void Hide()
+    public void Hide()
     {
         gameObject.SetActive(false);
     }

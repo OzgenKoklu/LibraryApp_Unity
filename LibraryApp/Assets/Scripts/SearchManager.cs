@@ -97,8 +97,6 @@ public static class SearchManager
 
     //THIS IS TOO MUCH REPETITON, WILL IMPLEMENT PROPERTY SELECTOR FUNCTION/GENERIC METHOD!
 
-    private static void LentBookSearch() { }
-
 
     private static void PerformSearchGeneral(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {

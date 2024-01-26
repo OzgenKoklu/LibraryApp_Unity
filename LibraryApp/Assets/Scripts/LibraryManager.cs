@@ -188,17 +188,15 @@ public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
             //Should add if due date has passed, penalty fee maybe?
             string returnSuccessfulResponseMessage = $"'{returnedBook.bookTitle}' (ISBN: '{returnedBook.bookIsbn}') borrowed by '{lendingInfoToRemove.borrowerName}' returned successfully.";
 
-            LendAndReturnResponsePanelUI.Instance.Show(returnSuccessfulResponseMessage);
+            PopupPanelUI.Instance.ShowResponse(returnSuccessfulResponseMessage);
+          
             
         }
         else
         {
-            //Not good practice to have so different panels to give some message...
-            OnErrorEncountered?.Invoke(this, new OnErrorEncounteredEventArgs
-            {
-                errorMessage = "Return Code you provided(" + returnCode + ") not found."
-            }) ;
-           
+            string errorMessage = "Return Code you provided(" + returnCode + ") not found.";
+
+            PopupPanelUI.Instance.ShowError(errorMessage); 
         }
 
     }
@@ -248,9 +246,10 @@ public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
 
         string lendingSuccessfulResponseMessage = $"'{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.returnCode}'\n Return Due Date: {deserializeDate.ToString("MM/dd/yyyy")}";
 
-        LendAndReturnResponsePanelUI.Instance.Show(lendingSuccessfulResponseMessage);
 
-        //Might change how panel reacts accordingly to events (maybe OnBookLendingUnsuccessful), rather than setting the message here
+        PopupPanelUI.Instance.ShowResponse(lendingSuccessfulResponseMessage);
+    
+        //Might change how panel reacts accordingly to events (maybe OnBookLendingUnsuccessful), rather than setting the message here I think I was updating a list here
         OnBookLendingSuccessful?.Invoke(sender, EventArgs.Empty); 
     }
 

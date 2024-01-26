@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BookLendingPanelUI : MonoBehaviour
+public class LendingOperationsPanelUI : MonoBehaviour
 {
-    public static BookLendingPanelUI Instance { get; private set; }
+    public static LendingOperationsPanelUI Instance { get; private set; }
 
     [SerializeField] private Button closeButton;
     [SerializeField] private Button lendBookButton;
@@ -19,17 +19,20 @@ public class BookLendingPanelUI : MonoBehaviour
 
         lendBookButton.onClick.AddListener(() =>
         {
-            LendBookPanelUI.Instance.Show();
+            //LendBookPanelUI.Instance.Show();
+            //listPanelWithCustomParameters
         });
 
         returnLentBookButton.onClick.AddListener(() =>
         {
-            ReturnLentBookPanelUI.Instance.Show();
+            //ReturnLentBookPanelUI.Instance.Show();
+            //popUpPanelWithCustomParameters
         });
 
         listAllLentBooksButton.onClick.AddListener(() =>
         {
-            ListAllLentBooksPanelUI.Instance.Show();
+            //ListAllLentBooksPanelUI.Instance.Show();
+            //List panel with custom parameters
         });
 
         Hide();

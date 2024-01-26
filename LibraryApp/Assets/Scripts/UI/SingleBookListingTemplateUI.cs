@@ -48,7 +48,7 @@ public class SingleBookListingTemplateUI : MonoBehaviour
 
     private void OnLendButtonClick(BookData bookData)
     {
-        LendABookBorrowerNamePromptPanelUI.Instance.Show(bookData);
+       // LendABookBorrowerNamePromptPanelUI.Instance.Show(bookData);
     }
 
     //Index approach is there for avoiding sending 2 classes in this basic function. I didnt want to send lendingInfo as a seperate parameter.
@@ -72,10 +72,11 @@ public class SingleBookListingTemplateUI : MonoBehaviour
         string returnConfirmationMessage = $"You are about to return {lendingPair.book.bookTitle} borrowed by {lendingPair.lendingInfoList[lendingInfoListIndex].borrowerName}. Press X to cancel or Confirm to proceed.";
       
         //passing in function as a delegate for the next UI pop Up to trigger
-        LendAndReturnResponsePanelUI.Instance.Show(returnConfirmationMessage, () =>
+
+       /* LendAndReturnResponsePanelUI.Instance.Show(returnConfirmationMessage, () =>
         {
             LibraryManager.Instance.TryReturnLentBookFromTheList(lendingPair.lendingInfoList[lendingInfoListIndex]);
         } );
-                
+         */       
     }
 }
