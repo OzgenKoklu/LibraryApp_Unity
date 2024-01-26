@@ -22,7 +22,7 @@ public class MainPanelUI : MonoBehaviour
 
         listAndSearchBooksButton.onClick.AddListener(() =>
         {
-            ListPanelUI.Instance.Show();
+            ListPanelUI.Instance.Show(ListPanelUI.ListType.AllBooksList);
         });
 
         lendingOperationsButton.onClick.AddListener(() =>
@@ -37,7 +37,7 @@ public class MainPanelUI : MonoBehaviour
 
         aboutProjectButton.onClick.AddListener(() =>
         {
-            PopupPanelUI.Instance.Show();
+            PopupPanelUI.Instance.ShowAboutInfo();
         });
 
     }

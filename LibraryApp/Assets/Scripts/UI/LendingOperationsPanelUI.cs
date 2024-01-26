@@ -19,8 +19,7 @@ public class LendingOperationsPanelUI : MonoBehaviour
 
         lendBookButton.onClick.AddListener(() =>
         {
-            //LendBookPanelUI.Instance.Show();
-            //listPanelWithCustomParameters
+            ListPanelUI.Instance.Show(ListPanelUI.ListType.LendABookList);
         });
 
         returnLentBookButton.onClick.AddListener(() =>
@@ -31,8 +30,7 @@ public class LendingOperationsPanelUI : MonoBehaviour
 
         listAllLentBooksButton.onClick.AddListener(() =>
         {
-            //ListAllLentBooksPanelUI.Instance.Show();
-            //List panel with custom parameters
+            ListPanelUI.Instance.Show(ListPanelUI.ListType.AllLentBooksList);
         });
 
         Hide();

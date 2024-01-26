@@ -9,22 +9,18 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class SingleBookListingTemplateUI : MonoBehaviour
 {
-    [Header("General Purpose Fields")] //Some General purpose fields, author and count not needed for return panel
+    [Header("For general Listings")] //Some General purpose fields, author and count not needed for return panel
     [SerializeField] private TextMeshProUGUI bookTitleText;
     [SerializeField] private TextMeshProUGUI bookAuthorText;
     [SerializeField] private TextMeshProUGUI bookCountText;
-
-    [Header("Listing and Searching Panels")] //Needed for listing and searching panels
-
     [SerializeField] private TextMeshProUGUI bookIsbnText;
 
-    [Header("Lending Panel")] //Needed to be asigned for panels where lending functionality is available
-    [SerializeField] private Button lendButton;
 
-    [Header("Returning Panel")] //Needed to be asigned for panels where returning lent book functionality is available
+    [Header("List for all lent books list type")] //Needed to be asigned for panels where returning lent book functionality is available
     [SerializeField] private TextMeshProUGUI borrowerNameText;
     [SerializeField] private TextMeshProUGUI dueDateText;
-    [SerializeField] private Button returnButton;
+
+    private BookData bookDataOnSingleTemplate;
 
     private Color dueDatePassedColor = Color.red;
     private Color dueDateNotPassedColor = Color.green;
@@ -43,7 +39,7 @@ public class SingleBookListingTemplateUI : MonoBehaviour
         bookTitleText.text = bookData.bookTitle;
         bookAuthorText.text = bookData.bookAuthor;
         bookCountText.text = bookData.bookCount.ToString();
-        lendButton.onClick.AddListener(() => OnLendButtonClick(bookData));
+       // lendButton.onClick.AddListener(() => OnLendButtonClick(bookData));
     }
 
     private void OnLendButtonClick(BookData bookData)
@@ -64,7 +60,7 @@ public class SingleBookListingTemplateUI : MonoBehaviour
         dueDateText.color = (expectedReturnDeserialized <= DateTime.Now) ? dueDatePassedColor : dueDateNotPassedColor;
         dueDateText.text = expectedReturnDeserialized.ToString("MM/dd/yyyy");
 
-        returnButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoListIndex));
+       // returnButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoListIndex));
     }
 
     private void OnReturnButtonClick(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
