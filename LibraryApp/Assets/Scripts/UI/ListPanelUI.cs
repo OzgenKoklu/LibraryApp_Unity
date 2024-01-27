@@ -25,6 +25,9 @@ public class ListPanelUI : MonoBehaviour
     private const string ACTION_BUTTON_LEND_TEXT = "Lend";
     private const string ACTION_BUTTON_RETURN_TEXT = "Return";
 
+    public event EventHandler<OnSelectedListItemChangedEventArgs> OnSelectedListItemChanged;
+    public class OnSelectedListItemChangedEventArgs : EventArgs { public SingleBookListingTemplateUI selectedListItemTemplate; };
+
     [SerializeField] private Button closeButton;
     [SerializeField] private TextMeshProUGUI panelTitleText;
     [SerializeField] private TextMeshProUGUI searchResultsDetailsText;
@@ -52,7 +55,8 @@ public class ListPanelUI : MonoBehaviour
     [SerializeField] private Transform lentListSingleBookListingTemplate;
     [SerializeField] private Toggle expiredDueDatesToggle;
 
-
+    private ListType currentListType;
+    private SingleBookListingTemplateUI selectedListing;
 
     private void Awake()
     {
@@ -70,17 +74,48 @@ public class ListPanelUI : MonoBehaviour
         Hide();
     }
 
+    public void ChangeSelectedListing(SingleBookListingTemplateUI selectedListing)
+    {
+        this.selectedListing = selectedListing;
+
+        OnSelectedListItemChanged?.Invoke(this, new OnSelectedListItemChangedEventArgs
+        {
+            selectedListItemTemplate = selectedListing
+        });
+    }
+
     private void OnSearchButtonClicked()
     {
-        SearchCriteriaSO searchCriteria = ScriptableObject.CreateInstance<SearchCriteriaSO>();
-        //Now we need to remove spaces we added just for the UI.
-        searchCriteria.searchType = (SearchManager.SearchType)Enum.Parse(typeof(SearchManager.SearchType), searchTypeDropdown.options[searchTypeDropdown.value].text.Replace(" ", ""));
-        searchCriteria.searchTerm = searchTermInputField.text;
+        //Only "All Lent books" uses a different container and different search type 
+        if(currentListType == ListType.AllLentBooksList)
+        {
+            SearchCriteriaSO searchCriteria = ScriptableObject.CreateInstance<SearchCriteriaSO>();
+            searchCriteria.searchTypeLentList = (SearchManager.SearchTypeLentListing)Enum.Parse(typeof(SearchManager.SearchTypeLentListing), searchTypeDropdown.options[searchTypeDropdown.value].text.Replace(" ", ""));
+            searchCriteria.searchTerm = searchTermInputField.text;
 
-        // Call the SearchManager to perform the search
-        List<BookData> searchResults = SearchManager.PerformSearch(searchCriteria);
-        // Now we have the search results, update & populate the container
-        UpdateSearchResultList(searchResults);
+            //perform Search from Lending info list (Not through book data)
+            List<LendingInfoPairsSO.LendingPair> searchResults = SearchManager.PerformLendingInfoPairsSearch(searchCriteria);
+            UpdateBookListForLentBooks(searchResults);
+            //UpdateSearchResultList(searchResults);
+        }
+        else
+        {
+            SearchCriteriaSO searchCriteria = ScriptableObject.CreateInstance<SearchCriteriaSO>();
+            //Now we need to remove spaces we added just for the UI.
+            searchCriteria.searchTypeGeneral = (SearchManager.SearchTypeGeneralListing)Enum.Parse(typeof(SearchManager.SearchTypeGeneralListing), searchTypeDropdown.options[searchTypeDropdown.value].text.Replace(" ", ""));
+            searchCriteria.searchTerm = searchTermInputField.text;
+
+            if(currentListType == ListType.LendABookList)
+            {
+                searchCriteria.isAvailable = true;
+            }
+
+            // Call the SearchManager to perform the search
+            List<BookData> searchResults = SearchManager.PerformBookListingSearch(searchCriteria);
+            // Now we have the search results, update & populate the container
+            UpdateSearchResultList(searchResults);
+        }
+       
     }
 
     private void UpdateSearchResultList(List<BookData> bookDataList)
@@ -108,6 +143,10 @@ public class ListPanelUI : MonoBehaviour
     public void Show(ListType listType)
     {
         gameObject.SetActive(true);
+        
+        //sets current list type so that we will unsub from the right events
+        currentListType = listType;
+        SetDropdownOptions(listType);
 
         ChangeLegendAndContainerType(listType);
 
@@ -119,7 +158,7 @@ public class ListPanelUI : MonoBehaviour
                 actionButton.gameObject.SetActive(false);
                 //Load AllBooks Script 
                 UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().books);
-                SetDropdownOptions();
+                
 
                 break;
             case ListType.LendABookList:
@@ -128,10 +167,13 @@ public class ListPanelUI : MonoBehaviour
 
                 actionButtonText.text = ACTION_BUTTON_LEND_TEXT;
 
-                UpdateSearchResultList(SearchManager.GetAvailableBooks(LibraryManager.Instance.GetLibraryData().books));
 
-                // MAKE SEARCH BUTTON OPERATE ON ISAVAILABLE BOOKS ONLY 
+                List<BookData> availableBookDataList = SearchManager.GetAvailableBooks(LibraryManager.Instance.GetLibraryData().books);
+                UpdateSearchResultList(availableBookDataList); 
+
+                
                 LibraryManager.Instance.OnBookLendingSuccessful += LibraryManager_OnBookLendingSuccessful;
+                actionButton.onClick.AddListener(() => OnLendButtonClick(selectedListing));
 
                 break;
 
@@ -142,8 +184,13 @@ public class ListPanelUI : MonoBehaviour
                
                 actionButtonText.text = ACTION_BUTTON_RETURN_TEXT;
                 expiredDueDatesToggle.onValueChanged.AddListener(UpdateBookListForLentBooks);
-                UpdateBookListForLentBooks();
+                expiredDueDatesToggle.isOn = false;
+                LendingInfoPairsSO allLentBooksList = LibraryManager.Instance.GetLendingInfoPairs();
+                UpdateBookListForLentBooks(allLentBooksList);
 
+                LendingInfoPairsSO.LendingPair lendingPair = new LendingInfoPairsSO.LendingPair();
+                int lendingInfoIndex = 0;
+                actionButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoIndex));
 
                 break;
 
@@ -156,7 +203,31 @@ public class ListPanelUI : MonoBehaviour
         }
     }
 
-    private void UpdateBookListForLentBooks()
+
+    private void OnReturnButtonClick(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
+    {
+        lendingPair = selectedListing.GetLendingPair();
+        lendingInfoListIndex = selectedListing.GetLendingPairLendingListInfoIndex();
+        string returnConfirmationMessage = $"You are about to return {lendingPair.book.bookTitle} borrowed by {lendingPair.lendingInfoList[lendingInfoListIndex].borrowerName}. Press X to cancel or Confirm to proceed.";
+       
+        
+        //passing in function as a delegate for the next UI pop Up to trigger, we can actually use the return code now that we have a function to get the return code. may simplify things
+        PopupPanelUI.Instance.ShowResponse(returnConfirmationMessage, () =>
+
+        LibraryManager.Instance.TryReturnLentBookFromTheList(lendingPair.lendingInfoList[lendingInfoListIndex])
+
+        );
+
+    }
+
+    private void OnLendButtonClick(SingleBookListingTemplateUI listing)
+    {
+        BookData tempBook = listing.GetBookData();
+        PopupPanelUI.Instance.ShowPrompt("Enter Your Name", tempBook);
+    }
+
+
+    private void UpdateBookListForLentBooks(List<LendingInfoPairsSO.LendingPair> lendingInfoPairs)
     {
         foreach (Transform child in lentListSearchResultsContainer)
         {
@@ -166,9 +237,7 @@ public class ListPanelUI : MonoBehaviour
 
         int totalLentEntries = 0;
 
-        LendingInfoPairsSO LendingInfoPairs = LibraryManager.Instance.GetLendingInfoPairs();
-
-        foreach (LendingInfoPairsSO.LendingPair lendingPair in LendingInfoPairs.lendingPairs)
+        foreach (LendingInfoPairsSO.LendingPair lendingPair in lendingInfoPairs)
         {
             int lendInfoIndex = 0;
             foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
@@ -264,22 +333,39 @@ public class ListPanelUI : MonoBehaviour
 
 
 
-    private void SetDropdownOptions()
+    private void SetDropdownOptions(ListType listType)
     {
-        // Assuming you have a list of string options
-        string[] searchTypeOptions = System.Enum.GetNames(typeof(SearchManager.SearchType));
-
-        // Modify enum names for better UI readability
-        for (int i = 0; i < searchTypeOptions.Length; i++)
-        {
-            searchTypeOptions[i] = AddSpaceBeforeUpperCase(searchTypeOptions[i]);
-        }
-
+        // Only "All Lent books" list have a different category, can search borrower name
         // Clear existing options
         searchTypeDropdown.ClearOptions();
 
-        // Add new options
-        searchTypeDropdown.AddOptions(new List<string>(searchTypeOptions));
+        if (listType == ListType.AllLentBooksList)
+        {
+            // Assuming you have a list of string options
+            string[] searchTypeOptions = System.Enum.GetNames(typeof(SearchManager.SearchTypeLentListing));
+
+            // Modify enum names for better UI readability
+            for (int i = 0; i < searchTypeOptions.Length; i++)
+            {
+                searchTypeOptions[i] = AddSpaceBeforeUpperCase(searchTypeOptions[i]);
+            }
+            // Add new options
+            searchTypeDropdown.AddOptions(new List<string>(searchTypeOptions));
+        }
+        else
+        {
+            // Assuming you have a list of string options
+            string[] searchTypeOptions = System.Enum.GetNames(typeof(SearchManager.SearchTypeGeneralListing));
+
+            // Modify enum names for better UI readability
+            for (int i = 0; i < searchTypeOptions.Length; i++)
+            {
+                searchTypeOptions[i] = AddSpaceBeforeUpperCase(searchTypeOptions[i]);
+            }
+            // Add new options
+            searchTypeDropdown.AddOptions(new List<string>(searchTypeOptions));
+        }
+       
     }
 
     string AddSpaceBeforeUpperCase(string input)
@@ -314,6 +400,22 @@ public class ListPanelUI : MonoBehaviour
 
     public void Hide()
     {
+        //search toggle reset
+
+
+        if(currentListType == ListType.AllLentBooksList)
+        {
+            expiredDueDatesToggle.onValueChanged.RemoveAllListeners();
+            actionButton.onClick.RemoveAllListeners();
+        }
+        if (currentListType == ListType.LendABookList)
+        {
+            LibraryManager.Instance.OnBookLendingSuccessful -= LibraryManager_OnBookLendingSuccessful;
+            actionButton.onClick.RemoveAllListeners();
+        }
+
+
+        searchTermInputField.text = "";
         gameObject.SetActive(false);
     }
 }

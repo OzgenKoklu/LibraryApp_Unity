@@ -84,7 +84,7 @@ public class LibraryManager : MonoBehaviour
         {
             libraryData.books.Add(bookData);
             SaveLibraryData();
-            Debug.Log(libraryData.books.Count);
+            
         }
     }
 

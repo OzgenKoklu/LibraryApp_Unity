@@ -41,7 +41,3 @@ MonoBehaviour:
     bookAuthor: asd
     bookIsbn: 1111111111112
     bookCount: 3
-  - bookTitle: asf
-    bookAuthor: asfa
-    bookIsbn: 2222222222222
-    bookCount: 1

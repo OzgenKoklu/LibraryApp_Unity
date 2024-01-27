@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
 
-public class SingleBookListingTemplateUI : MonoBehaviour
+public class SingleBookListingTemplateUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("For general Listings")] //Some General purpose fields, author and count not needed for return panel
     [SerializeField] private TextMeshProUGUI bookTitleText;
@@ -20,14 +21,79 @@ public class SingleBookListingTemplateUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI borrowerNameText;
     [SerializeField] private TextMeshProUGUI dueDateText;
 
+    [SerializeField] private Image selectedVisual;
+
     private BookData bookDataOnSingleTemplate;
+    private string returnCodeOnSingleTemplate;
+    private LendingInfoPairsSO.LendingPair lendingPairOnSingleTemplate;
+    private int lendingPairLendingListIndexSingleTemplate;
 
     private Color dueDatePassedColor = Color.red;
     private Color dueDateNotPassedColor = Color.green;
 
+    private void Awake()
+    {
+        bookDataOnSingleTemplate = null;
+        returnCodeOnSingleTemplate = null;
+    }
+
+    private void Start()
+    {
+        ListPanelUI.Instance.OnSelectedListItemChanged += ListPanelUI_OnSelectedListItemChanged;
+    }
+
+    public BookData GetBookData()
+    {
+        return bookDataOnSingleTemplate;
+    }
+
+    public string GetRetrunCode()
+    {
+        return returnCodeOnSingleTemplate;
+    }
+
+    public LendingInfoPairsSO.LendingPair GetLendingPair()
+    {
+        return lendingPairOnSingleTemplate;
+    }
+
+    public int GetLendingPairLendingListInfoIndex()
+    {
+        return lendingPairLendingListIndexSingleTemplate;
+    }
+
+
+
+    private void ListPanelUI_OnSelectedListItemChanged(object sender, ListPanelUI.OnSelectedListItemChangedEventArgs e)
+    {
+        SetSelectedVisualOnOrOff(e.selectedListItemTemplate == this);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // Trigger the OnClick method when the UI element is clicked
+        OnClick();
+    }
+    public void OnClick()
+    {
+        ListPanelUI.Instance.ChangeSelectedListing(this);
+    }
+
+    public void SetSelectedVisualOnOrOff(bool isOn)
+    {
+        if (isOn)
+        {
+            selectedVisual.gameObject.SetActive(true);
+        }
+        else
+        {
+            selectedVisual.gameObject.SetActive(false);
+        }
+    }
 
     public void SetBookDataForBasicListing(BookData bookData)
     {
+        bookDataOnSingleTemplate = bookData;
         bookTitleText.text = bookData.bookTitle;
         bookAuthorText.text = bookData.bookAuthor;
         bookIsbnText.text = bookData.bookIsbn;
@@ -36,22 +102,25 @@ public class SingleBookListingTemplateUI : MonoBehaviour
 
     public void SetBookDataForLending(BookData bookData)
     {
+        bookDataOnSingleTemplate = bookData;
         bookTitleText.text = bookData.bookTitle;
         bookAuthorText.text = bookData.bookAuthor;
         bookCountText.text = bookData.bookCount.ToString();
        // lendButton.onClick.AddListener(() => OnLendButtonClick(bookData));
     }
 
-    private void OnLendButtonClick(BookData bookData)
-    {
-       // LendABookBorrowerNamePromptPanelUI.Instance.Show(bookData);
-    }
 
     //Index approach is there for avoiding sending 2 classes in this basic function. I didnt want to send lendingInfo as a seperate parameter.
     public void SetBookDataForReturningLentBook(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
     {
         LendingInfo lendingInfo = lendingPair.lendingInfoList[lendingInfoListIndex];
+
+        lendingPairOnSingleTemplate = lendingPair;
+        lendingPairLendingListIndexSingleTemplate = lendingInfoListIndex;
+        returnCodeOnSingleTemplate = lendingInfo.returnCode;
+
         bookTitleText.text = lendingPair.book.bookTitle;
+        bookAuthorText.text = lendingPair.book.bookAuthor;
         borrowerNameText.text = lendingInfo.borrowerName;
 
         DateTime expectedReturnDeserialized = new DateTime(lendingInfo.expectedReturnDateTicks);
@@ -63,16 +132,12 @@ public class SingleBookListingTemplateUI : MonoBehaviour
        // returnButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoListIndex));
     }
 
-    private void OnReturnButtonClick(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
-    {
-        string returnConfirmationMessage = $"You are about to return {lendingPair.book.bookTitle} borrowed by {lendingPair.lendingInfoList[lendingInfoListIndex].borrowerName}. Press X to cancel or Confirm to proceed.";
-      
-        //passing in function as a delegate for the next UI pop Up to trigger
 
-       /* LendAndReturnResponsePanelUI.Instance.Show(returnConfirmationMessage, () =>
-        {
-            LibraryManager.Instance.TryReturnLentBookFromTheList(lendingPair.lendingInfoList[lendingInfoListIndex]);
-        } );
-         */       
+
+    private void OnDestroy()
+    {
+        ListPanelUI.Instance.OnSelectedListItemChanged -= ListPanelUI_OnSelectedListItemChanged;
     }
+
+
 }
