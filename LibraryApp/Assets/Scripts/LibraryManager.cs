@@ -25,8 +25,6 @@ public class LibraryManager : MonoBehaviour
     [SerializeField] private LibraryDataSO libraryData;
     [SerializeField] private LendingInfoPairsSO lendingInfoPairsList;
 
-    private BookData selectedBookData;
-    private EventArgs sender;
 
     private void Awake()
     {
@@ -60,7 +58,6 @@ public class LibraryManager : MonoBehaviour
             bookIsbn = bookIsbn,
             bookCount = 1
         };
-
         return newBookData;
     } 
 
@@ -75,77 +72,50 @@ public class LibraryManager : MonoBehaviour
     }
 
 
-    public void AddBookToLibrary(BookData bookData) {
-        if (IsBookListedinLibraryAlready(bookData))
+    public void AddBookToLibrary(BookData bookData)
+    {
+        if (IsBookListedInLibraryAlready(bookData))
         {
             IncreaseBookCountByOne(bookData);
         }
         else
         {
-            libraryData.books.Add(bookData);
-            SaveLibraryData();
-            
+            AddNewBookToLibrary(bookData);
         }
+    }
+
+    private void AddNewBookToLibrary(BookData bookData)
+    {
+        libraryData.books.Add(bookData);
+        SaveLibraryData(); 
     }
 
     public void IncreaseBookCountByOne(BookData bookData)
     {
-        if (IsBookListedinLibraryAlready(bookData))
+        BookData existingBook = GetExistingBook(bookData);
+
+        if (existingBook != null)
         {
-            //bu yapýnýn sebebi baþta bookData'yý struct olarak tutumuþtum, ref type tutmuyordum ondan birkaç satýr bu tarz iþler yapýyordum class olunca gereksiz kaçtý refactor edilmeli.
-            int bookDataIndex = GetIndexOfExistingBook(bookData);
-            libraryData.books[bookDataIndex].bookCount++;
+            existingBook.bookCount++;
+            SaveLibraryData(); 
         }
     }
 
-    public void IncreaseBookCountInBulk(BookData bookData, int bookCount)
+    //Deletes the data stored on Scriptable objects
+    public void DeleteLocalLibraryData()
     {
-        for(int i = 0; i < bookCount; i++)
-        {
-            IncreaseBookCountByOne(bookData);
-        }
-    }
-
-    public void DecreaseBookCountByOne(BookData bookData)
-    {
-        if (IsBookListedinLibraryAlready(bookData))
-        {
-            int bookDataIndex = libraryData.books.IndexOf(bookData);
-            if (libraryData.books[bookDataIndex].bookCount >= 1)
-            {
-                libraryData.books[bookDataIndex].bookCount--;
-
-            }
-            else
-            {
-                OnErrorEncountered?.Invoke(this, new OnErrorEncounteredEventArgs
-                {
-                    errorMessage = "No books remaining."
-            });
-                
-            }
-        }
-    }
-
-    public void DecreaseBookCountInBulk(BookData bookData, int bookCount)
-    {
-        for (int i = 0; i < bookCount; i++)
-        {
-            //Buraya ayar çekilmeli, sýfýrýn altýna inmediði için errorMessage popup'ý fýrlatýp durucak. 
-            DecreaseBookCountByOne(bookData);
-        }
+        libraryData.books.Clear();
+        lendingInfoPairsList.lendingPairs.Clear();
+        SaveLibraryData();
     }
 
     //start of json import scripts
     public void UpdateLibraryDataFromJsonData(LibraryDataSO libraryData, LendingInfoPairsSO lendingInfoPairs)
     {
-       // RevertToOriginalState();
+        DeleteLocalLibraryData();
 
-        //addrange method to avoic changing the reference this.libraryData = libraryData would change the reference
-        this.libraryData.books.Clear();
+        //addrange method to avoid changing the reference this.libraryData = libraryData would change the reference
         this.libraryData.books.AddRange(libraryData.books);
-
-        this.lendingInfoPairsList.lendingPairs.Clear();
         this.lendingInfoPairsList.lendingPairs.AddRange(lendingInfoPairs.lendingPairs);
 
         SaveLibraryData();
@@ -153,10 +123,9 @@ public class LibraryManager : MonoBehaviour
 
 public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
 
-        //Debug.Log(lendingInfo.returnCode);
         TryReturnLentBookByReturnCode(lendingInfo.returnCode);
 
-        OnReturnFromListSuccessful?.Invoke(sender, EventArgs.Empty);
+        OnReturnFromListSuccessful?.Invoke(this, EventArgs.Empty);
     }
 
     public void TryReturnLentBookByReturnCode(string returnCode)
@@ -220,11 +189,7 @@ public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
         }
 
         // Generate a unique return code from the static class 
-        string returnCode;
-        do
-        {
-            returnCode = ReturnCodeGeneratorAndChecker.GenerateReturnCode();
-        } while (!ReturnCodeGeneratorAndChecker.IsReturnCodeUnused(returnCode, lendingInfoPairsList.lendingPairs));
+        string returnCode = ReturnCodeGeneratorAndChecker.GenerateReturnCode();
 
         // Create a new lending info
         LendingInfo lendingInfo = new LendingInfo
@@ -250,61 +215,32 @@ public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
         PopupPanelUI.Instance.ShowResponse(lendingSuccessfulResponseMessage);
     
         //Might change how panel reacts accordingly to events (maybe OnBookLendingUnsuccessful), rather than setting the message here I think I was updating a list here
-        OnBookLendingSuccessful?.Invoke(sender, EventArgs.Empty); 
+        OnBookLendingSuccessful?.Invoke(this, EventArgs.Empty); 
     }
 
+    public BookData GetExistingBook(BookData bookData)
+    {
+        //return libraryData.books.FirstOrDefault(existingBook => existingBook.Equals(bookData));
+        //this does not work because bookData.bookcount is different for the newly created book, thus it does not return the same book
+        return FindBookInLibrary(bookData);
+    }
 
+    public bool IsBookListedInLibraryAlready(BookData bookData)
+    {
+        return FindBookInLibrary(bookData) != null;
+    }
 
-    public int GetIndexOfExistingBook(BookData bookData)
+    private BookData FindBookInLibrary(BookData bookData)
     {
         if (libraryData != null && libraryData.books != null)
         {
-            return libraryData.books.FindIndex(existingBook =>
+            return libraryData.books.FirstOrDefault(existingBook =>
                 existingBook.bookTitle == bookData.bookTitle &&
                 existingBook.bookAuthor == bookData.bookAuthor &&
                 existingBook.bookIsbn == bookData.bookIsbn);
         }
 
-        return -1; 
-    }
-
-    public bool IsBookListedinLibraryAlready(BookData bookData)
-    {
-        if (libraryData != null && libraryData.books != null)
-        {
-            return libraryData.books.Any(existingBook =>
-                existingBook.bookTitle == bookData.bookTitle &&
-                existingBook.bookAuthor == bookData.bookAuthor &&
-                existingBook.bookIsbn == bookData.bookIsbn);
-        }
-        return false;
-    }
-
-
-    public bool IsBookAvailable(BookData bookData) {
-        if (IsBookListedinLibraryAlready(bookData))
-        {
-            int bookDataIndex = libraryData.books.IndexOf(bookData);
-            if (libraryData.books[bookDataIndex].bookCount > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }   
-        return false;
-    }
-
-    public BookData GetBookDataFromInput(string bookName) {
-
-        return selectedBookData;
-    }
-
-    public int GetBookDataIndex(BookData bookData)
-    {
-        return libraryData.books.IndexOf(bookData);
+        return null;
     }
 
 }

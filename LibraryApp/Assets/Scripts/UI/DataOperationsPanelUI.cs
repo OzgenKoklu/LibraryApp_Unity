@@ -51,9 +51,9 @@ public class DataOperationsPanelUI : MonoBehaviour
         {
             panelMessage.text = "You are about to delete local library data that is stored in this application.";
 
-            ImportExportManager.ExportToJson();
+            LibraryManager.Instance.DeleteLocalLibraryData();
 
-            //Set text to "JSON successfully exported to directory" 
+            //Library Successfully deleted response
 
         });
 

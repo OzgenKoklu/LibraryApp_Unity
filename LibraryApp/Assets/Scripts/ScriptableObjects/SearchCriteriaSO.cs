@@ -9,5 +9,6 @@ public class SearchCriteriaSO : ScriptableObject
     public SearchManager.SearchTypeLentListing searchTypeLentList;
     public string searchTerm;
     public bool isAvailable;
+    public bool isExpiredLent;
     // Add other relevant search parameters as needed Like Book availability, parsing options etc. 
 }

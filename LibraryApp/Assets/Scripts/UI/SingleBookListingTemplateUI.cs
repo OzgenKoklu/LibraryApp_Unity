@@ -61,9 +61,6 @@ public class SingleBookListingTemplateUI : MonoBehaviour, IPointerClickHandler
     {
         return lendingPairLendingListIndexSingleTemplate;
     }
-
-
-
     private void ListPanelUI_OnSelectedListItemChanged(object sender, ListPanelUI.OnSelectedListItemChangedEventArgs e)
     {
         SetSelectedVisualOnOrOff(e.selectedListItemTemplate == this);
@@ -100,16 +97,6 @@ public class SingleBookListingTemplateUI : MonoBehaviour, IPointerClickHandler
         bookCountText.text = bookData.bookCount.ToString();
     }
 
-    public void SetBookDataForLending(BookData bookData)
-    {
-        bookDataOnSingleTemplate = bookData;
-        bookTitleText.text = bookData.bookTitle;
-        bookAuthorText.text = bookData.bookAuthor;
-        bookCountText.text = bookData.bookCount.ToString();
-       // lendButton.onClick.AddListener(() => OnLendButtonClick(bookData));
-    }
-
-
     //Index approach is there for avoiding sending 2 classes in this basic function. I didnt want to send lendingInfo as a seperate parameter.
     public void SetBookDataForReturningLentBook(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
     {
@@ -131,9 +118,6 @@ public class SingleBookListingTemplateUI : MonoBehaviour, IPointerClickHandler
 
        // returnButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoListIndex));
     }
-
-
-
     private void OnDestroy()
     {
         ListPanelUI.Instance.OnSelectedListItemChanged -= ListPanelUI_OnSelectedListItemChanged;

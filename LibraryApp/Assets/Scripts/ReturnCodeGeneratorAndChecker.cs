@@ -8,17 +8,21 @@ public static class ReturnCodeGeneratorAndChecker
     // Function to generate a random 5-digit return code
     public static string GenerateReturnCode()
     {
+        List<LendingInfoPairsSO.LendingPair> lendingPairs = LibraryManager.Instance.GetLendingInfoPairs().lendingPairs;
         string returnCode = "";
-        for (int i = 0; i < ReturnCodeLength; i++)
+        do
         {
-            returnCode += UnityEngine.Random.Range(0, 10).ToString();
-        }
+            for (int i = 0; i < ReturnCodeLength; i++)
+            {
+                returnCode += UnityEngine.Random.Range(0, 10).ToString();
+            }
+        } while (IsReturnCodeUnused(returnCode, lendingPairs));
         return returnCode;
     }
 
-    // Function to check if a return code is unused,  method chaining/fluent syntax + lambda expression
-    //checks if any of the returncodes inside the lendingInfoList matches the returnCode we use as a parameter
-    public static bool IsReturnCodeUnused(string returnCode, List<LendingInfoPairsSO.LendingPair> lendingPairs)
+// Function to check if a return code is unused,  method chaining/fluent syntax + lambda expression
+//checks if any of the returncodes inside the lendingInfoList matches the returnCode we use as a parameter
+public static bool IsReturnCodeUnused(string returnCode, List<LendingInfoPairsSO.LendingPair> lendingPairs)
     {
         return !lendingPairs.Any(pair => pair.lendingInfoList.Any(info => info.returnCode == returnCode));
     }

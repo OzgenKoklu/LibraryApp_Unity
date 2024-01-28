@@ -92,6 +92,7 @@ public class ListPanelUI : MonoBehaviour
             SearchCriteriaSO searchCriteria = ScriptableObject.CreateInstance<SearchCriteriaSO>();
             searchCriteria.searchTypeLentList = (SearchManager.SearchTypeLentListing)Enum.Parse(typeof(SearchManager.SearchTypeLentListing), searchTypeDropdown.options[searchTypeDropdown.value].text.Replace(" ", ""));
             searchCriteria.searchTerm = searchTermInputField.text;
+            searchCriteria.isExpiredLent = expiredDueDatesToggle.isOn;
 
             //perform Search from Lending info list (Not through book data)
             List<LendingInfoPairsSO.LendingPair> searchResults = SearchManager.PerformLendingInfoPairsSearch(searchCriteria);
@@ -188,6 +189,8 @@ public class ListPanelUI : MonoBehaviour
                 LendingInfoPairsSO allLentBooksList = LibraryManager.Instance.GetLendingInfoPairs();
                 UpdateBookListForLentBooks(allLentBooksList);
 
+                LibraryManager.Instance.OnReturnFromListSuccessful += LibraryManager_OnReturnFromListSuccessful;
+
                 LendingInfoPairsSO.LendingPair lendingPair = new LendingInfoPairsSO.LendingPair();
                 int lendingInfoIndex = 0;
                 actionButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoIndex));
@@ -203,9 +206,16 @@ public class ListPanelUI : MonoBehaviour
         }
     }
 
+    private void LibraryManager_OnReturnFromListSuccessful(object sender, EventArgs e)
+    {
+        LendingInfoPairsSO allLentBooksList = LibraryManager.Instance.GetLendingInfoPairs();
+        UpdateBookListForLentBooks(allLentBooksList);
+    }
 
     private void OnReturnButtonClick(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
     {
+        if(selectedListing == null)  return; 
+
         lendingPair = selectedListing.GetLendingPair();
         lendingInfoListIndex = selectedListing.GetLendingPairLendingListInfoIndex();
         string returnConfirmationMessage = $"You are about to return {lendingPair.book.bookTitle} borrowed by {lendingPair.lendingInfoList[lendingInfoListIndex].borrowerName}. Press X to cancel or Confirm to proceed.";
@@ -222,6 +232,8 @@ public class ListPanelUI : MonoBehaviour
 
     private void OnLendButtonClick(SingleBookListingTemplateUI listing)
     {
+        if (listing == null) return;
+
         BookData tempBook = listing.GetBookData();
         PopupPanelUI.Instance.ShowPrompt("Enter Your Name", tempBook);
     }
@@ -257,6 +269,7 @@ public class ListPanelUI : MonoBehaviour
     private void UpdateBookListForLentBooks(bool isExpired)
     {
 
+
         if (isExpired)
         {
             //List only the expired books
@@ -269,8 +282,8 @@ public class ListPanelUI : MonoBehaviour
             int totalLentEntries = 0;
 
             //
-
-            List<LendingInfoPairsSO.LendingPair> expiredLendingPairs = SearchManager.GetExpiredBooks();
+            List<LendingInfoPairsSO.LendingPair> allLentBooks = LibraryManager.Instance.GetLendingInfoPairs().lendingPairs;
+            List<LendingInfoPairsSO.LendingPair> expiredLendingPairs = SearchManager.GetExpiredBooks(allLentBooks);
 
             foreach (LendingInfoPairsSO.LendingPair lendingPair in expiredLendingPairs)
             {
@@ -401,12 +414,13 @@ public class ListPanelUI : MonoBehaviour
     public void Hide()
     {
         //search toggle reset
+        selectedListing = null;
 
-
-        if(currentListType == ListType.AllLentBooksList)
+        if (currentListType == ListType.AllLentBooksList)
         {
             expiredDueDatesToggle.onValueChanged.RemoveAllListeners();
             actionButton.onClick.RemoveAllListeners();
+            LibraryManager.Instance.OnReturnFromListSuccessful -= LibraryManager_OnReturnFromListSuccessful;
         }
         if (currentListType == ListType.LendABookList)
         {

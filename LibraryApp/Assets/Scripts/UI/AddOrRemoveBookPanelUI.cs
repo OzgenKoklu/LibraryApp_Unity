@@ -28,13 +28,13 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
         if (ValidInputChecker.IsBookAlreadyListed(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text))
         {
            
-            AddBookToLibrary(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text);
+            AddBookToLibraryViaLibraryManager(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text);
             return;
         }
         //checks if valid input, if it finds the same ISBN with a different title it would show error. 
         if (IsValidBookInput())
         {         
-            AddBookToLibrary(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text);
+            AddBookToLibraryViaLibraryManager(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text);
         }
         else
         {
@@ -71,7 +71,7 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
         return errorMessage;
     }
 
-    private void AddBookToLibrary(string bookTitle, string bookAuthor, string bookIsbn)
+    private void AddBookToLibraryViaLibraryManager(string bookTitle, string bookAuthor, string bookIsbn)
     {
         BookData newBookData = LibraryManager.Instance.CreateBookData(bookTitle, bookAuthor, bookIsbn);
         LibraryManager.Instance.AddBookToLibrary(newBookData);
