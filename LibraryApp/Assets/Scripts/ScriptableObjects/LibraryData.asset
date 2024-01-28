@@ -16,7 +16,7 @@ MonoBehaviour:
   - bookTitle: "Pokemon Nas\u0131l Avlan\u0131r?"
     bookAuthor: "E\u015F Ke\xE7\u0131m"
     bookIsbn: 3424125533121
-    bookCount: 3
+    bookCount: 5
   - bookTitle: "Kapitalist Ger\xE7eklik"
     bookAuthor: Mark Fisher
     bookIsbn: 1235739485723
@@ -28,7 +28,7 @@ MonoBehaviour:
   - bookTitle: "hasan h\xFCseyin roman\u0131"
     bookAuthor: "hasan h\xFCseyin"
     bookIsbn: 1029530459243
-    bookCount: 2
+    bookCount: 1
   - bookTitle: 'Roman 1 '
     bookAuthor: "Roman Yazar\u0131"
     bookIsbn: 2456453454241
@@ -40,4 +40,24 @@ MonoBehaviour:
   - bookTitle: asd
     bookAuthor: asd
     bookIsbn: 1111111111112
-    bookCount: 3
+    bookCount: 7
+  - bookTitle: "\xD6zgen K\xF6kl\xFC"
+    bookAuthor: Asd asasd
+    bookIsbn: 1233232223324
+    bookCount: 1
+  - bookTitle: "\xD6zgen K\xD6k"
+    bookAuthor: sdaf
+    bookIsbn: 1232324231232
+    bookCount: 1
+  - bookTitle: asdfa
+    bookAuthor: sadf
+    bookIsbn: 1111111111
+    bookCount: 1
+  - bookTitle: asdfa
+    bookAuthor: afasd
+    bookIsbn: 1111111111114
+    bookCount: 1
+  - bookTitle: asda
+    bookAuthor: sadfa
+    bookIsbn: 2424345432345
+    bookCount: 1

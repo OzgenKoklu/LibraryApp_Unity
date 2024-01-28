@@ -1,6 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 
 public static class ReturnCodeGeneratorAndChecker 
 {
@@ -17,40 +16,19 @@ public static class ReturnCodeGeneratorAndChecker
         return returnCode;
     }
 
-    // Function to check if a return code is unused
+    // Function to check if a return code is unused,  method chaining/fluent syntax + lambda expression
+    //checks if any of the returncodes inside the lendingInfoList matches the returnCode we use as a parameter
     public static bool IsReturnCodeUnused(string returnCode, List<LendingInfoPairsSO.LendingPair> lendingPairs)
     {
-        foreach (var lendingPair in lendingPairs)
-        {
-            foreach (var lendingInfo in lendingPair.lendingInfoList)
-            {
-                if (lendingInfo.returnCode == returnCode)
-                {
-                    return false; // Return code is already used
-                }
-            }
-        }
-        return true; // Return code is unused
+        return !lendingPairs.Any(pair => pair.lendingInfoList.Any(info => info.returnCode == returnCode));
     }
-
+    
+    //returns the lendingPair that has the matching return code. FirstOrDefault returns the first element that matches the condition. (theres only one anyway)
     public static LendingInfoPairsSO.LendingPair SearchForReturnCodeValidity(string returnCode)
     {
         LendingInfoPairsSO lendingInfoPairs = LibraryManager.Instance.GetLendingInfoPairs();
 
-        if (lendingInfoPairs != null)
-        {
-            foreach (var lendingPair in lendingInfoPairs.lendingPairs)
-            {
-                foreach (var lendingInfo in lendingPair.lendingInfoList)
-                {
-                    if (lendingInfo.returnCode == returnCode)
-                    {
-                        return lendingPair;
-                    }
-                }
-            }
-        }
-
-        return null; // Return null if no matching Return Code is found
+        return lendingInfoPairs?.lendingPairs
+        .FirstOrDefault(pair => pair.lendingInfoList.Any(info => info.returnCode == returnCode));
     }
 }

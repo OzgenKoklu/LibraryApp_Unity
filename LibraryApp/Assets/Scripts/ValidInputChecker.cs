@@ -1,46 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public static class ValidInputChecker 
 {
     public static bool IsBookNameValid(string inputText)
     {
-        //checks if the input is empty
-        return !string.IsNullOrEmpty(inputText);
+        return IsInputEmptyOrNull(inputText);
+        //Can add aditional logi if needed.
     }
     public static bool IsBookAuthorValid(string inputText)
     {
-        //checks if the input is empty
+        return IsInputEmptyOrNull(inputText);
+    }
+
+    // Checks if the input text is valid (not null or empty)
+    private static bool IsInputEmptyOrNull(string inputText)
+    {
         return !string.IsNullOrEmpty(inputText);
     }
 
+    // Checks if a book with the same title, author, and ISBN already exists
     public static bool IsBookAlreadyListed(string bookTitle, string authorName, string isbn)
     {
-        LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
-
-        // Check if any book in the library has the same author and title but a different ISBN
-        bool bookAlreadyListed = libraryData.books.Any(existingBook =>
-            existingBook.bookTitle.Equals(bookTitle) &&
-            existingBook.bookAuthor.Equals(authorName) &&
-            existingBook.bookIsbn.Equals(isbn));
-
-        return bookAlreadyListed;
+        return BookExistsInLibrary(bookTitle, authorName, isbn, checkDifferentIsbn: false);
     }
 
-    //Checks if AuthorName + BookTitle combo is listed with a different ISBN.
+    // Checks if a book with the same title and author but a different ISBN exists
     public static bool IsThisBookListedAsADifferentEntry(string bookTitle, string authorName, string isbn)
+    {
+        return BookExistsInLibrary(bookTitle, authorName, isbn, checkDifferentIsbn: true);
+    }
+
+    // Method to check if a book with the specified criteria exists in the library
+    private static bool BookExistsInLibrary(string bookTitle, string authorName, string isbn, bool checkDifferentIsbn)
     {
         LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
 
-        // Check if any book in the library has the same author and title but a different ISBN
-        bool similarEntryExists = libraryData.books.Any(existingBook =>
+        // Check if any book in the library matches the specified criteria
+        return libraryData.books.Any(existingBook =>
             existingBook.bookTitle.Equals(bookTitle) &&
             existingBook.bookAuthor.Equals(authorName) &&
-            !existingBook.bookIsbn.Equals(isbn));
-
-        return similarEntryExists;
+            (checkDifferentIsbn ? !existingBook.bookIsbn.Equals(isbn) : existingBook.bookIsbn.Equals(isbn)));
     }
 
     //This code uses ISBN as book identifiers so getting a valid and unique ISBN is important
@@ -50,8 +49,8 @@ public static class ValidInputChecker
         // Clean the ISBN by removing hyphens
         string cleanedIsbn = isbn.Replace("-", "");
 
-        // Check if the cleaned ISBN is a valid 13-digit number
-        if (string.IsNullOrEmpty(cleanedIsbn) || cleanedIsbn.Length != 13 || !long.TryParse(cleanedIsbn, out _))
+        // Check if the cleaned ISBN is a valid 10 or 13-digit number
+        if (string.IsNullOrEmpty(cleanedIsbn) || (cleanedIsbn.Length != 13 && cleanedIsbn.Length != 10) || !long.TryParse(cleanedIsbn, out _))
         {
             // If the ISBN is not a valid 13-digit number, return false
             return false;
@@ -70,9 +69,5 @@ public static class ValidInputChecker
         // If the ISBN is valid and not found in the library, return true
         return true;
     }
-
-
-
-
 
 }

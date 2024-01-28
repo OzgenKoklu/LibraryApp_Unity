@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static LibraryManager;
 
 public class AddOrRemoveBookPanelUI : MonoBehaviour
 {
@@ -27,62 +24,69 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
 
     public void TryAddBook()
     {
-        //if the same entry is already listed, add book to the library without further test and break from method
+        //if already listed, addbook increases BookData.bookcount by 1 in LibraryManager, if this check wasnt done, it would show error that ISBN already existed in the library
         if (ValidInputChecker.IsBookAlreadyListed(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text))
         {
-            LibraryManager.Instance.AddBookToLibrary(LibraryManager.Instance.CreateBookData(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text));
-
-            //Setting message for popup window
-            string responseMessage = bookTitleInputField.text + " by " + bookAuthorInputField.text + " is added to the library successfully.";
-            PopupPanelUI.Instance.ShowResponse(responseMessage);
-
-            CleanInputFields();
-
+           
+            AddBookToLibrary(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text);
             return;
         }
-
-        //tests for valid input and also whether the bookTitle+bookAuthor is listed with a different ISBN
-        if (ValidInputChecker.IsBookNameValid(bookTitleInputField.text)
-         && ValidInputChecker.IsBookAuthorValid(bookAuthorInputField.text)
-         && ValidInputChecker.IsBookIsbnValid(bookIsbnInputField.text)
-        && !ValidInputChecker.IsThisBookListedAsADifferentEntry(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text)){
-
-            LibraryManager.Instance.AddBookToLibrary(LibraryManager.Instance.CreateBookData(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text));
-
-            //Setting message for popup window
-            string responseMessage = bookTitleInputField.text + " by " + bookAuthorInputField.text + " is added to the library successfully.";
-            PopupPanelUI.Instance.ShowResponse(responseMessage);
-
-            CleanInputFields();
+        //checks if valid input, if it finds the same ISBN with a different title it would show error. 
+        if (IsValidBookInput())
+        {         
+            AddBookToLibrary(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text);
         }
         else
         {
-            List<string> errorMessages = new List<string>();
-
-            if (!ValidInputChecker.IsBookNameValid(bookTitleInputField.text))
-            {
-                errorMessages.Add("Book title can't be empty. Please enter a valid title. ");
-            }
-
-            if (!ValidInputChecker.IsBookAuthorValid(bookAuthorInputField.text))
-            {
-                errorMessages.Add("Author can't be empty. Please enter a valid author name. ");
-            }
-
-            if (!ValidInputChecker.IsBookIsbnValid(bookIsbnInputField.text))
-            {
-                errorMessages.Add("Invalid or repeated ISBN. Please check again and enter a valid ISBN with 13-digits.");
-            }
-            if (ValidInputChecker.IsThisBookListedAsADifferentEntry(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text))
-            {
-                errorMessages.Add($"The book '{bookTitleInputField.text}' by '{bookAuthorInputField.text}' is already listed with a different ISBN, please check your ISBN entry.");
-            }
-
-            // Combine error messages into a single string
-            string errorMessage = string.Join("\n", errorMessages);
-
+            string errorMessage = GenerateErrorMessage();
             PopupPanelUI.Instance.ShowError(errorMessage);
         }
+    }
+
+    private string GenerateErrorMessage()
+    {
+        List<string> errorMessages = new List<string>();
+
+        if (!ValidInputChecker.IsBookNameValid(bookTitleInputField.text))
+        {
+            errorMessages.Add("Book title can't be empty. Please enter a valid title.");
+        }
+
+        if (!ValidInputChecker.IsBookAuthorValid(bookAuthorInputField.text))
+        {
+            errorMessages.Add("Author can't be empty. Please enter a valid author name.");
+        }
+
+        if (!ValidInputChecker.IsBookIsbnValid(bookIsbnInputField.text))
+        {
+            errorMessages.Add("Invalid or repeated ISBN. Please check again and enter a valid ISBN with 10 or 13-digits.");
+        }
+
+        if (ValidInputChecker.IsThisBookListedAsADifferentEntry(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text))
+        {
+            errorMessages.Add($"The book '{bookTitleInputField.text}' by '{bookAuthorInputField.text}' is already listed with a different ISBN, please check your ISBN entry.");
+        }
+        string errorMessage = string.Join("\n", errorMessages);
+
+        return errorMessage;
+    }
+
+    private void AddBookToLibrary(string bookTitle, string bookAuthor, string bookIsbn)
+    {
+        BookData newBookData = LibraryManager.Instance.CreateBookData(bookTitle, bookAuthor, bookIsbn);
+        LibraryManager.Instance.AddBookToLibrary(newBookData);
+
+        string responseMessage = $"{bookTitle} by {bookAuthor} is added to the library successfully.";
+        PopupPanelUI.Instance.ShowResponse(responseMessage);
+        CleanInputFields();
+    }
+
+    private bool IsValidBookInput()
+    {
+        return ValidInputChecker.IsBookNameValid(bookTitleInputField.text)
+            && ValidInputChecker.IsBookAuthorValid(bookAuthorInputField.text)
+            && ValidInputChecker.IsBookIsbnValid(bookIsbnInputField.text)
+            && !ValidInputChecker.IsThisBookListedAsADifferentEntry(bookTitleInputField.text, bookAuthorInputField.text, bookIsbnInputField.text);
     }
 
     public void CleanInputFields()
