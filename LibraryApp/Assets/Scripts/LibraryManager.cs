@@ -210,12 +210,13 @@ public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
         DateTime deserializeDate = new DateTime(lendingInfo.expectedReturnDateTicks);
 
         string lendingSuccessfulResponseMessage = $"'{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.returnCode}'\n Return Due Date: {deserializeDate.ToString("MM/dd/yyyy")}";
-
+        
 
         PopupPanelUI.Instance.ShowResponse(lendingSuccessfulResponseMessage);
-    
-        //Might change how panel reacts accordingly to events (maybe OnBookLendingUnsuccessful), rather than setting the message here I think I was updating a list here
-        OnBookLendingSuccessful?.Invoke(this, EventArgs.Empty); 
+        OnBookLendingSuccessful?.Invoke(this, EventArgs.Empty);
+       
+        
+        
     }
 
     public BookData GetExistingBook(BookData bookData)

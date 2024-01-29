@@ -1,10 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static LendingInfoPairsSO;
 
 public class ListPanelUI : MonoBehaviour
 {
@@ -185,10 +184,12 @@ public class ListPanelUI : MonoBehaviour
                 actionButton.gameObject.SetActive(true);
                
                 actionButtonText.text = ACTION_BUTTON_RETURN_TEXT;
-                expiredDueDatesToggle.onValueChanged.AddListener(UpdateBookListForLentBooks);
                 expiredDueDatesToggle.isOn = false;
+                expiredDueDatesToggle.onValueChanged.AddListener(UpdateBookListForLentBooks);
+                
                 LendingInfoPairsSO allLentBooksList = LibraryManager.Instance.GetLendingInfoPairs();
                 UpdateBookListForLentBooks(allLentBooksList);
+                UpdateBookListForLentBooks(false);
 
                 LibraryManager.Instance.OnReturnFromListSuccessful += LibraryManager_OnReturnFromListSuccessful;
 
@@ -211,6 +212,7 @@ public class ListPanelUI : MonoBehaviour
     {
         LendingInfoPairsSO allLentBooksList = LibraryManager.Instance.GetLendingInfoPairs();
         UpdateBookListForLentBooks(allLentBooksList);
+        UpdateBookListForLentBooks(expiredDueDatesToggle.isOn);
     }
 
     private void OnReturnButtonClick(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
@@ -236,7 +238,11 @@ public class ListPanelUI : MonoBehaviour
         if (listing == null) return;
 
         BookData tempBook = listing.GetBookData();
-        PopupPanelUI.Instance.ShowPrompt("Enter Your Name", tempBook);
+        
+        string promptMessage = $"You are about to borrow the book titled '{tempBook.bookTitle}' by '{tempBook.bookAuthor}' (ISBN: '{tempBook.bookIsbn}'). The borrower is obliged to return the book within 1 month. To cancel the operation, you can press 'X'. To continue, please enter the borrower's name:";
+
+        PopupPanelUI.Instance.ShowBookLendingBorrowerNamePrompt(promptMessage, tempBook);
+
     }
 
 

@@ -16,7 +16,9 @@ public class PopupPanelUI : MonoBehaviour
     }
     public static PopupPanelUI Instance { get; private set; }
 
-    public event EventHandler<EventArgs> OnInvalidBorrowerNameEntered;
+
+    public event EventHandler<OnInvalidInputEnteredEventArgs> OnInvalidInputEntered;
+    public class OnInvalidInputEnteredEventArgs : EventArgs { public string errorMessage; }
 
     public delegate void ConfirmationCallback();
     public static ConfirmationCallback OnConfirmReturn;
@@ -38,25 +40,46 @@ public class PopupPanelUI : MonoBehaviour
         Instance = this;
         closeButton.onClick.AddListener(Hide);
         Hide();
-        OnInvalidBorrowerNameEntered += PopupPanel_OnInvalidBorrowerNameEntered;
+        OnInvalidInputEntered += PopupPanelUI_OnInvalidInputEntered;
     }
 
-    private void PopupPanel_OnInvalidBorrowerNameEntered(object sender, EventArgs e)
+    private void PopupPanelUI_OnInvalidInputEntered(object sender, OnInvalidInputEnteredEventArgs e)
     {
-        //not good. We need to do better error handling with this new setup.
-        ShowError("INVALID NAME");
+        ShowError(e.errorMessage);
     }
 
-    public void ShowPrompt(string promptMessage, BookData bookData)
+    public void ShowBookLendingBorrowerNamePrompt(string promptMessage, BookData bookData)
     {
-        //this is not ideal yet. return code will also use Show prompt, need better naming and/or better usage
         SetPopupComponents(PopupType.ShowPrompt);
+        titleText.text = "Enter Borrower Name";
         mainText.text = $"You are about to borrow the book titled '{bookData.bookTitle}' by '{bookData.bookAuthor}' (ISBN: '{bookData.bookIsbn}'). The borrower is obliged to return the book within 1 month. To cancel the operation, you can press 'X'. To continue, please enter the borrower's name:";
-        
-        //this allows input field to be tracked as a parameter for the onconfirmButtonClick 
-        TMP_InputField borrowerNameInput = popupPanelInputField;
 
-        actionButton.onClick.AddListener(()=> OnConfirmButtonClick(bookData, borrowerNameInput.text)); ;
+        TMP_InputField borrowerNameInput = popupPanelInputField;
+        actionButton.onClick.AddListener(() => OnConfirmButtonClick(bookData, borrowerNameInput.text));
+        
+    }
+
+    public void ShowBookReturningReturnCodePrompt()
+    {
+        SetPopupComponents(PopupType.ShowPrompt);
+        titleText.text = "Return Book";
+        mainText.text = "Enter the 5-Digit Return Code\n Or Select Your Book From The 'All Lent Books' List";
+        TMP_InputField returnCodeInput = popupPanelInputField;
+        actionButton.onClick.AddListener(() => OnRetunrCodeEntered(returnCodeInput.text));
+    }
+
+    private void OnRetunrCodeEntered(string returnCode)
+    {
+        if (returnCode.Length == 5 && int.TryParse(returnCode, out _))
+        {
+            actionButton.onClick.RemoveAllListeners();
+            LibraryManager.Instance.TryReturnLentBookByReturnCode(returnCode);
+        }
+        else
+        {
+            actionButton.onClick.RemoveAllListeners();
+            OnInvalidInputEntered?.Invoke(this, new OnInvalidInputEnteredEventArgs { errorMessage = "Your Return Code Must be a 5-Digit Number." });
+        }
     }
 
 
@@ -64,13 +87,15 @@ public class PopupPanelUI : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(borrowerName))
         {
-            //we already lend available books so no need to check availability
+            actionButton.onClick.RemoveAllListeners();
             LibraryManager.Instance.LendABook(bookData, borrowerName);
-            Hide();
+            popupPanelInputField.text = "";
+           
         }
         else
         {
-            OnInvalidBorrowerNameEntered?.Invoke(this, new EventArgs());
+            actionButton.onClick.RemoveAllListeners();
+            OnInvalidInputEntered?.Invoke(this, new OnInvalidInputEnteredEventArgs { errorMessage = "Borrower Name Can't Be Empty."});
         }
     }
 
@@ -117,7 +142,7 @@ public class PopupPanelUI : MonoBehaviour
     {
         SetPopupComponents(PopupType.ShowResponse);
         titleText.text = "About";
-        mainText.text = "Made by Özgen Köklü";
+        mainText.text = "Made by Özgen Köklü\n\nFor Velo Games\n\nAs a Task Project\n\n2024 All Rights Reserved";
         actionButtonText.text = "Return";
     }
 
@@ -154,6 +179,7 @@ public class PopupPanelUI : MonoBehaviour
         {
             actionButton.onClick.RemoveAllListeners();
         }
+        popupPanelInputField.text = "";
         gameObject.SetActive(false);
     }
 }

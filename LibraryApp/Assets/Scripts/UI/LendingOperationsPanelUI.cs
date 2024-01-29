@@ -24,8 +24,7 @@ public class LendingOperationsPanelUI : MonoBehaviour
 
         returnLentBookButton.onClick.AddListener(() =>
         {
-            //ReturnLentBookPanelUI.Instance.Show();
-            //popUpPanelWithCustomParameters
+            PopupPanelUI.Instance.ShowBookReturningReturnCodePrompt();
         });
 
         listAllLentBooksButton.onClick.AddListener(() =>
