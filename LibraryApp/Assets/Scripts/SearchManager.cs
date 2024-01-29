@@ -309,4 +309,20 @@ public static class SearchManager
         return source.ToLower().Contains(searchTerm);
     }
 
+    // Method to return the bookData if it exists in the library
+    public static BookData FindBookIfItExistsInTheLibrary(string bookTitle, string authorName, string isbn, bool checkDifferentIsbn)
+    {
+        LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
+
+        if (libraryData != null && libraryData.books != null)
+        {
+            return libraryData.books.FirstOrDefault(existingBook =>
+                existingBook.bookTitle == bookTitle &&
+                existingBook.bookAuthor == authorName &&
+                (checkDifferentIsbn ? !existingBook.bookIsbn.Equals(isbn) : existingBook.bookIsbn.Equals(isbn)));
+        }
+
+        return null;
+    }
+
 }

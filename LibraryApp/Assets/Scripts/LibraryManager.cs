@@ -232,15 +232,7 @@ public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
 
     private BookData FindBookInLibrary(BookData bookData)
     {
-        if (libraryData != null && libraryData.books != null)
-        {
-            return libraryData.books.FirstOrDefault(existingBook =>
-                existingBook.bookTitle == bookData.bookTitle &&
-                existingBook.bookAuthor == bookData.bookAuthor &&
-                existingBook.bookIsbn == bookData.bookIsbn);
-        }
-
-        return null;
+        return SearchManager.FindBookIfItExistsInTheLibrary(bookData.bookTitle, bookData.bookAuthor, bookData.bookIsbn, checkDifferentIsbn: false);
     }
 
 }

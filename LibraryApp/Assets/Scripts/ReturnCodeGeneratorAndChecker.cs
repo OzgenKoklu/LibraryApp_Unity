@@ -16,7 +16,7 @@ public static class ReturnCodeGeneratorAndChecker
             {
                 returnCode += UnityEngine.Random.Range(0, 10).ToString();
             }
-        } while (IsReturnCodeUnused(returnCode, lendingPairs));
+        } while (!IsReturnCodeUnused(returnCode, lendingPairs));
         return returnCode;
     }
 

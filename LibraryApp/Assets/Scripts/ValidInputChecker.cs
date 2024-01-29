@@ -21,25 +21,13 @@ public static class ValidInputChecker
     // Checks if a book with the same title, author, and ISBN already exists
     public static bool IsBookAlreadyListed(string bookTitle, string authorName, string isbn)
     {
-        return BookExistsInLibrary(bookTitle, authorName, isbn, checkDifferentIsbn: false);
+        return SearchManager.FindBookIfItExistsInTheLibrary(bookTitle, authorName, isbn, checkDifferentIsbn: false) != null;
     }
 
     // Checks if a book with the same title and author but a different ISBN exists
     public static bool IsThisBookListedAsADifferentEntry(string bookTitle, string authorName, string isbn)
     {
-        return BookExistsInLibrary(bookTitle, authorName, isbn, checkDifferentIsbn: true);
-    }
-
-    // Method to check if a book with the specified criteria exists in the library
-    private static bool BookExistsInLibrary(string bookTitle, string authorName, string isbn, bool checkDifferentIsbn)
-    {
-        LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
-
-        // Check if any book in the library matches the specified criteria
-        return libraryData.books.Any(existingBook =>
-            existingBook.bookTitle.Equals(bookTitle) &&
-            existingBook.bookAuthor.Equals(authorName) &&
-            (checkDifferentIsbn ? !existingBook.bookIsbn.Equals(isbn) : existingBook.bookIsbn.Equals(isbn)));
+        return SearchManager.FindBookIfItExistsInTheLibrary(bookTitle, authorName, isbn, checkDifferentIsbn: true) != null;
     }
 
     //This code uses ISBN as book identifiers so getting a valid and unique ISBN is important

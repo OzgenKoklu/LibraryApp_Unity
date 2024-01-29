@@ -50,6 +50,7 @@ public class ListPanelUI : MonoBehaviour
     [SerializeField] private Transform searchResultsContainer;
     [SerializeField] private Transform singleBookListingTemplate;
 
+
     //For All Lent Books - Return List 
     [SerializeField] private Transform lentListSearchResultsContainer;
     [SerializeField] private Transform lentListSingleBookListingTemplate;
