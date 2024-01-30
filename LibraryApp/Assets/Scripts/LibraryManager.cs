@@ -19,60 +19,26 @@ public class LibraryManager : MonoBehaviour
     public event EventHandler<EventArgs> OnReturnFromListSuccessful;
     public event EventHandler<EventArgs> OnListDataUpdated;
 
-
-    public event EventHandler<OnErrorEncounteredEventArgs> OnErrorEncountered;
-    public class OnErrorEncounteredEventArgs : EventArgs { public string errorMessage; }
-
     [SerializeField] private LibraryDataSO libraryData;
     [SerializeField] private LendingInfoPairsSO lendingInfoPairsList;
-
 
     private void Awake()
     {
         Instance = this;
     }
     
-    public LendingInfoPairsSO GetLendingInfoPairs()
-    {
-        if(lendingInfoPairsList == null)
-        {
-            Debug.LogWarning("LendingInfoPairsList data is null. Make sure it has been assigned.");
-        }
-        return lendingInfoPairsList;
-    }
-
-    public LibraryDataSO GetLibraryData()
-    {
-        if (libraryData == null)
-        {
-            Debug.LogWarning("Library data is null. Make sure it has been assigned.");
-            // Optionally, you can create a new instance or return a default value here.
-        }
-        return libraryData;
-    }
+    #region MainOperationMethods
     public BookData CreateBookData(string bookTitle, string bookAuthor, string bookIsbn)
     {
         BookData newBookData = new BookData
         {
-            bookTitle = bookTitle, 
+            bookTitle = bookTitle,
             bookAuthor = bookAuthor,
             bookIsbn = bookIsbn,
             bookCount = 1
         };
         return newBookData;
-    } 
-
-    //check where you save your data
-    private void SaveLibraryData()
-    {
-        // Saving the ScriptableObject asset
-        UnityEditor.EditorUtility.SetDirty(libraryData);
-        UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
-        UnityEditor.AssetDatabase.SaveAssets();
-        UnityEditor.AssetDatabase.Refresh(); 
     }
-
-
     public void AddBookToLibrary(BookData bookData)
     {
         if (IsBookListedInLibraryAlready(bookData))
@@ -88,7 +54,7 @@ public class LibraryManager : MonoBehaviour
     private void AddNewBookToLibrary(BookData bookData)
     {
         libraryData.books.Add(bookData);
-        SaveLibraryData(); 
+        SaveLibraryData();
     }
 
     public void IncreaseBookCountByOne(BookData bookData)
@@ -103,11 +69,11 @@ public class LibraryManager : MonoBehaviour
 
         if (existingBook != null)
         {
-            for(int i = 0; i < amountToIncrease; i++)
+            for (int i = 0; i < amountToIncrease; i++)
             {
                 existingBook.bookCount++;
-            }          
-            
+            }
+
             SaveLibraryData();
         }
     }
@@ -181,7 +147,7 @@ public class LibraryManager : MonoBehaviour
             if (lendingPair.book.bookIsbn == bookData.bookIsbn)
             {
                 lendingInfoPairsList.lendingPairs.RemoveAt(i);
-                i--; 
+                i--;
             }
             else
             {
@@ -194,87 +160,6 @@ public class LibraryManager : MonoBehaviour
         string responseMessage = $"Book Data about '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') and all the related info is deleted from the library.";
         PopupPanelUI.Instance.ShowResponse(responseMessage);
     }
-
-    //Deletes the data stored on Scriptable objects
-    public void DeleteLocalLibraryData()
-    {
-        try
-        {
-            libraryData.books.Clear();
-            lendingInfoPairsList.lendingPairs.Clear();
-            SaveLibraryData();
-
-            string popupResonseMessage = "Library Data successfully deleted.";
-            PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
-
-        }catch(Exception ex) {
-            Debug.LogError("An error occurred while deleting library data: " + ex.Message);
-            string errorResponse = "An error occurred while deleting library data. Please try again.";
-            PopupPanelUI.Instance.ShowError(errorResponse);
-        }
-    }
-
-    //start of json import scripts
-    public void UpdateLibraryDataFromJsonData(LibraryDataSO libraryData, LendingInfoPairsSO lendingInfoPairs)
-    {
-        DeleteLocalLibraryData();
-
-        //addrange method to avoid changing the reference this.libraryData = libraryData would change the reference
-        this.libraryData.books.AddRange(libraryData.books);
-        this.lendingInfoPairsList.lendingPairs.AddRange(lendingInfoPairs.lendingPairs);
-
-        SaveLibraryData();
-    }
-
-public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
-
-        TryReturnLentBookByReturnCode(lendingInfo.returnCode);
-
-        OnReturnFromListSuccessful?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void TryReturnLentBookByReturnCode(string returnCode)
-    {
-        LendingInfoPairsSO.LendingPair matchingPair = ReturnCodeGeneratorAndChecker.SearchForReturnCodeValidity(returnCode);
-
-
-        if (matchingPair != null)
-        {
-            BookData returnedBook = matchingPair.book;
-            LendingInfo lendingInfoToRemove = matchingPair.lendingInfoList.Find(info => info.returnCode == returnCode);
-
-            BookData libraryBook = libraryData.books.Find(book => book.bookIsbn.Equals(returnedBook.bookIsbn));
-
-            if (libraryBook != null)
-            {
-                libraryBook.bookCount++;
-                // Remove lending info
-                matchingPair.lendingInfoList.Remove(lendingInfoToRemove);
-
-                // If no lending info remains for the book, remove the entire LendingPair
-                if (matchingPair.lendingInfoList.Count == 0)
-                {
-                    lendingInfoPairsList.lendingPairs.Remove(matchingPair);
-                }
-
-                SaveLibraryData();
-            }
-            //Should add if due date has passed, penalty fee maybe?
-            string returnSuccessfulResponseMessage = $"'{returnedBook.bookTitle}' (ISBN: '{returnedBook.bookIsbn}') borrowed by '{lendingInfoToRemove.borrowerName}' returned successfully.";
-
-            PopupPanelUI.Instance.ShowResponse(returnSuccessfulResponseMessage);
-          
-            
-        }
-        else
-        {
-            string errorMessage = "Return Code you provided(" + returnCode + ") not found.";
-
-            PopupPanelUI.Instance.ShowError(errorMessage); 
-        }
-
-    }
-
     public void LendABook(BookData bookData, string borrowerName)
     {
         //Checks If bookData is already in the lendingInfoPairsSO List, checks from book ISBN to avoid addition of multiple book-lendingInfoPairs
@@ -318,12 +203,81 @@ public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
         
 
         PopupPanelUI.Instance.ShowResponse(lendingSuccessfulResponseMessage);
-        OnBookLendingSuccessful?.Invoke(this, EventArgs.Empty);
-       
-        
-        
+        OnBookLendingSuccessful?.Invoke(this, EventArgs.Empty);   
+    }
+    public void TryReturnLentBookFromTheList(LendingInfo lendingInfo)
+    {
+
+        TryReturnLentBookByReturnCode(lendingInfo.returnCode);
+
+        OnReturnFromListSuccessful?.Invoke(this, EventArgs.Empty);
+    }
+    public void TryReturnLentBookByReturnCode(string returnCode)
+    {
+        LendingInfoPairsSO.LendingPair matchingPair = ReturnCodeGeneratorAndChecker.SearchForReturnCodeValidity(returnCode);
+
+
+        if (matchingPair != null)
+        {
+            BookData returnedBook = matchingPair.book;
+            LendingInfo lendingInfoToRemove = matchingPair.lendingInfoList.Find(info => info.returnCode == returnCode);
+
+            BookData libraryBook = libraryData.books.Find(book => book.bookIsbn.Equals(returnedBook.bookIsbn));
+
+            if (libraryBook != null)
+            {
+                libraryBook.bookCount++;
+                // Remove lending info
+                matchingPair.lendingInfoList.Remove(lendingInfoToRemove);
+
+                // If no lending info remains for the book, remove the entire LendingPair
+                if (matchingPair.lendingInfoList.Count == 0)
+                {
+                    lendingInfoPairsList.lendingPairs.Remove(matchingPair);
+                }
+
+                SaveLibraryData();
+            }
+            //Should add if due date has passed, penalty fee maybe?
+            string returnSuccessfulResponseMessage = $"'{returnedBook.bookTitle}' (ISBN: '{returnedBook.bookIsbn}') borrowed by '{lendingInfoToRemove.borrowerName}' returned successfully.";
+
+            PopupPanelUI.Instance.ShowResponse(returnSuccessfulResponseMessage);
+
+
+        }
+        else
+        {
+            string errorMessage = "Return Code you provided(" + returnCode + ") not found.";
+
+            PopupPanelUI.Instance.ShowError(errorMessage);
+        }
+
+    }
+    #endregion
+
+    #region FindingAndExposingLibraryData
+
+    public LendingInfoPairsSO GetLendingInfoPairs()
+    {
+        if (lendingInfoPairsList == null)
+        {
+            Debug.LogWarning("LendingInfoPairsList data is null. Make sure it has been assigned.");
+            string errorMessage = "Lending Pairs data not found.";
+            PopupPanelUI.Instance.ShowError(errorMessage);
+        }
+        return lendingInfoPairsList;
     }
 
+    public LibraryDataSO GetLibraryData()
+    {
+        if (libraryData == null)
+        {
+            Debug.LogWarning("Library data is null. Make sure it has been assigned.");
+            string errorMessage = "Library data not found.";
+            PopupPanelUI.Instance.ShowError(errorMessage);
+        }
+        return libraryData;
+    }
     public BookData GetExistingBook(BookData bookData)
     {
         //return libraryData.books.FirstOrDefault(existingBook => existingBook.Equals(bookData));
@@ -340,6 +294,48 @@ public void TryReturnLentBookFromTheList(LendingInfo lendingInfo) {
     {
         return SearchManager.FindBookIfItExistsInTheLibrary(bookData.bookTitle, bookData.bookAuthor, bookData.bookIsbn, checkDifferentIsbn: false);
     }
+    #endregion
 
+    #region SavingDeletingAndRelatedOperationMethods
+    private void SaveLibraryData()
+    {
+        // Saving the ScriptableObject asset
+        UnityEditor.EditorUtility.SetDirty(libraryData);
+        UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
+        UnityEditor.AssetDatabase.SaveAssets();
+        UnityEditor.AssetDatabase.Refresh();
+    }
+
+    public void UpdateLibraryDataFromJsonData(LibraryDataSO libraryData, LendingInfoPairsSO lendingInfoPairs)
+    {
+        DeleteLocalLibraryData();
+
+        //addrange method to avoid changing the reference this.libraryData = libraryData would change the reference
+        this.libraryData.books.AddRange(libraryData.books);
+        this.lendingInfoPairsList.lendingPairs.AddRange(lendingInfoPairs.lendingPairs);
+
+        SaveLibraryData();
+    }
+    //Deletes the data stored on Scriptable objects
+    public void DeleteLocalLibraryData()
+    {
+        try
+        {
+            libraryData.books.Clear();
+            lendingInfoPairsList.lendingPairs.Clear();
+            SaveLibraryData();
+
+            string popupResonseMessage = "Library Data successfully deleted.";
+            PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
+
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("An error occurred while deleting library data: " + ex.Message);
+            string errorResponse = "An error occurred while deleting library data. Please try again.";
+            PopupPanelUI.Instance.ShowError(errorResponse);
+        }
+    }
+    #endregion
 }
 
