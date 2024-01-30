@@ -9,6 +9,7 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
 
     [SerializeField] private Button closeButton;
     [SerializeField] private Button addBookButton;
+    [SerializeField] private Button addOrRemoveFromList;
     [SerializeField] private TMP_InputField bookTitleInputField;
     [SerializeField] private TMP_InputField bookAuthorInputField;
     [SerializeField] private TMP_InputField bookIsbnInputField;
@@ -18,6 +19,10 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
         Instance = this;
         closeButton.onClick.AddListener(Hide);
         addBookButton.onClick.AddListener(TryAddBook);
+        addOrRemoveFromList.onClick.AddListener(() =>
+        {
+            ListPanelUI.Instance.Show(ListPanelUI.ListType.AddOrRemovePanelList);
+        });
         Hide();
     }
 

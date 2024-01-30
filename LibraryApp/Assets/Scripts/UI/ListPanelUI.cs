@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,11 +19,12 @@ public class ListPanelUI : MonoBehaviour
 
     private const string ALL_BOOKS_TITLE_TEXT = "All Books";
     private const string LEND_A_BOOK_TITLE_TEXT = "Lend A Book";
-    private const string ADD_OR_REMOVE_A_BOOK_TITLE_TEXT = "Add or Remove A Book";
+    private const string ADD_OR_REMOVE_A_BOOK_TITLE_TEXT = "Add or Remove An Existing Book";
     private const string ALL_LENT_BOOKS_TITLE_TEXT = "List of all Lent Books";
 
     private const string ACTION_BUTTON_LEND_TEXT = "Lend";
     private const string ACTION_BUTTON_RETURN_TEXT = "Return";
+    private const string ACTION_BUTTON_ADD_OR_REMOVE_TEXT = "Add or\nRemove";
 
     public event EventHandler<OnSelectedListItemChangedEventArgs> OnSelectedListItemChanged;
     public class OnSelectedListItemChangedEventArgs : EventArgs { public SingleBookListingTemplateUI selectedListItemTemplate; };
@@ -201,11 +203,20 @@ public class ListPanelUI : MonoBehaviour
 
             case ListType.AddOrRemovePanelList:
                 panelTitleText.text = ADD_OR_REMOVE_A_BOOK_TITLE_TEXT;
-                actionButton.gameObject.SetActive(false);
+                actionButton.gameObject.SetActive(true);
+                actionButtonText.text = ACTION_BUTTON_ADD_OR_REMOVE_TEXT;
 
+                UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().books);
+                LibraryManager.Instance.OnListDataUpdated += LibraryManager_OnListDataUpdated;
+                actionButton.onClick.AddListener(() => OnAddOrRemoveButtonClick(selectedListing));
 
                 break;
         }
+    }
+
+    private void LibraryManager_OnListDataUpdated(object sender, EventArgs e)
+    {
+        UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().books);
     }
 
     private void LibraryManager_OnReturnFromListSuccessful(object sender, EventArgs e)
@@ -217,7 +228,12 @@ public class ListPanelUI : MonoBehaviour
 
     private void OnReturnButtonClick(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
     {
-        if(selectedListing == null)  return; 
+        if (selectedListing == null)
+        {
+            string errorMessage = "Select a book first.";
+            PopupPanelUI.Instance.ShowError(errorMessage);
+            return;
+        }
 
         lendingPair = selectedListing.GetLendingPair();
         lendingInfoListIndex = selectedListing.GetLendingPairLendingListInfoIndex();
@@ -233,9 +249,33 @@ public class ListPanelUI : MonoBehaviour
 
     }
 
+    private void OnAddOrRemoveButtonClick(SingleBookListingTemplateUI listing)
+    {
+        if (listing == null)
+        {
+            string errorMessage = "Select a book first.";
+            PopupPanelUI.Instance.ShowError(errorMessage);
+            return;
+        }
+
+        BookData tempBook = listing.GetBookData();
+
+        string promptMessage = $"You can increase or decrease the number of copies of '{tempBook.bookTitle}' (ISBN: '{tempBook.bookIsbn}') or remove the data related with it completely including the lending data. To cancel the operation, you can press 'X'.\nCurrent number of copies: '{tempBook.bookCount}'";
+
+        PopupPanelUI.Instance.ShowAddOrRemoveBookPanel(tempBook, promptMessage);
+
+
+        
+    }
+
     private void OnLendButtonClick(SingleBookListingTemplateUI listing)
     {
-        if (listing == null) return;
+        if (listing == null)
+        {
+            string errorMessage = "Select a book first.";
+            PopupPanelUI.Instance.ShowError(errorMessage);
+            return;
+        }
 
         BookData tempBook = listing.GetBookData();
         
@@ -432,6 +472,11 @@ public class ListPanelUI : MonoBehaviour
         if (currentListType == ListType.LendABookList)
         {
             LibraryManager.Instance.OnBookLendingSuccessful -= LibraryManager_OnBookLendingSuccessful;
+            actionButton.onClick.RemoveAllListeners();
+        }
+        if (currentListType == ListType.AddOrRemovePanelList)
+        {
+            LibraryManager.Instance.OnListDataUpdated -= LibraryManager_OnListDataUpdated;
             actionButton.onClick.RemoveAllListeners();
         }
 

@@ -6,13 +6,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using static ListPanelUI;
 
+
 public class PopupPanelUI : MonoBehaviour
 {   
     public enum PopupType
     {
         ShowResponse,
         ShowError,
-        ShowPrompt,     
+        ShowPrompt,
+        ShowBookAddOrRemovePanel,
     }
     public static PopupPanelUI Instance { get; private set; }
 
@@ -31,6 +33,13 @@ public class PopupPanelUI : MonoBehaviour
     //actionButton's text will change depending on the context. It can write OK or Confirm
     [SerializeField] private Button actionButton; 
     [SerializeField] private TextMeshProUGUI actionButtonText;
+
+    //For Add / Remove book Subpanel
+    [SerializeField] Transform addOrRemoveBookSubpanel;
+    [SerializeField] private Button removeListingButton;
+    [SerializeField] private Button plusButton;
+    [SerializeField] private Button minusButton;
+    [SerializeField] private TMP_InputField bookCountInputField;
 
     private PopupType currentPopupType;
 
@@ -70,14 +79,13 @@ public class PopupPanelUI : MonoBehaviour
 
     private void OnRetunrCodeEntered(string returnCode)
     {
+        actionButton.onClick.RemoveAllListeners();
         if (returnCode.Length == 5 && int.TryParse(returnCode, out _))
-        {
-            actionButton.onClick.RemoveAllListeners();
+        {          
             LibraryManager.Instance.TryReturnLentBookByReturnCode(returnCode);
         }
         else
         {
-            actionButton.onClick.RemoveAllListeners();
             OnInvalidInputEntered?.Invoke(this, new OnInvalidInputEnteredEventArgs { errorMessage = "Your Return Code Must be a 5-Digit Number." });
         }
     }
@@ -97,6 +105,60 @@ public class PopupPanelUI : MonoBehaviour
             actionButton.onClick.RemoveAllListeners();
             OnInvalidInputEntered?.Invoke(this, new OnInvalidInputEnteredEventArgs { errorMessage = "Borrower Name Can't Be Empty."});
         }
+    }
+
+    public void ShowAddOrRemoveBookPanel(BookData bookData, string infoMessage)
+    {
+        SetPopupComponents(PopupType.ShowBookAddOrRemovePanel);
+        titleText.text = "Add or Remove Book";
+        mainText.text = infoMessage;
+
+        TMP_InputField bookCountInput = bookCountInputField;
+
+        removeListingButton.onClick.AddListener(() => OnRemoveButtonClicked(bookData));
+        minusButton.onClick.AddListener(() => OnMinusButtonClicked(bookData, bookCountInput.text));
+        plusButton.onClick.AddListener(() => OnPlusButtonClicked(bookData, bookCountInput.text));
+    }
+
+    private void OnMinusButtonClicked(BookData bookData, string bookCountToDerease)
+    {
+        if (bookData.bookCount == 0)
+        {
+            string errorMessage = "Can't decrease any number of coppies";
+            PopupPanelUI.Instance.ShowError(errorMessage);
+            return;
+        }
+        //already accepting int only input so checking if its empty is enough
+        if(bookCountToDerease != "")
+        {
+            RemoveListenerForAddorRemoveBookPanel();
+            string responseMessage = $"You are about to decrease the number of copies of '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') by '{bookCountToDerease}'. Please Confirm: ";
+            PopupPanelUI.Instance.ShowResponse(responseMessage, () => LibraryManager.Instance.DecreaseTheNumberOfBooks(bookData, bookCountToDerease));
+        }  
+    }
+
+    private void OnPlusButtonClicked(BookData bookData, string bookCountToIncrease)
+    {
+        if (bookCountToIncrease != "")
+        {
+            RemoveListenerForAddorRemoveBookPanel();
+            string responseMessage = $"You are about to increase the number of copies of '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') by '{bookCountToIncrease}'. Please Confirm: ";
+            PopupPanelUI.Instance.ShowResponse(responseMessage, () => LibraryManager.Instance.IncreaseTheNumberOfBooks(bookData, bookCountToIncrease));
+        }                  
+    }
+
+    private void OnRemoveButtonClicked(BookData bookData)
+    {
+        RemoveListenerForAddorRemoveBookPanel();
+        string responseMessage = $"You are about to remove any data related with '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') including the lending information stored about this book. Continue?";
+        PopupPanelUI.Instance.ShowResponse(responseMessage, () => LibraryManager.Instance.DeleteSingleBookDataInformation(bookData));
+    }
+
+    public void RemoveListenerForAddorRemoveBookPanel()
+    {
+        removeListingButton.onClick.RemoveAllListeners();
+        minusButton.onClick.RemoveAllListeners();
+        plusButton.onClick.RemoveAllListeners();
     }
 
     //response with a confirmationCallback
@@ -157,19 +219,40 @@ public class PopupPanelUI : MonoBehaviour
             case PopupType.ShowPrompt:
                 popupPanelInputField.gameObject.SetActive(true);
                 actionButton.gameObject.SetActive(true);
+                addOrRemoveBookSubpanel.gameObject.SetActive(false);
 
                 break;
             case PopupType.ShowError:
                 popupPanelInputField.gameObject.SetActive(false);
                 actionButton.gameObject.SetActive(false);
+                addOrRemoveBookSubpanel.gameObject.SetActive(false);
 
                 break;
             case PopupType.ShowResponse:
                 popupPanelInputField.gameObject.SetActive(false);
                 actionButton.gameObject.SetActive(true);
+                addOrRemoveBookSubpanel.gameObject.SetActive(false);
                 actionButton.onClick.AddListener(Hide);
                 break;
+            case PopupType.ShowBookAddOrRemovePanel:
+                addOrRemoveBookSubpanel.gameObject.SetActive(true);
+                bookCountInputField.onValueChanged.AddListener(LimitToInteger);
+                actionButton.gameObject.SetActive(false);
+                popupPanelInputField.gameObject.SetActive(false);
+                bookCountInputField.text = "";
+                break;
 
+        }
+    }
+
+    void LimitToInteger(string newValue)
+    {
+        int intValue;
+        //if input does not parse to an integer, delete it
+        if (!int.TryParse(newValue, out intValue))
+        {
+            // If parsing fails, set the input field text to empty
+            bookCountInputField.text = "";
         }
     }
 
@@ -179,7 +262,15 @@ public class PopupPanelUI : MonoBehaviour
         {
             actionButton.onClick.RemoveAllListeners();
         }
+
+        if(currentPopupType == PopupType.ShowBookAddOrRemovePanel)
+        {
+            bookCountInputField.onValueChanged.RemoveAllListeners();
+            RemoveListenerForAddorRemoveBookPanel();
+        }
+       
         popupPanelInputField.text = "";
+
         gameObject.SetActive(false);
     }
 }

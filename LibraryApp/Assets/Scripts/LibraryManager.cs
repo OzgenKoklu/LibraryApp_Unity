@@ -17,6 +17,7 @@ public class LibraryManager : MonoBehaviour
 
     public event EventHandler<EventArgs> OnBookLendingSuccessful;
     public event EventHandler<EventArgs> OnReturnFromListSuccessful;
+    public event EventHandler<EventArgs> OnListDataUpdated;
 
 
     public event EventHandler<OnErrorEncounteredEventArgs> OnErrorEncountered;
@@ -92,21 +93,125 @@ public class LibraryManager : MonoBehaviour
 
     public void IncreaseBookCountByOne(BookData bookData)
     {
+        int bookCountToIncrease = 1;
+        IncreaseBookCountByAmount(bookData, bookCountToIncrease);
+    }
+
+    public void IncreaseBookCountByAmount(BookData bookData, int amountToIncrease)
+    {
         BookData existingBook = GetExistingBook(bookData);
 
         if (existingBook != null)
         {
-            existingBook.bookCount++;
-            SaveLibraryData(); 
+            for(int i = 0; i < amountToIncrease; i++)
+            {
+                existingBook.bookCount++;
+            }          
+            
+            SaveLibraryData();
         }
+    }
+
+    public void DecreaseBookCountByAmount(BookData bookData, int amountToDecrease, out string actualDecreaseAmount)
+    {
+        BookData existingBook = GetExistingBook(bookData);
+        actualDecreaseAmount = "";
+
+        if (existingBook != null)
+        {
+            int decreaseAmount = 0;
+            for (int i = 0; i < amountToDecrease; i++)
+            {
+                if (existingBook.bookCount > 0)
+                {
+                    existingBook.bookCount--;
+                    decreaseAmount++;
+                }
+                else
+                {
+                    break; // If no more books are available to decrease, exit the loop
+                }
+            }
+
+            actualDecreaseAmount = decreaseAmount.ToString();
+            SaveLibraryData();
+        }
+    }
+
+    public void IncreaseTheNumberOfBooks(BookData bookData, string numberOfBooksToIncrease)
+    {
+        int increaseAmount = int.Parse(numberOfBooksToIncrease);
+
+        IncreaseBookCountByAmount(bookData, increaseAmount);
+
+        OnListDataUpdated?.Invoke(this, EventArgs.Empty);
+        string responseMessage = $"Number of copies of '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') increased by '{numberOfBooksToIncrease}'.";
+        PopupPanelUI.Instance.ShowResponse(responseMessage);
+
+    }
+
+    public void DecreaseTheNumberOfBooks(BookData bookData, string numberOfBooksToDecrease)
+    {
+        int decreaseAmount = int.Parse(numberOfBooksToDecrease);
+        string actualDecreaseAmount;
+        DecreaseBookCountByAmount(bookData, decreaseAmount, out actualDecreaseAmount);
+
+        //Update the list and show response message
+        OnListDataUpdated?.Invoke(this, EventArgs.Empty);
+        string responseMessage = $"Number of copies of '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') decreased by '{actualDecreaseAmount}'.";
+        PopupPanelUI.Instance.ShowResponse(responseMessage);
+    }
+
+    public void DeleteSingleBookDataInformation(BookData bookData)
+    {
+        BookData existingBook = GetExistingBook(bookData);
+
+        if (libraryData.books.Contains(bookData))
+        {
+            libraryData.books.Remove(bookData);
+        }
+
+        //now remove the book data from lending pair list, first we need to find the index
+
+        for (int i = 0; i < lendingInfoPairsList.lendingPairs.Count; i++)
+        {
+            LendingInfoPairsSO.LendingPair lendingPair = lendingInfoPairsList.lendingPairs[i];
+
+            //if I did book = bookData it might not find it due to how count is stored and if it doesnt match it skips it
+            if (lendingPair.book.bookIsbn == bookData.bookIsbn)
+            {
+                lendingInfoPairsList.lendingPairs.RemoveAt(i);
+                i--; 
+            }
+            else
+            {
+                //no lent book exists on this listing 
+            }
+        }
+        SaveLibraryData();
+
+        OnListDataUpdated?.Invoke(this, EventArgs.Empty);
+        string responseMessage = $"Book Data about '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') and all the related info is deleted from the library.";
+        PopupPanelUI.Instance.ShowResponse(responseMessage);
     }
 
     //Deletes the data stored on Scriptable objects
     public void DeleteLocalLibraryData()
     {
-        libraryData.books.Clear();
-        lendingInfoPairsList.lendingPairs.Clear();
-        SaveLibraryData();
+        try
+        {
+            libraryData.books.Clear();
+            lendingInfoPairsList.lendingPairs.Clear();
+            SaveLibraryData();
+
+            string popupResonseMessage = "Library Data successfully deleted.";
+            PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
+
+        }catch(Exception ex) {
+            Debug.LogError("An error occurred while deleting library data: " + ex.Message);
+            string errorResponse = "An error occurred while deleting library data. Please try again.";
+            PopupPanelUI.Instance.ShowError(errorResponse);
+        }
     }
 
     //start of json import scripts

@@ -108,71 +108,93 @@ public static class ImportExportManager
 
     public static void ExportToJson()
     {
-        ImportExportManager.CombinedData combinedData = new ImportExportManager.CombinedData();
-        combinedData.ConvertFromActualData(
-            LibraryManager.Instance.GetLibraryData(),
-            LibraryManager.Instance.GetLendingInfoPairs()
-        );
+        try
+        {
+            ImportExportManager.CombinedData combinedData = new ImportExportManager.CombinedData();
+            combinedData.ConvertFromActualData(
+                LibraryManager.Instance.GetLibraryData(),
+                LibraryManager.Instance.GetLendingInfoPairs()
+            );
 
-        // Save to JSON using the SaveToJson method
-        string json = combinedData.SaveToJson();
-        File.WriteAllText(ImportExportManager.CombinedData.filePath, json);
+            // Save to JSON using the SaveToJson method
+            string json = combinedData.SaveToJson();
+            File.WriteAllText(ImportExportManager.CombinedData.filePath, json);
+
+            string popupResonseMessage = "Json Successfully exported.";
+            PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
+        } catch (Exception ex)
+        {
+            Debug.LogError("An error occurred while exporting to Json: " + ex.Message);
+            string errorResponse = "An error occurred while exporting to Json. Please try again.";
+            PopupPanelUI.Instance.ShowError(errorResponse);
+        }
     }
 
     public static void ImportFromJson()
     {
+        try
+        { // Read from JSON using the LoadFromJson method
+            string json = File.ReadAllText(ImportExportManager.CombinedData.filePath);
+            ImportExportManager.CombinedData combinedData = ImportExportManager.CombinedData.LoadFromJson(json);
 
-        // Read from JSON using the LoadFromJson method
-        string json = File.ReadAllText(ImportExportManager.CombinedData.filePath);
-        ImportExportManager.CombinedData combinedData = ImportExportManager.CombinedData.LoadFromJson(json);
 
-
-        //Deserializing and making scriptable object for library data
-        LibraryDataSO libraryData = ScriptableObject.CreateInstance<LibraryDataSO>();
-        foreach (CombinedData.SerializableBookData serializableBookData in combinedData.libraryData.books)
-        {
-            BookData bookData = new BookData
+            //Deserializing and making scriptable object for library data
+            LibraryDataSO libraryData = ScriptableObject.CreateInstance<LibraryDataSO>();
+            foreach (CombinedData.SerializableBookData serializableBookData in combinedData.libraryData.books)
             {
-                bookTitle = serializableBookData.bookTitle,
-                bookAuthor = serializableBookData.bookAuthor,
-                bookIsbn = serializableBookData.bookIsbn,
-                bookCount = serializableBookData.bookCount
-            };
-            libraryData.books.Add(bookData);
-        }
-
-        //Deserializing and making scriptable object for lendingInfoPairs
-        LendingInfoPairsSO lendingInfoPairs = ScriptableObject.CreateInstance<LendingInfoPairsSO>();
-        foreach (ImportExportManager.CombinedData.SerializableLendingPair serializableLendingPair in combinedData.lendingInfoPairs.lendingPairs)
-        {
-            LendingInfoPairsSO.LendingPair lendingPair = new LendingInfoPairsSO.LendingPair
-            {
-                book = new BookData
+                BookData bookData = new BookData
                 {
-                    bookTitle = serializableLendingPair.book.bookTitle,
-                    bookAuthor = serializableLendingPair.book.bookAuthor,
-                    bookIsbn = serializableLendingPair.book.bookIsbn,
-                    bookCount = serializableLendingPair.book.bookCount
-                },
-                totalLendedBookCount = serializableLendingPair.totalLendedBookCount
-            };
-            lendingPair.lendingInfoList.Clear();
-            foreach (ImportExportManager.CombinedData.SerializableLendingInfo serializableLendingInfo in serializableLendingPair.lendingInfoList)
-            {
-                LendingInfo lendingInfo = new LendingInfo
-                {
-                    borrowerName = serializableLendingInfo.borrowerName,
-                    returnCode = serializableLendingInfo.returnCode,
-                    expectedReturnDateTicks = serializableLendingInfo.expectedReturnDateTicks
+                    bookTitle = serializableBookData.bookTitle,
+                    bookAuthor = serializableBookData.bookAuthor,
+                    bookIsbn = serializableBookData.bookIsbn,
+                    bookCount = serializableBookData.bookCount
                 };
-                lendingPair.lendingInfoList.Add(lendingInfo);
+                libraryData.books.Add(bookData);
             }
-            lendingInfoPairs.lendingPairs.Add(lendingPair);
+
+            //Deserializing and making scriptable object for lendingInfoPairs
+            LendingInfoPairsSO lendingInfoPairs = ScriptableObject.CreateInstance<LendingInfoPairsSO>();
+            foreach (ImportExportManager.CombinedData.SerializableLendingPair serializableLendingPair in combinedData.lendingInfoPairs.lendingPairs)
+            {
+                LendingInfoPairsSO.LendingPair lendingPair = new LendingInfoPairsSO.LendingPair
+                {
+                    book = new BookData
+                    {
+                        bookTitle = serializableLendingPair.book.bookTitle,
+                        bookAuthor = serializableLendingPair.book.bookAuthor,
+                        bookIsbn = serializableLendingPair.book.bookIsbn,
+                        bookCount = serializableLendingPair.book.bookCount
+                    },
+                    totalLendedBookCount = serializableLendingPair.totalLendedBookCount
+                };
+                lendingPair.lendingInfoList.Clear();
+                foreach (ImportExportManager.CombinedData.SerializableLendingInfo serializableLendingInfo in serializableLendingPair.lendingInfoList)
+                {
+                    LendingInfo lendingInfo = new LendingInfo
+                    {
+                        borrowerName = serializableLendingInfo.borrowerName,
+                        returnCode = serializableLendingInfo.returnCode,
+                        expectedReturnDateTicks = serializableLendingInfo.expectedReturnDateTicks
+                    };
+                    lendingPair.lendingInfoList.Add(lendingInfo);
+                }
+                lendingInfoPairs.lendingPairs.Add(lendingPair);
+            }
+            //sending them to libraryManager to set the library data accordingly and save it
+
+            LibraryManager.Instance.UpdateLibraryDataFromJsonData(libraryData, lendingInfoPairs);
+
+            string popupResonseMessage = "Json Successfully Imported.";
+            PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
         }
-        //sending them to libraryManager to set the library data accordingly and save it
-        
-        LibraryManager.Instance.UpdateLibraryDataFromJsonData(libraryData, lendingInfoPairs);
+        catch (Exception ex)
+        {
+            Debug.LogError("An error occurred while importing from Json: " + ex.Message);
+            string errorResponse = "An error occurred while importing from Json. Please try again.";
+            PopupPanelUI.Instance.ShowError(errorResponse);
+        }
     }
+
 
 
 
