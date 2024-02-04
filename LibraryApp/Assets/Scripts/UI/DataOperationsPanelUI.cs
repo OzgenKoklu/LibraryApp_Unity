@@ -33,19 +33,19 @@ public class DataOperationsPanelUI : MonoBehaviour
     private void OnImportFromJsonButtonClick()
     {
         string responseMessage = "You are about to import from Json data, your local data will be re-writen. Continue?";
-        PopupPanelUI.Instance.ShowResponse(responseMessage, () => ImportExportManager.ImportFromJson()
+        PopupPanelUI.Instance.ShowResponse(responseMessage, () => ImportExportManager.ImportFromJsonForBackup()
         );
     }
 
     private void OnExportToJsonButtonClick() {
         string responseMessage = "You are about to export to a Json file, Json file located in the directory will be  re-writen. Continue?";
-        PopupPanelUI.Instance.ShowResponse(responseMessage, () => ImportExportManager.ExportToJson()
+        PopupPanelUI.Instance.ShowResponse(responseMessage, () => ImportExportManager.ExportToJsonForBackup()
         );
     }
 
     private void OnDeleteLocalDataButtonClick() {
         string responseMessage = "You are about to delete the local Library Data. Continue?";
-        PopupPanelUI.Instance.ShowResponse(responseMessage, () => LibraryManager.Instance.DeleteLocalLibraryData()
+        PopupPanelUI.Instance.ShowResponse(responseMessage, () => LibraryManager.Instance.DeleteLocalLibraryDataFromUserPrompt()
         );
     }
     public void Show()

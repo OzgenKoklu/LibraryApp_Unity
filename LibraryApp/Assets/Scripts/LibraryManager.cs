@@ -14,19 +14,22 @@ public class LibraryManager : MonoBehaviour
 {
     public static LibraryManager Instance { get; private set; }
 
-
-    public event EventHandler<EventArgs> OnBookLendingSuccessful;
-    public event EventHandler<EventArgs> OnReturnFromListSuccessful;
-    public event EventHandler<EventArgs> OnListDataUpdated;
+    public event EventHandler<EventArgs> OnLibraryDataUpdatedForLists;
 
     [SerializeField] private LibraryDataSO libraryData;
     [SerializeField] private LendingInfoPairsSO lendingInfoPairsList;
 
     private void Awake()
     {
-        Instance = this;
+        Instance = this;  
     }
-    
+
+    private void Start()
+    {
+        ImportExportManager.ImportFromJsonForRuntime();
+    }
+
+
     #region MainOperationMethods
     public BookData CreateBookData(string bookTitle, string bookAuthor, string bookIsbn)
     {
@@ -110,7 +113,7 @@ public class LibraryManager : MonoBehaviour
 
         IncreaseBookCountByAmount(bookData, increaseAmount);
 
-        OnListDataUpdated?.Invoke(this, EventArgs.Empty);
+        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
         string responseMessage = $"Number of copies of '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') increased by '{numberOfBooksToIncrease}'.";
         PopupPanelUI.Instance.ShowResponse(responseMessage);
 
@@ -123,7 +126,7 @@ public class LibraryManager : MonoBehaviour
         DecreaseBookCountByAmount(bookData, decreaseAmount, out actualDecreaseAmount);
 
         //Update the list and show response message
-        OnListDataUpdated?.Invoke(this, EventArgs.Empty);
+        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
         string responseMessage = $"Number of copies of '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') decreased by '{actualDecreaseAmount}'.";
         PopupPanelUI.Instance.ShowResponse(responseMessage);
     }
@@ -156,7 +159,7 @@ public class LibraryManager : MonoBehaviour
         }
         SaveLibraryData();
 
-        OnListDataUpdated?.Invoke(this, EventArgs.Empty);
+        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
         string responseMessage = $"Book Data about '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') and all the related info is deleted from the library.";
         PopupPanelUI.Instance.ShowResponse(responseMessage);
     }
@@ -203,14 +206,14 @@ public class LibraryManager : MonoBehaviour
         
 
         PopupPanelUI.Instance.ShowResponse(lendingSuccessfulResponseMessage);
-        OnBookLendingSuccessful?.Invoke(this, EventArgs.Empty);   
+        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);   
     }
     public void TryReturnLentBookFromTheList(LendingInfo lendingInfo)
     {
 
         TryReturnLentBookByReturnCode(lendingInfo.returnCode);
 
-        OnReturnFromListSuccessful?.Invoke(this, EventArgs.Empty);
+        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
     }
     public void TryReturnLentBookByReturnCode(string returnCode)
     {
@@ -299,16 +302,18 @@ public class LibraryManager : MonoBehaviour
     #region SavingDeletingAndRelatedOperationMethods
     private void SaveLibraryData()
     {
-        // Saving the ScriptableObject asset
-        UnityEditor.EditorUtility.SetDirty(libraryData);
-        UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
-        UnityEditor.AssetDatabase.SaveAssets();
-        UnityEditor.AssetDatabase.Refresh();
+        ImportExportManager.ExportToJsonForRuntime();
+
+       // Saving the ScriptableObject asset(only available for Unity Editor version) 
+       // UnityEditor.EditorUtility.SetDirty(libraryData);
+       // UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
+       // UnityEditor.AssetDatabase.SaveAssets();
+       // UnityEditor.AssetDatabase.Refresh();
     }
 
     public void UpdateLibraryDataFromJsonData(LibraryDataSO libraryData, LendingInfoPairsSO lendingInfoPairs)
     {
-        DeleteLocalLibraryData();
+        ClearLocalLibraryData();
 
         //addrange method to avoid changing the reference this.libraryData = libraryData would change the reference
         this.libraryData.books.AddRange(libraryData.books);
@@ -317,13 +322,11 @@ public class LibraryManager : MonoBehaviour
         SaveLibraryData();
     }
     //Deletes the data stored on Scriptable objects
-    public void DeleteLocalLibraryData()
+    public void DeleteLocalLibraryDataFromUserPrompt()
     {
         try
         {
-            libraryData.books.Clear();
-            lendingInfoPairsList.lendingPairs.Clear();
-            SaveLibraryData();
+            ClearLocalLibraryData();
 
             string popupResonseMessage = "Library Data successfully deleted.";
             PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
@@ -336,6 +339,14 @@ public class LibraryManager : MonoBehaviour
             PopupPanelUI.Instance.ShowError(errorResponse);
         }
     }
+
+    private void ClearLocalLibraryData()
+    {
+        libraryData.books.Clear();
+        lendingInfoPairsList.lendingPairs.Clear();
+        SaveLibraryData();
+    }
+
     #endregion
 }
 

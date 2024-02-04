@@ -2,13 +2,13 @@
     "libraryData": {
         "books": [
             {
-                "bookTitle": "Pokemon Nasï¿½l Avlanï¿½r?",
-                "bookAuthor": "Eï¿½ Keï¿½ï¿½m",
+                "bookTitle": "Pokemon Nasýl Avlanýr?",
+                "bookAuthor": "Eþ Keçým",
                 "bookIsbn": "3424125533121",
                 "bookCount": 3
             },
             {
-                "bookTitle": "Kapitalist Gerï¿½eklik",
+                "bookTitle": "Kapitalist Gerçeklik",
                 "bookAuthor": "Mark Fisher",
                 "bookIsbn": "1235739485723",
                 "bookCount": 1
@@ -20,19 +20,19 @@
                 "bookCount": 2
             },
             {
-                "bookTitle": "hasan hï¿½seyin romanï¿½",
-                "bookAuthor": "hasan hï¿½seyin",
+                "bookTitle": "hasan hüseyin romaný",
+                "bookAuthor": "hasan hüseyin",
                 "bookIsbn": "1029530459243",
                 "bookCount": 2
             },
             {
                 "bookTitle": "Roman 1 ",
-                "bookAuthor": "Roman Yazarï¿½",
+                "bookAuthor": "Roman Yazarý",
                 "bookIsbn": "2456453454241",
                 "bookCount": 1
             },
             {
-                "bookTitle": "Rï¿½ya Romanï¿½",
+                "bookTitle": "Rüya Romaný",
                 "bookAuthor": "Hasan Tahsin",
                 "bookIsbn": "1111111111111",
                 "bookCount": 1
@@ -49,15 +49,15 @@
         "lendingPairs": [
             {
                 "book": {
-                    "bookTitle": "Pokemon Nasï¿½l Avlanï¿½r?",
-                    "bookAuthor": "Eï¿½ Keï¿½ï¿½m",
+                    "bookTitle": "Pokemon Nasýl Avlanýr?",
+                    "bookAuthor": "Eþ Keçým",
                     "bookIsbn": "3424125533121",
                     "bookCount": 4
                 },
                 "totalLendedBookCount": 3,
                 "lendingInfoList": [
                     {
-                        "borrowerName": "hasan hï¿½seyin",
+                        "borrowerName": "hasan hüseyin",
                         "returnCode": "35261",
                         "expectedReturnDateTicks": 638443029623222761
                     },
@@ -70,7 +70,7 @@
             },
             {
                 "book": {
-                    "bookTitle": "Kapitalist Gerï¿½eklik",
+                    "bookTitle": "Kapitalist Gerçeklik",
                     "bookAuthor": "Mark Fisher",
                     "bookIsbn": "1235739485723",
                     "bookCount": 1

@@ -7,7 +7,22 @@ public class ScollViewListBoundsLimiter : MonoBehaviour
     [SerializeField] private Transform containerGameObject;
     [SerializeField] private RectTransform containerRect;
 
+    private float anchoredPositionLimitForListTop = 0;
+    private int activeChildObjectsInContainer = 0;
+    private int previousActiveChildObjects = -1; // Initialize to a value that won't match the initial state
+    float anchoredPositionLimitForListBottom = 0f;
+
     private void Awake()
+    {
+        
+    }
+
+    private void Start()
+    {
+        LibraryManager.Instance.OnLibraryDataUpdatedForLists += LibraryManager_OnLibraryDataUpdatedForLists;
+    }
+
+    private void LibraryManager_OnLibraryDataUpdatedForLists(object sender, System.EventArgs e)
     {
         
     }
@@ -17,14 +32,11 @@ public class ScollViewListBoundsLimiter : MonoBehaviour
         if (containerGameObject != null)
         {
             CorrectContentListRektIfOutOfBounds();
-        }
-        
+        }    
     }
 
     private void CorrectContentListRektIfOutOfBounds()
     {
-        float anchoredPositionLimitForListTop = 0;
-
         if (containerRect.anchoredPosition.y < anchoredPositionLimitForListTop)
         {
             Vector2 currentAnchoredPosition = containerRect.anchoredPosition;
@@ -32,10 +44,13 @@ public class ScollViewListBoundsLimiter : MonoBehaviour
             containerRect.anchoredPosition = currentAnchoredPosition;
         }
 
-        //not logicat to do it every single update. Only logical to do once list updates. Can Also change Scrollbar size depending on child object count 
-
-        int activeChildObjectsInContainer = GetNumberOfActiveChildObjects(containerGameObject);
-        float anchoredPositionLimitForListBottom = GetAnchoredPositionLimitForListBottom(activeChildObjectsInContainer);
+        activeChildObjectsInContainer = GetNumberOfActiveChildObjects(containerGameObject);
+        // Checks if the number of active child objects has changed
+        if (activeChildObjectsInContainer != previousActiveChildObjects)
+        {
+            anchoredPositionLimitForListBottom = GetAnchoredPositionLimitForListBottom(activeChildObjectsInContainer);
+            previousActiveChildObjects = activeChildObjectsInContainer;
+        }
 
         if (containerRect.anchoredPosition.y > anchoredPositionLimitForListBottom)
         {
@@ -46,6 +61,7 @@ public class ScollViewListBoundsLimiter : MonoBehaviour
     }
     private float GetAnchoredPositionLimitForListBottom(int childObjectCount)
     {
+        //These numbers are measured during runtime. 56 is pixel count needed when 1920x1080 reference pixel size for UI canvas is selected. Might need a change in case of a canvas update
         int maxNumberOfObjectsThatFitInOnePage = 11;
         float anchoredPositionLimitForListBottom = 0;
         float listingVerticalSize = 56;

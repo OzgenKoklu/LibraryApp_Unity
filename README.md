@@ -48,8 +48,16 @@ Remade the whole UI setup to handle most operations in PopupPanelUI and ListPane
 ## Technical Details
 
 -Uses state machine to contextually arrange list / popup windows
+
 -Uses scriptable objects for data persistance (in editor only)
+
 -Can use json to import-export data
+
+Feedback Optimizations: 
+
+
+
+-AssetDatabase usage revoked. Now altered the json import/export feature to handle saves on program start / closure to make the build possible.
 
 ----------
 

@@ -4,12 +4,14 @@ using UnityEngine;
 using System.IO;
 using System;
 using System.Linq;
+using UnityEditor;
 
 public static class ImportExportManager
 {
     public class CombinedData
     {
-        public const string filePath = "Assets/Resources/CombinedData.json";
+        public const string filePathBackup = "Assets/Resources/CombinedDataBackup.json";
+        public const string filePathRuntime = "Assets/Resources/CombinedData.json";
 
         //JSONUTILITY WONT SERIALIZE SCRIPTABLE OBJECTS DIRECTLY. SO WE NEED EXTRA SERIALIZATION/DESERIALIZATION METHODS FOR THEM
         //we need to serialize bookdata, lendingInfo,LendingPairs individually to write them onto the json
@@ -105,8 +107,21 @@ public static class ImportExportManager
         }
     }
 
+    public static void ExportToJsonForBackup()
+    {
+        ExportToJson(ImportExportManager.CombinedData.filePathBackup);
 
-    public static void ExportToJson()
+        string popupResonseMessage = "Json Successfully exported.";
+        PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
+    }
+
+    public static void ExportToJsonForRuntime()
+    {
+        //this is the version we will use for every single new update that occurs. LibraryManager.cs hase SaveData method for that.
+        ExportToJson(ImportExportManager.CombinedData.filePathRuntime);
+    }
+
+        public static void ExportToJson(string filePath)
     {
         try
         {
@@ -118,10 +133,9 @@ public static class ImportExportManager
 
             // Save to JSON using the SaveToJson method
             string json = combinedData.SaveToJson();
-            File.WriteAllText(ImportExportManager.CombinedData.filePath, json);
+            File.WriteAllText(filePath, json);
 
-            string popupResonseMessage = "Json Successfully exported.";
-            PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
+ 
         } catch (Exception ex)
         {
             Debug.LogError("An error occurred while exporting to Json: " + ex.Message);
@@ -130,11 +144,24 @@ public static class ImportExportManager
         }
     }
 
-    public static void ImportFromJson()
+    public static void ImportFromJsonForBackup()
+    {
+        ImportFromJson(ImportExportManager.CombinedData.filePathBackup);
+
+        string popupResonseMessage = "Json Successfully Imported.";
+        PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
+    }
+
+    public static void ImportFromJsonForRuntime()
+    {
+        ImportFromJson(ImportExportManager.CombinedData.filePathRuntime);
+    }
+
+    public static void ImportFromJson(string filePath)
     {
         try
         { // Read from JSON using the LoadFromJson method
-            string json = File.ReadAllText(ImportExportManager.CombinedData.filePath);
+            string json = File.ReadAllText(filePath);
             ImportExportManager.CombinedData combinedData = ImportExportManager.CombinedData.LoadFromJson(json);
 
 
@@ -184,8 +211,6 @@ public static class ImportExportManager
 
             LibraryManager.Instance.UpdateLibraryDataFromJsonData(libraryData, lendingInfoPairs);
 
-            string popupResonseMessage = "Json Successfully Imported.";
-            PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
         }
         catch (Exception ex)
         {

@@ -108,7 +108,7 @@ public class ListPanelUI : MonoBehaviour
                 UpdateSearchResultList(availableBookDataList);
 
 
-                LibraryManager.Instance.OnBookLendingSuccessful += LibraryManager_OnBookLendingSuccessful;
+                LibraryManager.Instance.OnLibraryDataUpdatedForLists += LibraryManager_OnBookLendingSuccessful;
                 actionButton.onClick.AddListener(() => OnLendButtonClick(selectedListing));
 
                 break;
@@ -126,7 +126,7 @@ public class ListPanelUI : MonoBehaviour
                 UpdateBookListForLentBooks(allLentBooksList);
                 UpdateBookListForLentBooks(false);
 
-                LibraryManager.Instance.OnReturnFromListSuccessful += LibraryManager_OnReturnFromListSuccessful;
+                LibraryManager.Instance.OnLibraryDataUpdatedForLists += LibraryManager_OnReturnFromListSuccessful;
 
                 LendingInfoPairsSO.LendingPair lendingPair = new LendingInfoPairsSO.LendingPair();
                 int lendingInfoIndex = 0;
@@ -140,7 +140,7 @@ public class ListPanelUI : MonoBehaviour
                 actionButtonText.text = ACTION_BUTTON_ADD_OR_REMOVE_TEXT;
 
                 UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().books);
-                LibraryManager.Instance.OnListDataUpdated += LibraryManager_OnListDataUpdated;
+                LibraryManager.Instance.OnLibraryDataUpdatedForLists += LibraryManager_OnListDataUpdated;
                 actionButton.onClick.AddListener(() => OnAddOrRemoveButtonClick(selectedListing));
 
                 break;
@@ -155,16 +155,16 @@ public class ListPanelUI : MonoBehaviour
         {
             expiredDueDatesToggle.onValueChanged.RemoveAllListeners();
             actionButton.onClick.RemoveAllListeners();
-            LibraryManager.Instance.OnReturnFromListSuccessful -= LibraryManager_OnReturnFromListSuccessful;
+            LibraryManager.Instance.OnLibraryDataUpdatedForLists -= LibraryManager_OnReturnFromListSuccessful;
         }
         if (currentListType == ListType.LendABookList)
         {
-            LibraryManager.Instance.OnBookLendingSuccessful -= LibraryManager_OnBookLendingSuccessful;
+            LibraryManager.Instance.OnLibraryDataUpdatedForLists -= LibraryManager_OnBookLendingSuccessful;
             actionButton.onClick.RemoveAllListeners();
         }
         if (currentListType == ListType.AddOrRemovePanelList)
         {
-            LibraryManager.Instance.OnListDataUpdated -= LibraryManager_OnListDataUpdated;
+            LibraryManager.Instance.OnLibraryDataUpdatedForLists -= LibraryManager_OnListDataUpdated;
             actionButton.onClick.RemoveAllListeners();
         }
 
