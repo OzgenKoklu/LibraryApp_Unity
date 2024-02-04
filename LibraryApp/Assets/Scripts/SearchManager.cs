@@ -1,14 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
-using static LendingInfoPairsSO;
 
 public static class SearchManager
 {
-
     public enum SearchTypeGeneralListing
     {
         General,
@@ -29,7 +25,7 @@ public static class SearchManager
     {
         List<LendingInfoPairsSO.LendingPair> searchResults = new List<LendingInfoPairsSO.LendingPair>();
 
-        switch (searchCriteria.searchTypeLentList)
+        switch (searchCriteria.SearchTypeLentList)
         {
             case SearchTypeLentListing.General:
                 PerformGeneralSearchOnInfoPairs(searchCriteria, searchResults);
@@ -54,7 +50,7 @@ public static class SearchManager
         }
 
         //Gets expired books if expired books toggle is enabled
-        if (searchCriteria.isExpiredLent)
+        if (searchCriteria.IsExpiredLent)
         {
             searchResults = GetExpiredBooks(searchResults);
         }
@@ -66,7 +62,7 @@ public static class SearchManager
     {
         List<BookData> searchResults = new List<BookData>();
 
-        switch (searchCriteria.searchTypeGeneral)
+        switch (searchCriteria.SearchTypeGeneral)
         {
             case SearchTypeGeneralListing.General:
                 PerformGeneralSearchOnBookList(searchCriteria, searchResults);
@@ -90,7 +86,7 @@ public static class SearchManager
         }
 
         //mainly for lending a book page where only available books are listed, can be customized to be included in general list searches with the addition of advanced search options
-        if (searchCriteria.isAvailable)
+        if (searchCriteria.IsAvailable)
         {
             searchResults = GetAvailableBooks(searchResults);
         }
@@ -104,7 +100,7 @@ public static class SearchManager
     public static List<BookData> GetAvailableBooks(List<BookData> bookDataList)
     {
         // Use LINQ to filter the list of books based on the book count
-        var availableBooks = bookDataList.Where(book => book.bookCount > 0).ToList();
+        var availableBooks = bookDataList.Where(book => book.BookCount > 0).ToList();
 
         return availableBooks;
     }
@@ -117,18 +113,18 @@ public static class SearchManager
         {
             int totalNumberOfOverDue = 0;
             LendingInfoPairsSO.LendingPair lendingPairInTest = new LendingInfoPairsSO.LendingPair();
-            lendingPairInTest.book = lendingPair.book;
+            lendingPairInTest.Book = lendingPair.Book;
 
-            foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+            foreach (LendingInfo lendingInfo in lendingPair.LendingInfoList)
             {
                 // Get the expected return date as a DateTime for the lending Info
-                DateTime expectedReturnDate = new DateTime(lendingInfo.expectedReturnDateTicks);
+                DateTime expectedReturnDate = new DateTime(lendingInfo.ExpectedReturnDateTicks);
 
                 // Compare the expected return date with the current time to check if its exceeded
                 if (expectedReturnDate < DateTime.Now)
                 {
                     totalNumberOfOverDue++;
-                    lendingPairInTest.lendingInfoList.Add(lendingInfo);
+                    lendingPairInTest.LendingInfoList.Add(lendingInfo);
                 }
             }
             if (totalNumberOfOverDue > 0)
@@ -141,9 +137,9 @@ public static class SearchManager
 
     private static void PerformGeneralSearchOnInfoPairs(SearchCriteriaSO searchCriteria, List<LendingInfoPairsSO.LendingPair> searchResults)
     {
-        List<LendingInfoPairsSO.LendingPair> allLentBooks = LibraryManager.Instance.GetLendingInfoPairs().lendingPairs;
+        List<LendingInfoPairsSO.LendingPair> allLentBooks = LibraryManager.Instance.GetLendingInfoPairs().LendingPairs;
 
-        string searchTerm = searchCriteria.searchTerm.ToLower();
+        string searchTerm = searchCriteria.SearchTerm.ToLower();
 
         // Check if the search term is empty, if so, return an empty result list
         if (string.IsNullOrEmpty(searchTerm))
@@ -157,15 +153,15 @@ public static class SearchManager
             int lendingInfoIndex = 0;
             //since we hold bookdata + lendingInfoList, we want to be sure that this entry is added as a BookData + List<LendingInfo) list. 
             LendingInfoPairsSO.LendingPair lendingPairInTest = new LendingInfoPairsSO.LendingPair();
-            lendingPairInTest.book = lendingPair.book;
+            lendingPairInTest.Book = lendingPair.Book;
 
-            foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+            foreach (LendingInfo lendingInfo in lendingPair.LendingInfoList)
             {
 
                 if (ContainsSearchTermInLendingPairListIndex(lendingPair, lendingInfoIndex, searchTerm))
                 {
                     totalNumberOfResults++;
-                    lendingPairInTest.lendingInfoList.Add(lendingInfo);
+                    lendingPairInTest.LendingInfoList.Add(lendingInfo);
                 }
                 lendingInfoIndex++;
             }
@@ -178,9 +174,9 @@ public static class SearchManager
 
     private static void PerformBorrowerNameSearchOnInfoPairs(SearchCriteriaSO searchCriteria, List<LendingInfoPairsSO.LendingPair> searchResults)
     {
-        List<LendingInfoPairsSO.LendingPair> allLentBooks = LibraryManager.Instance.GetLendingInfoPairs().lendingPairs;
+        List<LendingInfoPairsSO.LendingPair> allLentBooks = LibraryManager.Instance.GetLendingInfoPairs().LendingPairs;
 
-        string searchTerm = searchCriteria.searchTerm.ToLower();
+        string searchTerm = searchCriteria.SearchTerm.ToLower();
 
         // Check if the search term is empty, if so, return an empty result list
         if (string.IsNullOrEmpty(searchTerm))
@@ -193,15 +189,15 @@ public static class SearchManager
             int totalNumberOfResults = 0;
             // Create a new LendingPairInTest to store the matched lending info
             LendingInfoPairsSO.LendingPair lendingPairInTest = new LendingInfoPairsSO.LendingPair();
-            lendingPairInTest.book = lendingPair.book;
+            lendingPairInTest.Book = lendingPair.Book;
 
-            foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+            foreach (LendingInfo lendingInfo in lendingPair.LendingInfoList)
             {
                 // Check if the borrower name contains the search term in a case-insensitive manner
-                if (ContainsSearchTerm(lendingInfo.borrowerName, searchTerm))
+                if (ContainsSearchTerm(lendingInfo.BorrowerName, searchTerm))
                 {
                     totalNumberOfResults++;
-                    lendingPairInTest.lendingInfoList.Add(lendingInfo);
+                    lendingPairInTest.LendingInfoList.Add(lendingInfo);
                 }
             }
 
@@ -217,9 +213,9 @@ public static class SearchManager
     private static void PerformGeneralSearchOnBookList(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
         LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
-        List<BookData> allBooks = libraryData.books;
+        List<BookData> allBooks = libraryData.Books;
 
-        string searchTerm = searchCriteria.searchTerm.ToLower();
+        string searchTerm = searchCriteria.SearchTerm.ToLower();
 
         // Check if the search term is empty, if so, return an empty result list
         if (string.IsNullOrEmpty(searchTerm))
@@ -238,36 +234,36 @@ public static class SearchManager
 
     private static void PerformBookTitleSearchOnBookList(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
-        PerformSearchBy(searchCriteria, searchResults, book => book.bookTitle);
+        PerformSearchBy(searchCriteria, searchResults, book => book.BookTitle);
     }
 
     private static void PerformBookTitleSearchOnInfoPairs(SearchCriteriaSO searchCriteria, List<LendingInfoPairsSO.LendingPair> searchResults)
     {
-        PerformSearchBy(searchCriteria, searchResults, lendingPair => lendingPair.book.bookTitle);
+        PerformSearchBy(searchCriteria, searchResults, lendingPair => lendingPair.Book.BookTitle);
     }
     private static void PerformIsbnSearchOnBookList(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
-        PerformSearchBy(searchCriteria, searchResults, book => book.bookIsbn);
+        PerformSearchBy(searchCriteria, searchResults, book => book.BookIsbn);
     }
 
     private static void PerformAuthorSearchOnBookList(SearchCriteriaSO searchCriteria, List<BookData> searchResults)
     {
-        PerformSearchBy(searchCriteria, searchResults, book => book.bookAuthor);
+        PerformSearchBy(searchCriteria, searchResults, book => book.BookAuthor);
     }
 
     private static void PerformAuthorSearchOnInfoPairs(SearchCriteriaSO searchCriteria, List<LendingInfoPairsSO.LendingPair> searchResults)
     {
-        PerformSearchBy(searchCriteria, searchResults, lendingPair => lendingPair.book.bookAuthor);
+        PerformSearchBy(searchCriteria, searchResults, lendingPair => lendingPair.Book.BookAuthor);
     }
 
     private static void PerformSearchBy<T>(SearchCriteriaSO searchCriteria, List<T> searchResults, Func<T, string> getProperty)
     {
         // Retrieve the list of items to search from the appropriate source based on the type T
         IEnumerable<T> itemsToSearch = typeof(T) == typeof(BookData) ?
-        LibraryManager.Instance.GetLibraryData().books.Cast<T>() :
-        LibraryManager.Instance.GetLendingInfoPairs().lendingPairs.Cast<T>();
+        LibraryManager.Instance.GetLibraryData().Books.Cast<T>() :
+        LibraryManager.Instance.GetLendingInfoPairs().LendingPairs.Cast<T>();
 
-        string searchTerm = searchCriteria.searchTerm.ToLower();
+        string searchTerm = searchCriteria.SearchTerm.ToLower();
 
         // Check if the search term is empty, if so, return an empty result list
         if (string.IsNullOrEmpty(searchTerm))
@@ -291,17 +287,17 @@ public static class SearchManager
     private static bool ContainsSearchTermInBookData(BookData book, string searchTerm)
     {
         // Check if the search term is contained in the title, author, or ISBN
-        return ContainsSearchTerm(book.bookTitle, searchTerm)
-            || ContainsSearchTerm(book.bookAuthor, searchTerm)
-            || ContainsSearchTerm(book.bookIsbn, searchTerm);
+        return ContainsSearchTerm(book.BookTitle, searchTerm)
+            || ContainsSearchTerm(book.BookAuthor, searchTerm)
+            || ContainsSearchTerm(book.BookIsbn, searchTerm);
     }
 
     private static bool ContainsSearchTermInLendingPairListIndex(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoIndex, string searchTerm)
     {
         // Check if the search term is contained in the title, author, or ISBN
-        return ContainsSearchTerm(lendingPair.book.bookTitle, searchTerm)
-            || ContainsSearchTerm(lendingPair.book.bookAuthor, searchTerm)
-            || ContainsSearchTerm(lendingPair.lendingInfoList[lendingInfoIndex].borrowerName, searchTerm);
+        return ContainsSearchTerm(lendingPair.Book.BookTitle, searchTerm)
+            || ContainsSearchTerm(lendingPair.Book.BookAuthor, searchTerm)
+            || ContainsSearchTerm(lendingPair.LendingInfoList[lendingInfoIndex].BorrowerName, searchTerm);
     }
     private static bool ContainsSearchTerm(string source, string searchTerm)
     {
@@ -314,12 +310,12 @@ public static class SearchManager
     {
         LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
 
-        if (libraryData != null && libraryData.books != null)
+        if (libraryData != null && libraryData.Books != null)
         {
-            return libraryData.books.FirstOrDefault(existingBook =>
-                existingBook.bookTitle == bookTitle &&
-                existingBook.bookAuthor == authorName &&
-                (checkDifferentIsbn ? !existingBook.bookIsbn.Equals(isbn) : existingBook.bookIsbn.Equals(isbn)));
+            return libraryData.Books.FirstOrDefault(existingBook =>
+                existingBook.BookTitle == bookTitle &&
+                existingBook.BookAuthor == authorName &&
+                (checkDifferentIsbn ? !existingBook.BookIsbn.Equals(isbn) : existingBook.BookIsbn.Equals(isbn)));
         }
 
         return null;

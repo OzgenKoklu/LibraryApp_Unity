@@ -1,40 +1,37 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
+
 
 public class SingleBookListingTemplateUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("For general Listings")] //Some General purpose fields, author and count not needed for return panel
-    [SerializeField] private TextMeshProUGUI bookTitleText;
-    [SerializeField] private TextMeshProUGUI bookAuthorText;
-    [SerializeField] private TextMeshProUGUI bookCountText;
-    [SerializeField] private TextMeshProUGUI bookIsbnText;
+    [SerializeField] private TextMeshProUGUI _bookTitleText;
+    [SerializeField] private TextMeshProUGUI _bookAuthorText;
+    [SerializeField] private TextMeshProUGUI _bookCountText;
+    [SerializeField] private TextMeshProUGUI _bookIsbnText;
 
 
     [Header("List for all lent books list type")] //Needed to be asigned for panels where returning lent book functionality is available
-    [SerializeField] private TextMeshProUGUI borrowerNameText;
-    [SerializeField] private TextMeshProUGUI dueDateText;
+    [SerializeField] private TextMeshProUGUI _borrowerNameText;
+    [SerializeField] private TextMeshProUGUI _dueDateText;
 
-    [SerializeField] private Image selectedVisual;
+    [SerializeField] private Image _selectedVisual;
 
-    private BookData bookDataOnSingleTemplate;
-    private string returnCodeOnSingleTemplate;
-    private LendingInfoPairsSO.LendingPair lendingPairOnSingleTemplate;
-    private int lendingPairLendingListIndexSingleTemplate;
+    private BookData _bookDataOnSingleTemplate;
+    private string _returnCodeOnSingleTemplate;
+    private LendingInfoPairsSO.LendingPair _lendingPairOnSingleTemplate;
+    private int _lendingPairLendingListIndexSingleTemplate;
 
-    private Color dueDatePassedColor = Color.red;
-    private Color dueDateNotPassedColor = Color.green;
+    private Color _dueDatePassedColor = Color.red;
+    private Color _dueDateNotPassedColor = Color.green;
 
     private void Awake()
     {
-        bookDataOnSingleTemplate = null;
-        returnCodeOnSingleTemplate = null;
+        _bookDataOnSingleTemplate = null;
+        _returnCodeOnSingleTemplate = null;
     }
 
     private void Start()
@@ -44,22 +41,22 @@ public class SingleBookListingTemplateUI : MonoBehaviour, IPointerClickHandler
 
     public BookData GetBookData()
     {
-        return bookDataOnSingleTemplate;
+        return _bookDataOnSingleTemplate;
     }
 
     public string GetRetrunCode()
     {
-        return returnCodeOnSingleTemplate;
+        return _returnCodeOnSingleTemplate;
     }
 
     public LendingInfoPairsSO.LendingPair GetLendingPair()
     {
-        return lendingPairOnSingleTemplate;
+        return _lendingPairOnSingleTemplate;
     }
 
     public int GetLendingPairLendingListInfoIndex()
     {
-        return lendingPairLendingListIndexSingleTemplate;
+        return _lendingPairLendingListIndexSingleTemplate;
     }
     private void ListPanelUI_OnSelectedListItemChanged(object sender, ListPanelUI.OnSelectedListItemChangedEventArgs e)
     {
@@ -80,41 +77,41 @@ public class SingleBookListingTemplateUI : MonoBehaviour, IPointerClickHandler
     {
         if (isOn)
         {
-            selectedVisual.gameObject.SetActive(true);
+            _selectedVisual.gameObject.SetActive(true);
         }
         else
         {
-            selectedVisual.gameObject.SetActive(false);
+            _selectedVisual.gameObject.SetActive(false);
         }
     }
 
     public void SetBookDataForBasicListing(BookData bookData)
     {
-        bookDataOnSingleTemplate = bookData;
-        bookTitleText.text = bookData.bookTitle;
-        bookAuthorText.text = bookData.bookAuthor;
-        bookIsbnText.text = bookData.bookIsbn;
-        bookCountText.text = bookData.bookCount.ToString();
+        _bookDataOnSingleTemplate = bookData;
+        _bookTitleText.text = bookData.BookTitle;
+        _bookAuthorText.text = bookData.BookAuthor;
+        _bookIsbnText.text = bookData.BookIsbn;
+        _bookCountText.text = bookData.BookCount.ToString();
     }
 
     //Index approach is there for avoiding sending 2 classes in this basic function. I didnt want to send lendingInfo as a seperate parameter.
-    public void SetBookDataForReturningLentBook(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
+    public void SetBookDataLentBookList(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
     {
-        LendingInfo lendingInfo = lendingPair.lendingInfoList[lendingInfoListIndex];
+        LendingInfo lendingInfo = lendingPair.LendingInfoList[lendingInfoListIndex];
 
-        lendingPairOnSingleTemplate = lendingPair;
-        lendingPairLendingListIndexSingleTemplate = lendingInfoListIndex;
-        returnCodeOnSingleTemplate = lendingInfo.returnCode;
+        _lendingPairOnSingleTemplate = lendingPair;
+        _lendingPairLendingListIndexSingleTemplate = lendingInfoListIndex;
+        _returnCodeOnSingleTemplate = lendingInfo.ReturnCode;
 
-        bookTitleText.text = lendingPair.book.bookTitle;
-        bookAuthorText.text = lendingPair.book.bookAuthor;
-        borrowerNameText.text = lendingInfo.borrowerName;
+        _bookTitleText.text = lendingPair.Book.BookTitle;
+        _bookAuthorText.text = lendingPair.Book.BookAuthor;
+        _borrowerNameText.text = lendingInfo.BorrowerName;
 
-        DateTime expectedReturnDeserialized = new DateTime(lendingInfo.expectedReturnDateTicks);
+        DateTime expectedReturnDeserialized = new DateTime(lendingInfo.ExpectedReturnDateTicks);
 
         //change the color of the text according to due date passing or not passing 
-        dueDateText.color = (expectedReturnDeserialized <= DateTime.Now) ? dueDatePassedColor : dueDateNotPassedColor;
-        dueDateText.text = expectedReturnDeserialized.ToString("MM/dd/yyyy");
+        _dueDateText.color = (expectedReturnDeserialized <= DateTime.Now) ? _dueDatePassedColor : _dueDateNotPassedColor;
+        _dueDateText.text = expectedReturnDeserialized.ToString("MM/dd/yyyy");
 
        // returnButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair,lendingInfoListIndex));
     }

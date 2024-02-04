@@ -48,7 +48,7 @@ public static class ValidInputChecker
         LibraryDataSO libraryData = LibraryManager.Instance.GetLibraryData();
 
         // Check if the ISBN already exists in the library
-        if (libraryData.books.Any(book => book.bookIsbn == cleanedIsbn))
+        if (libraryData.Books.Any(book => book.BookIsbn == cleanedIsbn))
         {
             // If the ISBN already exists, return false
             return false;

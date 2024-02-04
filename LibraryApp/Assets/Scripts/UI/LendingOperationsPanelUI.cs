@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,32 +5,38 @@ public class LendingOperationsPanelUI : MonoBehaviour
 {
     public static LendingOperationsPanelUI Instance { get; private set; }
 
-    [SerializeField] private Button closeButton;
-    [SerializeField] private Button lendBookButton;
-    [SerializeField] private Button returnLentBookButton;
-    [SerializeField] private Button listAllLentBooksButton;
+    [SerializeField] private Button _closeButton;
+    [SerializeField] private Button _lendBookButton;
+    [SerializeField] private Button _returnLentBookButton;
+    [SerializeField] private Button _listAllLentBooksButton;
 
     private void Awake()
     {
         Instance = this;
-        closeButton.onClick.AddListener(Hide);
+        _closeButton.onClick.AddListener(Hide);
 
-        lendBookButton.onClick.AddListener(() =>
-        {
-            ListPanelUI.Instance.Show(ListPanelUI.ListType.LendABookList);
-        });
+        _lendBookButton.onClick.AddListener(ShowLendABookList);
 
-        returnLentBookButton.onClick.AddListener(() =>
-        {
-            PopupPanelUI.Instance.ShowBookReturningReturnCodePrompt();
-        });
+        _returnLentBookButton.onClick.AddListener(ShowBookReturningReturnCodePrompt);
 
-        listAllLentBooksButton.onClick.AddListener(() =>
-        {
-            ListPanelUI.Instance.Show(ListPanelUI.ListType.AllLentBooksList);
-        });
+        _listAllLentBooksButton.onClick.AddListener(ShowAllLentBooksList);
 
         Hide();
+    }
+
+    private void ShowLendABookList()
+    {
+        ListPanelUI.Instance.Show(ListPanelUI.ListType.LendABookList);
+    }
+
+    private void ShowBookReturningReturnCodePrompt()
+    {
+        PopupPanelUI.Instance.ShowBookReturningReturnCodePrompt();
+    }
+
+    private void ShowAllLentBooksList()
+    {
+        ListPanelUI.Instance.Show(ListPanelUI.ListType.AllLentBooksList);
     }
 
     public void Show()

@@ -1959,8 +1959,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf60d082838a60a40aa3d1764974bae9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  containerGameObject: {fileID: 298034821}
-  containerRect: {fileID: 298034821}
+  _containerGameObject: {fileID: 298034821}
+  _containerRect: {fileID: 298034821}
 --- !u!1 &292815030
 GameObject:
   m_ObjectHideFlags: 0
@@ -3122,8 +3122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b29f6bfca8edb41ab233976ef2a988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  libraryData: {fileID: 11400000, guid: 9dbc78a27dd343942b4b941572ac4d3c, type: 2}
-  lendingInfoPairsList: {fileID: 11400000, guid: 9a583c01337bc6e46b67d956e624c85c, type: 2}
+  _libraryData: {fileID: 11400000, guid: 9dbc78a27dd343942b4b941572ac4d3c, type: 2}
+  _lendingInfoPairsList: {fileID: 11400000, guid: 9a583c01337bc6e46b67d956e624c85c, type: 2}
 --- !u!4 &402758758
 Transform:
   m_ObjectHideFlags: 0
@@ -3628,12 +3628,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a2ea814b9a2e7d4b8c0fda406ed0ada, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 2027929487}
-  addBookButton: {fileID: 851177883}
-  addOrRemoveFromList: {fileID: 1108016092}
-  bookTitleInputField: {fileID: 695979265}
-  bookAuthorInputField: {fileID: 2002742893}
-  bookIsbnInputField: {fileID: 698098741}
+  _closeButton: {fileID: 2027929487}
+  _addBookButton: {fileID: 851177883}
+  _addOrRemoveFromList: {fileID: 1108016092}
+  _bookTitleInputField: {fileID: 695979265}
+  _bookAuthorInputField: {fileID: 2002742893}
+  _bookIsbnInputField: {fileID: 698098741}
 --- !u!1 &571223983
 GameObject:
   m_ObjectHideFlags: 0
@@ -6080,21 +6080,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1204ab23cbcf7045a05b6c59165870c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 571223985}
-  panelTitleText: {fileID: 1177021439}
-  searchResultsDetailsText: {fileID: 1458835123}
-  actionButton: {fileID: 997402478}
-  actionButtonText: {fileID: 1786821993}
-  searchButton: {fileID: 366757883}
-  searchTypeDropdown: {fileID: 1139669439}
-  searchTermInputField: {fileID: 838912770}
-  GeneralList: {fileID: 1604149784}
-  LentList: {fileID: 1286775844}
-  searchResultsContainer: {fileID: 2101162571}
-  singleBookListingTemplate: {fileID: 957781511}
-  lentListSearchResultsContainer: {fileID: 298034821}
-  lentListSingleBookListingTemplate: {fileID: 1811106900}
-  expiredDueDatesToggle: {fileID: 1080587689}
+  _closeButton: {fileID: 571223985}
+  _panelTitleText: {fileID: 1177021439}
+  _searchResultsDetailsText: {fileID: 1458835123}
+  _actionButton: {fileID: 997402478}
+  _actionButtonText: {fileID: 1786821993}
+  _searchButton: {fileID: 366757883}
+  _searchTypeDropdown: {fileID: 1139669439}
+  _searchTermInputField: {fileID: 838912770}
+  _generalList: {fileID: 1604149784}
+  _lentList: {fileID: 1286775844}
+  _searchResultsContainer: {fileID: 2101162571}
+  _singleBookListingTemplate: {fileID: 957781511}
+  _lentListSearchResultsContainer: {fileID: 298034821}
+  _lentListSingleBookListingTemplate: {fileID: 1811106900}
+  _expiredDueDatesToggle: {fileID: 1080587689}
 --- !u!1 &778973607
 GameObject:
   m_ObjectHideFlags: 0
@@ -6191,17 +6191,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68e9edc5ba3de2c43abbbeb8ff6c70d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 1155085955}
-  titleText: {fileID: 849892213}
-  mainText: {fileID: 665880519}
-  popupPanelInputField: {fileID: 1835927078}
-  actionButton: {fileID: 1057212593}
-  actionButtonText: {fileID: 1265120881}
-  addOrRemoveBookSubpanel: {fileID: 1122053259}
-  removeListingButton: {fileID: 384803697}
-  plusButton: {fileID: 1759116104}
-  minusButton: {fileID: 1529028264}
-  bookCountInputField: {fileID: 2055601240}
+  _closeButton: {fileID: 1155085955}
+  _titleText: {fileID: 849892213}
+  _mainText: {fileID: 665880519}
+  _popupPanelInputField: {fileID: 1835927078}
+  _actionButton: {fileID: 1057212593}
+  _actionButtonText: {fileID: 1265120881}
+  _addOrRemoveBookSubpanel: {fileID: 1122053259}
+  _removeListingButton: {fileID: 384803697}
+  _plusButton: {fileID: 1759116104}
+  _minusButton: {fileID: 1529028264}
+  _bookCountInputField: {fileID: 2055601240}
+  _windowTint: {fileID: 1434967593}
+  _defaultWindowTintColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.6901961}
+  _errorWindowTintColor: {r: 0.8584906, g: 0, b: 0, a: 0.8862745}
+  _successWindowTintColor: {r: 0.12375231, g: 0.9056604, b: 0, a: 0.6901961}
+  _warningWindowTintColor: {r: 0.91764706, g: 0.6689558, b: 0, a: 0.8156863}
 --- !u!1 &815276459
 GameObject:
   m_ObjectHideFlags: 0
@@ -7029,11 +7034,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdadf52e42e1a24db1ffcab8e29d018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addOrRemoveBookButton: {fileID: 2676399}
-  listAndSearchBooksButton: {fileID: 958959527}
-  lendingOperationsButton: {fileID: 542870316}
-  dataOperationsButton: {fileID: 718829114}
-  aboutProjectButton: {fileID: 1573035775}
+  _addOrRemoveBookButton: {fileID: 2676399}
+  _listAndSearchBooksButton: {fileID: 958959527}
+  _lendingOperationsButton: {fileID: 542870316}
+  _dataOperationsButton: {fileID: 718829114}
+  _aboutProjectButton: {fileID: 1573035775}
 --- !u!1 &848075833
 GameObject:
   m_ObjectHideFlags: 0
@@ -7946,13 +7951,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fab4ef1371cd53148bbb9bbea10dccd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bookTitleText: {fileID: 1905627629}
-  bookAuthorText: {fileID: 1641714609}
-  bookCountText: {fileID: 832518799}
-  bookIsbnText: {fileID: 207578261}
-  borrowerNameText: {fileID: 0}
-  dueDateText: {fileID: 0}
-  selectedVisual: {fileID: 1757032816}
+  _bookTitleText: {fileID: 1905627629}
+  _bookAuthorText: {fileID: 1641714609}
+  _bookCountText: {fileID: 832518799}
+  _bookIsbnText: {fileID: 207578261}
+  _borrowerNameText: {fileID: 0}
+  _dueDateText: {fileID: 0}
+  _selectedVisual: {fileID: 1757032816}
 --- !u!114 &957781513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12151,8 +12156,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf60d082838a60a40aa3d1764974bae9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  containerGameObject: {fileID: 2101162571}
-  containerRect: {fileID: 2101162571}
+  _containerGameObject: {fileID: 2101162571}
+  _containerRect: {fileID: 2101162571}
 --- !u!1 &1347181199
 GameObject:
   m_ObjectHideFlags: 0
@@ -14576,10 +14581,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec4a19dbb7861c8499ae31ee437968c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 1982298911}
-  lendBookButton: {fileID: 861848316}
-  returnLentBookButton: {fileID: 831967196}
-  listAllLentBooksButton: {fileID: 1943447578}
+  _closeButton: {fileID: 1982298911}
+  _lendBookButton: {fileID: 861848316}
+  _returnLentBookButton: {fileID: 831967196}
+  _listAllLentBooksButton: {fileID: 1943447578}
 --- !u!1 &1696976738
 GameObject:
   m_ObjectHideFlags: 0
@@ -15376,7 +15381,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 72443771}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.6315659
+  m_Size: 0.631566
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -15650,10 +15655,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37ae241892093fd47a4ea0b991bdd6b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 1493834580}
-  importFromJsonButton: {fileID: 2103252258}
-  exportToJsonButton: {fileID: 639788835}
-  deleteLibraryDataButton: {fileID: 1462632652}
+  _closeButton: {fileID: 1493834580}
+  _importFromJsonButton: {fileID: 2103252258}
+  _exportToJsonButton: {fileID: 639788835}
+  _deleteLibraryDataButton: {fileID: 1462632652}
 --- !u!1 &1786821991
 GameObject:
   m_ObjectHideFlags: 0
@@ -15846,13 +15851,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fab4ef1371cd53148bbb9bbea10dccd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bookTitleText: {fileID: 1871533243}
-  bookAuthorText: {fileID: 998713747}
-  bookCountText: {fileID: 0}
-  bookIsbnText: {fileID: 0}
-  borrowerNameText: {fileID: 2117296560}
-  dueDateText: {fileID: 1708414280}
-  selectedVisual: {fileID: 35744177}
+  _bookTitleText: {fileID: 1871533243}
+  _bookAuthorText: {fileID: 998713747}
+  _bookCountText: {fileID: 0}
+  _bookIsbnText: {fileID: 0}
+  _borrowerNameText: {fileID: 2117296560}
+  _dueDateText: {fileID: 1708414280}
+  _selectedVisual: {fileID: 35744177}
 --- !u!114 &1811106902
 MonoBehaviour:
   m_ObjectHideFlags: 0

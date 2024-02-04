@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static LendingInfoPairsSO;
 
 public class ListPanelUI : MonoBehaviour
 {
@@ -17,59 +15,59 @@ public class ListPanelUI : MonoBehaviour
     }
     public static ListPanelUI Instance { get; private set; }
 
-    private const string ALL_BOOKS_TITLE_TEXT = "All Books";
-    private const string LEND_A_BOOK_TITLE_TEXT = "Lend A Book";
-    private const string ADD_OR_REMOVE_A_BOOK_TITLE_TEXT = "Add or Remove An Existing Book";
-    private const string ALL_LENT_BOOKS_TITLE_TEXT = "List of all Lent Books";
+    private const string AllBooksPanelTitleText = "All Books";
+    private const string LendABookPanelTitleText = "Lend A Book";
+    private const string AddOrRemoveABookPanelTitleText = "Add or Remove An Existing Book";
+    private const string AllLentBooksPanelTitleText = "List of all Lent Books";
 
-    private const string ACTION_BUTTON_LEND_TEXT = "Lend";
-    private const string ACTION_BUTTON_RETURN_TEXT = "Return";
-    private const string ACTION_BUTTON_ADD_OR_REMOVE_TEXT = "Add or\nRemove";
+    private const string ActionButtonLendText = "Lend";
+    private const string ActionButtonReturnText = "Return";
+    private const string ActionButtonAddOrRemoveText = "Add or\nRemove";
 
     public event EventHandler<OnSelectedListItemChangedEventArgs> OnSelectedListItemChanged;
     public class OnSelectedListItemChangedEventArgs : EventArgs { public SingleBookListingTemplateUI selectedListItemTemplate; };
 
-    [SerializeField] private Button closeButton;
-    [SerializeField] private TextMeshProUGUI panelTitleText;
-    [SerializeField] private TextMeshProUGUI searchResultsDetailsText;
+    [SerializeField] private Button _closeButton;
+    [SerializeField] private TextMeshProUGUI _panelTitleText;
+    [SerializeField] private TextMeshProUGUI _searchResultsDetailsText;
 
     //Action button will act differently in different states, for example it will work as lend button or return button and so forth, hence the "obscure" name
-    [SerializeField] private Button actionButton;
-    [SerializeField] private TextMeshProUGUI actionButtonText;
+    [SerializeField] private Button _actionButton;
+    [SerializeField] private TextMeshProUGUI _actionButtonText;
 
-    [SerializeField] private Button searchButton;
-    [SerializeField] private TMP_Dropdown searchTypeDropdown;
-    [SerializeField] private TMP_InputField searchTermInputField;
+    [SerializeField] private Button _searchButton;
+    [SerializeField] private TMP_Dropdown _searchTypeDropdown;
+    [SerializeField] private TMP_InputField _searchTermInputField;
 
     //Legend And Vertical Layout Groups that include the listing templates
-    [SerializeField] private Transform GeneralList;
-    [SerializeField] private Transform LentList;
+    [SerializeField] private Transform _generalList;
+    [SerializeField] private Transform _lentList;
 
     //For Generic List
-    [SerializeField] private Transform searchResultsContainer;
-    [SerializeField] private Transform singleBookListingTemplate;
+    [SerializeField] private Transform _searchResultsContainer;
+    [SerializeField] private Transform _singleBookListingTemplate;
 
 
     //For All Lent Books - Return List 
-    [SerializeField] private Transform lentListSearchResultsContainer;
-    [SerializeField] private Transform lentListSingleBookListingTemplate;
-    [SerializeField] private Toggle expiredDueDatesToggle;
+    [SerializeField] private Transform _lentListSearchResultsContainer;
+    [SerializeField] private Transform _lentListSingleBookListingTemplate;
+    [SerializeField] private Toggle _expiredDueDatesToggle;
 
-    private ListType currentListType;
-    private SingleBookListingTemplateUI selectedListing;
+    private ListType _currentListType;
+    private SingleBookListingTemplateUI _selectedListing;
 
     private void Awake()
     {
         Instance = this;
-        closeButton.onClick.AddListener(Hide);
+        _closeButton.onClick.AddListener(Hide);
 
-        searchButton.onClick.AddListener(() =>
+        _searchButton.onClick.AddListener(() =>
         {
             OnSearchButtonClicked();
         });
 
-        singleBookListingTemplate.gameObject.SetActive(false);
-        lentListSingleBookListingTemplate.gameObject.SetActive(false);
+        _singleBookListingTemplate.gameObject.SetActive(false);
+        _lentListSingleBookListingTemplate.gameObject.SetActive(false);
 
         Hide();
     }
@@ -81,7 +79,7 @@ public class ListPanelUI : MonoBehaviour
         gameObject.SetActive(true);
 
         //sets current list type so that we will unsub from the right events
-        currentListType = listType;
+        _currentListType = listType;
         SetDropdownOptions(listType);
 
         ChangeLegendAndContainerType(listType);
@@ -90,37 +88,37 @@ public class ListPanelUI : MonoBehaviour
         switch (listType)
         {
             case ListType.AllBooksList:
-                panelTitleText.text = ALL_BOOKS_TITLE_TEXT;
-                actionButton.gameObject.SetActive(false);
+                _panelTitleText.text = AllBooksPanelTitleText;
+                _actionButton.gameObject.SetActive(false);
                 //Load AllBooks Script 
-                UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().books);
+                UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().Books);
 
 
                 break;
             case ListType.LendABookList:
-                panelTitleText.text = LEND_A_BOOK_TITLE_TEXT;
-                actionButton.gameObject.SetActive(true);
+                _panelTitleText.text = LendABookPanelTitleText;
+                _actionButton.gameObject.SetActive(true);
 
-                actionButtonText.text = ACTION_BUTTON_LEND_TEXT;
+                _actionButtonText.text = ActionButtonLendText;
 
 
-                List<BookData> availableBookDataList = SearchManager.GetAvailableBooks(LibraryManager.Instance.GetLibraryData().books);
+                List<BookData> availableBookDataList = SearchManager.GetAvailableBooks(LibraryManager.Instance.GetLibraryData().Books);
                 UpdateSearchResultList(availableBookDataList);
 
 
                 LibraryManager.Instance.OnLibraryDataUpdatedForLists += LibraryManager_OnBookLendingSuccessful;
-                actionButton.onClick.AddListener(() => OnLendButtonClick(selectedListing));
+                _actionButton.onClick.AddListener(() => OnLendButtonClick(_selectedListing));
 
                 break;
 
             //in this list you can return the books so the button is repurposed as a return button
             case ListType.AllLentBooksList:
-                panelTitleText.text = ALL_LENT_BOOKS_TITLE_TEXT;
-                actionButton.gameObject.SetActive(true);
+                _panelTitleText.text = AllLentBooksPanelTitleText;
+                _actionButton.gameObject.SetActive(true);
 
-                actionButtonText.text = ACTION_BUTTON_RETURN_TEXT;
-                expiredDueDatesToggle.isOn = false;
-                expiredDueDatesToggle.onValueChanged.AddListener(UpdateBookListForLentBooks);
+                _actionButtonText.text = ActionButtonReturnText;
+                _expiredDueDatesToggle.isOn = false;
+                _expiredDueDatesToggle.onValueChanged.AddListener(UpdateBookListForLentBooks);
 
                 LendingInfoPairsSO allLentBooksList = LibraryManager.Instance.GetLendingInfoPairs();
                 UpdateBookListForLentBooks(allLentBooksList);
@@ -130,18 +128,18 @@ public class ListPanelUI : MonoBehaviour
 
                 LendingInfoPairsSO.LendingPair lendingPair = new LendingInfoPairsSO.LendingPair();
                 int lendingInfoIndex = 0;
-                actionButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair, lendingInfoIndex));
+                _actionButton.onClick.AddListener(() => OnReturnButtonClick(lendingPair, lendingInfoIndex));
 
                 break;
 
             case ListType.AddOrRemovePanelList:
-                panelTitleText.text = ADD_OR_REMOVE_A_BOOK_TITLE_TEXT;
-                actionButton.gameObject.SetActive(true);
-                actionButtonText.text = ACTION_BUTTON_ADD_OR_REMOVE_TEXT;
+                _panelTitleText.text = AddOrRemoveABookPanelTitleText;
+                _actionButton.gameObject.SetActive(true);
+                _actionButtonText.text = ActionButtonAddOrRemoveText;
 
-                UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().books);
+                UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().Books);
                 LibraryManager.Instance.OnLibraryDataUpdatedForLists += LibraryManager_OnListDataUpdated;
-                actionButton.onClick.AddListener(() => OnAddOrRemoveButtonClick(selectedListing));
+                _actionButton.onClick.AddListener(() => OnAddOrRemoveButtonClick(_selectedListing));
 
                 break;
         }
@@ -149,34 +147,34 @@ public class ListPanelUI : MonoBehaviour
     public void Hide()
     {
         //search toggle reset
-        selectedListing = null;
+        _selectedListing = null;
 
-        if (currentListType == ListType.AllLentBooksList)
+        if (_currentListType == ListType.AllLentBooksList)
         {
-            expiredDueDatesToggle.onValueChanged.RemoveAllListeners();
-            actionButton.onClick.RemoveAllListeners();
+            _expiredDueDatesToggle.onValueChanged.RemoveAllListeners();
+            _actionButton.onClick.RemoveAllListeners();
             LibraryManager.Instance.OnLibraryDataUpdatedForLists -= LibraryManager_OnReturnFromListSuccessful;
         }
-        if (currentListType == ListType.LendABookList)
+        if (_currentListType == ListType.LendABookList)
         {
             LibraryManager.Instance.OnLibraryDataUpdatedForLists -= LibraryManager_OnBookLendingSuccessful;
-            actionButton.onClick.RemoveAllListeners();
+            _actionButton.onClick.RemoveAllListeners();
         }
-        if (currentListType == ListType.AddOrRemovePanelList)
+        if (_currentListType == ListType.AddOrRemovePanelList)
         {
             LibraryManager.Instance.OnLibraryDataUpdatedForLists -= LibraryManager_OnListDataUpdated;
-            actionButton.onClick.RemoveAllListeners();
+            _actionButton.onClick.RemoveAllListeners();
         }
 
 
-        searchTermInputField.text = "";
+        _searchTermInputField.text = "";
         gameObject.SetActive(false);
     }
 
     #region General Purpose Methods 
     public void ChangeSelectedListing(SingleBookListingTemplateUI selectedListing)
     {
-        this.selectedListing = selectedListing;
+        this._selectedListing = selectedListing;
 
         OnSelectedListItemChanged?.Invoke(this, new OnSelectedListItemChangedEventArgs
         {
@@ -186,12 +184,12 @@ public class ListPanelUI : MonoBehaviour
     private void OnSearchButtonClicked()
     {
         //Only "All Lent books" uses a different container and different search type 
-        if (currentListType == ListType.AllLentBooksList)
+        if (_currentListType == ListType.AllLentBooksList)
         {
             SearchCriteriaSO searchCriteria = ScriptableObject.CreateInstance<SearchCriteriaSO>();
-            searchCriteria.searchTypeLentList = (SearchManager.SearchTypeLentListing)Enum.Parse(typeof(SearchManager.SearchTypeLentListing), searchTypeDropdown.options[searchTypeDropdown.value].text.Replace(" ", ""));
-            searchCriteria.searchTerm = searchTermInputField.text;
-            searchCriteria.isExpiredLent = expiredDueDatesToggle.isOn;
+            searchCriteria.SearchTypeLentList = (SearchManager.SearchTypeLentListing)Enum.Parse(typeof(SearchManager.SearchTypeLentListing), _searchTypeDropdown.options[_searchTypeDropdown.value].text.Replace(" ", ""));
+            searchCriteria.SearchTerm = _searchTermInputField.text;
+            searchCriteria.IsExpiredLent = _expiredDueDatesToggle.isOn;
 
             //perform Search from Lending info list (Not through book data)
             List<LendingInfoPairsSO.LendingPair> searchResults = SearchManager.PerformLendingInfoPairsSearch(searchCriteria);
@@ -202,12 +200,12 @@ public class ListPanelUI : MonoBehaviour
         {
             SearchCriteriaSO searchCriteria = ScriptableObject.CreateInstance<SearchCriteriaSO>();
             //Now we need to remove spaces we added just for the UI.
-            searchCriteria.searchTypeGeneral = (SearchManager.SearchTypeGeneralListing)Enum.Parse(typeof(SearchManager.SearchTypeGeneralListing), searchTypeDropdown.options[searchTypeDropdown.value].text.Replace(" ", ""));
-            searchCriteria.searchTerm = searchTermInputField.text;
+            searchCriteria.SearchTypeGeneral = (SearchManager.SearchTypeGeneralListing)Enum.Parse(typeof(SearchManager.SearchTypeGeneralListing), _searchTypeDropdown.options[_searchTypeDropdown.value].text.Replace(" ", ""));
+            searchCriteria.SearchTerm = _searchTermInputField.text;
 
-            if (currentListType == ListType.LendABookList)
+            if (_currentListType == ListType.LendABookList)
             {
-                searchCriteria.isAvailable = true;
+                searchCriteria.IsAvailable = true;
             }
 
             // Call the SearchManager to perform the search
@@ -220,12 +218,12 @@ public class ListPanelUI : MonoBehaviour
 
     private void LibraryManager_OnBookLendingSuccessful(object sender, System.EventArgs e)
     {
-        UpdateSearchResultList(SearchManager.GetAvailableBooks(LibraryManager.Instance.GetLibraryData().books));
+        UpdateSearchResultList(SearchManager.GetAvailableBooks(LibraryManager.Instance.GetLibraryData().Books));
     }
 
 
 
-    string AddSpaceBeforeUpperCase(string input)
+    private string AddSpaceBeforeUpperCase(string input)
     {
         // Add a space before each uppercase letter in the string
         System.Text.StringBuilder modifiedString = new System.Text.StringBuilder();
@@ -247,20 +245,20 @@ public class ListPanelUI : MonoBehaviour
         //AllLentBooks uses different Legend/templates thus this code sets on/off the right template
         if (listType == ListType.AllLentBooksList)
         {
-            LentList.gameObject.SetActive(true);
-            GeneralList.gameObject.SetActive(false);
+            _lentList.gameObject.SetActive(true);
+            _generalList.gameObject.SetActive(false);
         }
         else
         {
-            GeneralList.gameObject.SetActive(true);
-            LentList.gameObject.SetActive(false);
+            _generalList.gameObject.SetActive(true);
+            _lentList.gameObject.SetActive(false);
         }
     }
     private void SetDropdownOptions(ListType listType)
     {
         // Only "All Lent books" list have a different category, can search borrower name
         // Clear existing options
-        searchTypeDropdown.ClearOptions();
+        _searchTypeDropdown.ClearOptions();
 
         if (listType == ListType.AllLentBooksList)
         {
@@ -273,7 +271,7 @@ public class ListPanelUI : MonoBehaviour
                 searchTypeOptions[i] = AddSpaceBeforeUpperCase(searchTypeOptions[i]);
             }
             // Add new options
-            searchTypeDropdown.AddOptions(new List<string>(searchTypeOptions));
+            _searchTypeDropdown.AddOptions(new List<string>(searchTypeOptions));
         }
         else
         {
@@ -286,7 +284,7 @@ public class ListPanelUI : MonoBehaviour
                 searchTypeOptions[i] = AddSpaceBeforeUpperCase(searchTypeOptions[i]);
             }
             // Add new options
-            searchTypeDropdown.AddOptions(new List<string>(searchTypeOptions));
+            _searchTypeDropdown.AddOptions(new List<string>(searchTypeOptions));
         }
 
     }
@@ -296,9 +294,9 @@ public class ListPanelUI : MonoBehaviour
     #region Book List Methods
     private void UpdateSearchResultList(List<BookData> bookDataList)
     {
-        foreach (Transform child in searchResultsContainer)
+        foreach (Transform child in _searchResultsContainer)
         {
-            if (child == singleBookListingTemplate) continue;
+            if (child == _singleBookListingTemplate) continue;
             Destroy(child.gameObject);
         }
 
@@ -306,19 +304,19 @@ public class ListPanelUI : MonoBehaviour
         foreach (BookData result in bookDataList)
         {
             totalUniqueBookCount++;
-            Transform bookListingTransform = Instantiate(singleBookListingTemplate, searchResultsContainer);
+            Transform bookListingTransform = Instantiate(_singleBookListingTemplate, _searchResultsContainer);
             bookListingTransform.gameObject.SetActive(true);
             bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataForBasicListing(result);
         }
 
         //update this line, more info is better
-        searchResultsDetailsText.text = $"{totalUniqueBookCount} book(s) found.";
+        _searchResultsDetailsText.text = $"{totalUniqueBookCount} book(s) found.";
 
     }
  
     private void LibraryManager_OnListDataUpdated(object sender, EventArgs e)
     {
-        UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().books);
+        UpdateSearchResultList(LibraryManager.Instance.GetLibraryData().Books);
     }
     private void OnAddOrRemoveButtonClick(SingleBookListingTemplateUI listing)
     {
@@ -331,7 +329,7 @@ public class ListPanelUI : MonoBehaviour
 
         BookData tempBook = listing.GetBookData();
 
-        string promptMessage = $"You can increase or decrease the number of copies of '{tempBook.bookTitle}' (ISBN: '{tempBook.bookIsbn}') or remove the data related with it completely including the lending data. To cancel the operation, you can press 'X'.\nCurrent number of copies: '{tempBook.bookCount}'";
+        string promptMessage = $"You can increase or decrease the number of copies of '{tempBook.BookTitle}' (ISBN: '{tempBook.BookIsbn}') or remove the data related with it completely including the lending data. To cancel the operation, you can press 'X'.\nCurrent number of copies: '{tempBook.BookCount}'";
 
         PopupPanelUI.Instance.ShowAddOrRemoveBookPanel(tempBook, promptMessage);
     }
@@ -347,7 +345,7 @@ public class ListPanelUI : MonoBehaviour
 
         BookData tempBook = listing.GetBookData();
 
-        string promptMessage = $"You are about to borrow the book titled '{tempBook.bookTitle}' by '{tempBook.bookAuthor}' (ISBN: '{tempBook.bookIsbn}'). The borrower is obliged to return the book within 1 month. To cancel the operation, you can press 'X'. To continue, please enter the borrower's name:";
+        string promptMessage = $"You are about to borrow the book titled '{tempBook.BookTitle}' by '{tempBook.BookAuthor}' (ISBN: '{tempBook.BookIsbn}'). The borrower is obliged to return the book within 1 month. To cancel the operation, you can press 'X'. To continue, please enter the borrower's name:";
 
         PopupPanelUI.Instance.ShowBookLendingBorrowerNamePrompt(promptMessage, tempBook);
 
@@ -358,9 +356,9 @@ public class ListPanelUI : MonoBehaviour
     #region Lent List Methods
     private void UpdateBookListForLentBooks(List<LendingInfoPairsSO.LendingPair> lendingInfoPairs)
     {
-        foreach (Transform child in lentListSearchResultsContainer)
+        foreach (Transform child in _lentListSearchResultsContainer)
         {
-            if (child == lentListSingleBookListingTemplate) continue;
+            if (child == _lentListSingleBookListingTemplate) continue;
             Destroy(child.gameObject);
         }
 
@@ -369,12 +367,12 @@ public class ListPanelUI : MonoBehaviour
         foreach (LendingInfoPairsSO.LendingPair lendingPair in lendingInfoPairs)
         {
             int lendInfoIndex = 0;
-            foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+            foreach (LendingInfo lendingInfo in lendingPair.LendingInfoList)
             {
                 totalLentEntries++;
-                Transform bookListingTransform = Instantiate(lentListSingleBookListingTemplate, lentListSearchResultsContainer);
+                Transform bookListingTransform = Instantiate(_lentListSingleBookListingTemplate, _lentListSearchResultsContainer);
                 bookListingTransform.gameObject.SetActive(true);
-                bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataForReturningLentBook(lendingPair, lendInfoIndex);
+                bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataLentBookList(lendingPair, lendInfoIndex);
                 lendInfoIndex++;
             }
         }
@@ -386,26 +384,26 @@ public class ListPanelUI : MonoBehaviour
     {
         LendingInfoPairsSO allLentBooksList = LibraryManager.Instance.GetLendingInfoPairs();
         UpdateBookListForLentBooks(allLentBooksList);
-        UpdateBookListForLentBooks(expiredDueDatesToggle.isOn);
+        UpdateBookListForLentBooks(_expiredDueDatesToggle.isOn);
     }
     private void OnReturnButtonClick(LendingInfoPairsSO.LendingPair lendingPair, int lendingInfoListIndex)
     {
-        if (selectedListing == null)
+        if (_selectedListing == null)
         {
             string errorMessage = "Select a book first.";
             PopupPanelUI.Instance.ShowError(errorMessage);
             return;
         }
 
-        lendingPair = selectedListing.GetLendingPair();
-        lendingInfoListIndex = selectedListing.GetLendingPairLendingListInfoIndex();
-        string returnConfirmationMessage = $"You are about to return {lendingPair.book.bookTitle} borrowed by {lendingPair.lendingInfoList[lendingInfoListIndex].borrowerName}. Press X to cancel or Confirm to proceed.";
+        lendingPair = _selectedListing.GetLendingPair();
+        lendingInfoListIndex = _selectedListing.GetLendingPairLendingListInfoIndex();
+        string returnConfirmationMessage = $"You are about to return {lendingPair.Book.BookTitle} borrowed by {lendingPair.LendingInfoList[lendingInfoListIndex].BorrowerName}. Press X to cancel or Confirm to proceed.";
 
 
         //passing in function as a delegate for the next UI pop Up to trigger, we can actually use the return code now that we have a function to get the return code. may simplify things
         PopupPanelUI.Instance.ShowResponse(returnConfirmationMessage, () =>
 
-        LibraryManager.Instance.TryReturnLentBookFromTheList(lendingPair.lendingInfoList[lendingInfoListIndex])
+        LibraryManager.Instance.TryReturnLentBookFromTheList(lendingPair.LendingInfoList[lendingInfoListIndex])
 
         );
 
@@ -419,27 +417,27 @@ public class ListPanelUI : MonoBehaviour
         if (isExpired)
         {
             //List only the expired books
-            foreach (Transform child in lentListSearchResultsContainer)
+            foreach (Transform child in _lentListSearchResultsContainer)
             {
-                if (child == lentListSingleBookListingTemplate) continue;
+                if (child == _lentListSingleBookListingTemplate) continue;
                 Destroy(child.gameObject);
             }
 
             int totalLentEntries = 0;
 
             //
-            List<LendingInfoPairsSO.LendingPair> allLentBooks = LibraryManager.Instance.GetLendingInfoPairs().lendingPairs;
+            List<LendingInfoPairsSO.LendingPair> allLentBooks = LibraryManager.Instance.GetLendingInfoPairs().LendingPairs;
             List<LendingInfoPairsSO.LendingPair> expiredLendingPairs = SearchManager.GetExpiredBooks(allLentBooks);
 
             foreach (LendingInfoPairsSO.LendingPair lendingPair in expiredLendingPairs)
             {
                 int lendInfoIndex = 0;
-                foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+                foreach (LendingInfo lendingInfo in lendingPair.LendingInfoList)
                 {
                     totalLentEntries++;
-                    Transform bookListingTransform = Instantiate(lentListSingleBookListingTemplate, lentListSearchResultsContainer);
+                    Transform bookListingTransform = Instantiate(_lentListSingleBookListingTemplate, _lentListSearchResultsContainer);
                     bookListingTransform.gameObject.SetActive(true);
-                    bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataForReturningLentBook(lendingPair, lendInfoIndex);
+                    bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataLentBookList(lendingPair, lendInfoIndex);
                     lendInfoIndex++;
                 }
             }
@@ -449,9 +447,9 @@ public class ListPanelUI : MonoBehaviour
         else
         {
             //list all the books
-            foreach (Transform child in lentListSearchResultsContainer)
+            foreach (Transform child in _lentListSearchResultsContainer)
             {
-                if (child == lentListSingleBookListingTemplate) continue;
+                if (child == _lentListSingleBookListingTemplate) continue;
                 Destroy(child.gameObject);
             }
 
@@ -459,15 +457,15 @@ public class ListPanelUI : MonoBehaviour
 
             LendingInfoPairsSO LendingInfoPairs = LibraryManager.Instance.GetLendingInfoPairs();
 
-            foreach (LendingInfoPairsSO.LendingPair lendingPair in LendingInfoPairs.lendingPairs)
+            foreach (LendingInfoPairsSO.LendingPair lendingPair in LendingInfoPairs.LendingPairs)
             {
                 int lendInfoIndex = 0;
-                foreach (LendingInfo lendingInfo in lendingPair.lendingInfoList)
+                foreach (LendingInfo lendingInfo in lendingPair.LendingInfoList)
                 {
                     totalLentEntries++;
-                    Transform bookListingTransform = Instantiate(lentListSingleBookListingTemplate, lentListSearchResultsContainer);
+                    Transform bookListingTransform = Instantiate(_lentListSingleBookListingTemplate, _lentListSearchResultsContainer);
                     bookListingTransform.gameObject.SetActive(true);
-                    bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataForReturningLentBook(lendingPair, lendInfoIndex);
+                    bookListingTransform.GetComponent<SingleBookListingTemplateUI>().SetBookDataLentBookList(lendingPair, lendInfoIndex);
                     lendInfoIndex++;
                 }
             }
@@ -479,7 +477,7 @@ public class ListPanelUI : MonoBehaviour
 
     private void UpdateListDetailsTextForLentBooks(int totalLentEntries)
     {
-        searchResultsDetailsText.text = $"Total Lent Books: {totalLentEntries}";
+        _searchResultsDetailsText.text = $"Total Lent Books: {totalLentEntries}";
     }
 
 

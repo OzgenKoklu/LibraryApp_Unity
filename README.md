@@ -1,6 +1,6 @@
-# VeloGames_Unity_LibraryApp
+# VeloGames - Library App made with Unity Game Engine
 
-Unity 2022.3.0f1 LTS 
+Made with Unity 2022.3.0f1 LTS 
 
 ----------
 <!-- TABLE OF SECTIONS -->
@@ -47,7 +47,7 @@ Remade the whole UI setup to handle most operations in PopupPanelUI and ListPane
 <!-- Technical Details -->
 ## Technical Details
 
--Uses state machine to contextually arrange list / popup windows
+-Uses state machine to contextually arrange list / popup windows and searchManager.cs
 
 -Uses scriptable objects for data persistance (in editor only)
 
@@ -55,7 +55,7 @@ Remade the whole UI setup to handle most operations in PopupPanelUI and ListPane
 
 Feedback Optimizations: 
 
-
+-Naming conventions altered. Changed Unity's naming conventions to C# standards and conventions.
 
 -AssetDatabase usage revoked. Now altered the json import/export feature to handle saves on program start / closure to make the build possible.
 

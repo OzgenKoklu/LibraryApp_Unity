@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,10 +7,10 @@ public class LendingInfoPairsSO : ScriptableObject
     [System.Serializable]
     public class LendingPair
     {
-        public BookData book;
-        public int totalLendedBookCount;
-        public List<LendingInfo> lendingInfoList = new List<LendingInfo>();
+        public BookData Book;
+        //public int TotalLentBookCount;
+        public List<LendingInfo> LendingInfoList = new List<LendingInfo>();
     }
 
-    [SerializeField] public List<LendingPair> lendingPairs = new List<LendingPair>();
+    [SerializeField] public List<LendingPair> LendingPairs = new List<LendingPair>();
 }

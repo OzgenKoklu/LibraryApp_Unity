@@ -1,86 +1,165 @@
 {
-    "libraryData": {
-        "books": [
+    "LibraryData": {
+        "Books": [
             {
-                "bookTitle": "Pokemon Nas�l Avlan�r?",
-                "bookAuthor": "E� Ke��m",
-                "bookIsbn": "3424125533121",
-                "bookCount": 3
+                "BookTitle": "asdsa",
+                "BookAuthor": "asdas",
+                "BookIsbn": "1234345622",
+                "BookCount": 22
             },
             {
-                "bookTitle": "Kapitalist Ger�eklik",
-                "bookAuthor": "Mark Fisher",
-                "bookIsbn": "1235739485723",
-                "bookCount": 1
+                "BookTitle": "sad",
+                "BookAuthor": "asd",
+                "BookIsbn": "1231234323",
+                "BookCount": 23
             },
             {
-                "bookTitle": "LOTR 1",
-                "bookAuthor": "Tolkien  JRR",
-                "bookIsbn": "1245650489343",
-                "bookCount": 2
+                "BookTitle": "asda ",
+                "BookAuthor": "asda s",
+                "BookIsbn": "3456765545",
+                "BookCount": 32
             },
             {
-                "bookTitle": "hasan h�seyin roman�",
-                "bookAuthor": "hasan h�seyin",
-                "bookIsbn": "1029530459243",
-                "bookCount": 2
+                "BookTitle": "asdasd123",
+                "BookAuthor": "123",
+                "BookIsbn": "2346789099",
+                "BookCount": 0
             },
             {
-                "bookTitle": "Roman 1 ",
-                "bookAuthor": "Roman Yazar�",
-                "bookIsbn": "2456453454241",
-                "bookCount": 1
+                "BookTitle": "asa",
+                "BookAuthor": "123",
+                "BookIsbn": "1234432234",
+                "BookCount": 434
             },
             {
-                "bookTitle": "R�ya Roman�",
-                "bookAuthor": "Hasan Tahsin",
-                "bookIsbn": "1111111111111",
-                "bookCount": 1
+                "BookTitle": "asdfa",
+                "BookAuthor": "123",
+                "BookIsbn": "4323234423",
+                "BookCount": 3266
             },
             {
-                "bookTitle": "asd",
-                "bookAuthor": "asd",
-                "bookIsbn": "1111111111112",
-                "bookCount": 3
+                "BookTitle": "asdfa",
+                "BookAuthor": "212",
+                "BookIsbn": "3234232233223",
+                "BookCount": 32
+            },
+            {
+                "BookTitle": "asaa",
+                "BookAuthor": "asaaa",
+                "BookIsbn": "2333323233",
+                "BookCount": 1
+            },
+            {
+                "BookTitle": "asdga",
+                "BookAuthor": "123",
+                "BookIsbn": "1322232232",
+                "BookCount": 24
+            },
+            {
+                "BookTitle": "asaaa",
+                "BookAuthor": "aas",
+                "BookIsbn": "1222232232",
+                "BookCount": 1
+            },
+            {
+                "BookTitle": "asada",
+                "BookAuthor": "asdaa ",
+                "BookIsbn": "1122332233",
+                "BookCount": 1
+            },
+            {
+                "BookTitle": "dasd",
+                "BookAuthor": "asdas",
+                "BookIsbn": "1233543423",
+                "BookCount": 1
+            },
+            {
+                "BookTitle": "asda",
+                "BookAuthor": "asda",
+                "BookIsbn": "1232232332",
+                "BookCount": 1
             }
         ]
     },
-    "lendingInfoPairs": {
-        "lendingPairs": [
+    "LendingInfoPairs": {
+        "LendingPairs": [
             {
-                "book": {
-                    "bookTitle": "Pokemon Nas�l Avlan�r?",
-                    "bookAuthor": "E� Ke��m",
-                    "bookIsbn": "3424125533121",
-                    "bookCount": 4
+                "Book": {
+                    "BookTitle": "asdsa",
+                    "BookAuthor": "asdas",
+                    "BookIsbn": "1234345622",
+                    "BookCount": 21
                 },
-                "totalLendedBookCount": 3,
-                "lendingInfoList": [
+                "LendingInfoList": [
                     {
-                        "borrowerName": "hasan h�seyin",
-                        "returnCode": "35261",
-                        "expectedReturnDateTicks": 638443029623222761
+                        "BorrowerName": "asda asda",
+                        "ReturnCode": "73342",
+                        "ExpectedReturnDateTicks": 638452635204989295
                     },
                     {
-                        "borrowerName": "asdfa sada",
-                        "returnCode": "36227",
-                        "expectedReturnDateTicks": 638443104147219239
+                        "BorrowerName": "asda sada",
+                        "ReturnCode": "04116",
+                        "ExpectedReturnDateTicks": 638452635292664040
                     }
                 ]
             },
             {
-                "book": {
-                    "bookTitle": "Kapitalist Ger�eklik",
-                    "bookAuthor": "Mark Fisher",
-                    "bookIsbn": "1235739485723",
-                    "bookCount": 1
+                "Book": {
+                    "BookTitle": "asda ",
+                    "BookAuthor": "asda s",
+                    "BookIsbn": "3456765545",
+                    "BookCount": 0
                 },
-                "totalLendedBookCount": 1,
-                "lendingInfoList": [
+                "LendingInfoList": [
                     {
-                        "borrowerName": "SFD fda",
-                        "returnCode": "46368",
-                        "expectedReturnDateTicks": 638414517100000000
+                        "BorrowerName": "assaa a",
+                        "ReturnCode": "45856",
+                        "ExpectedReturnDateTicks": 638452644095353256
+                    }
+                ]
+            },
+            {
+                "Book": {
+                    "BookTitle": "asdfa",
+                    "BookAuthor": "212",
+                    "BookIsbn": "3234232233223",
+                    "BookCount": 31
+                },
+                "LendingInfoList": [
+                    {
+                        "BorrowerName": "asdaa ",
+                        "ReturnCode": "40736",
+                        "ExpectedReturnDateTicks": 638452644142025860
+                    }
+                ]
+            },
+            {
+                "Book": {
+                    "BookTitle": "sad",
+                    "BookAuthor": "asd",
+                    "BookIsbn": "1231234323",
+                    "BookCount": 22
+                },
+                "LendingInfoList": [
+                    {
+                        "BorrowerName": "asda a",
+                        "ReturnCode": "58450",
+                        "ExpectedReturnDateTicks": 638452644233578769
+                    }
+                ]
+            },
+            {
+                "Book": {
+                    "BookTitle": "asdasd123",
+                    "BookAuthor": "123",
+                    "BookIsbn": "2346789099",
+                    "BookCount": 0
+                },
+                "LendingInfoList": [
+                    {
+                        "BorrowerName": "asd",
+                        "ReturnCode": "18886",
+                        "ExpectedReturnDateTicks": 638452670519951811
                     }
                 ]
             }

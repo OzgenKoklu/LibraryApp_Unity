@@ -1,45 +1,46 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 
 public class MainPanelUI : MonoBehaviour
 {
-    [SerializeField] private Button addOrRemoveBookButton;
-    [SerializeField] private Button listAndSearchBooksButton;
-    [SerializeField] private Button lendingOperationsButton;
-    [SerializeField] private Button dataOperationsButton;
-    [SerializeField] private Button aboutProjectButton;
-
+    [SerializeField] private Button _addOrRemoveBookButton;
+    [SerializeField] private Button _listAndSearchBooksButton;
+    [SerializeField] private Button _lendingOperationsButton;
+    [SerializeField] private Button _dataOperationsButton;
+    [SerializeField] private Button _aboutProjectButton;
 
     private void Awake()
     {
-        addOrRemoveBookButton.onClick.AddListener(() =>
-        {
-            AddOrRemoveBookPanelUI.Instance.Show();
-        });
-
-        listAndSearchBooksButton.onClick.AddListener(() =>
-        {
-            ListPanelUI.Instance.Show(ListPanelUI.ListType.AllBooksList);
-        });
-
-        lendingOperationsButton.onClick.AddListener(() =>
-        {
-          LendingOperationsPanelUI.Instance.Show();
-        });
-
-        dataOperationsButton.onClick.AddListener(() =>
-        {
-          DataOperationsPanelUI.Instance.Show();    
-        });
-
-        aboutProjectButton.onClick.AddListener(() =>
-        {
-            PopupPanelUI.Instance.ShowAboutInfo();
-        });
-
+        _addOrRemoveBookButton.onClick.AddListener(ShowAddOrRemoveBookPanel);
+        _listAndSearchBooksButton.onClick.AddListener(ShowAllBooksList);
+        _lendingOperationsButton.onClick.AddListener(ShowLendingOperationsPanel);
+        _dataOperationsButton.onClick.AddListener(ShowDataOperationsPanel);
+        _aboutProjectButton.onClick.AddListener(ShowAboutInfo);
     }
 
+    private void ShowAddOrRemoveBookPanel()
+    {
+        AddOrRemoveBookPanelUI.Instance.Show();
+    }
+
+    private void ShowAllBooksList()
+    {
+        ListPanelUI.Instance.Show(ListPanelUI.ListType.AllBooksList);
+    }
+
+    private void ShowLendingOperationsPanel()
+    {
+        LendingOperationsPanelUI.Instance.Show();
+    }
+
+    private void ShowDataOperationsPanel()
+    {
+        DataOperationsPanelUI.Instance.Show();
+    }
+
+    private void ShowAboutInfo()
+    {
+        PopupPanelUI.Instance.ShowAboutInfo();
+    }
 }

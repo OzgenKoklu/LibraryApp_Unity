@@ -1,17 +1,16 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System;
 using System.Linq;
-using UnityEditor;
+
 
 public static class ImportExportManager
 {
     public class CombinedData
     {
-        public const string filePathBackup = "Assets/Resources/CombinedDataBackup.json";
-        public const string filePathRuntime = "Assets/Resources/CombinedData.json";
+        public const string FilePathForBackup = "Assets/Resources/CombinedDataBackup.json";
+        public const string FilePathForRuntime = "Assets/Resources/CombinedData.json";
 
         //JSONUTILITY WONT SERIALIZE SCRIPTABLE OBJECTS DIRECTLY. SO WE NEED EXTRA SERIALIZATION/DESERIALIZATION METHODS FOR THEM
         //we need to serialize bookdata, lendingInfo,LendingPairs individually to write them onto the json
@@ -19,77 +18,77 @@ public static class ImportExportManager
         [Serializable]
         public class SerializableBookData
         {
-            public string bookTitle;
-            public string bookAuthor;
-            public string bookIsbn;
-            public int bookCount;
+            public string BookTitle;
+            public string BookAuthor;
+            public string BookIsbn;
+            public int BookCount;
         }
 
         [Serializable]
         public class SerializableLendingInfo
         {
-            public string borrowerName;
-            public string returnCode;
-            public long expectedReturnDateTicks;
+            public string BorrowerName;
+            public string ReturnCode;
+            public long ExpectedReturnDateTicks;
         }
 
         [Serializable]
         public class SerializableLendingPair
         {
-            public SerializableBookData book;
-            public int totalLendedBookCount;
-            public List<SerializableLendingInfo> lendingInfoList = new List<SerializableLendingInfo>();
+            public SerializableBookData Book;
+            //public int totalLendedBookCount;
+            public List<SerializableLendingInfo> LendingInfoList = new List<SerializableLendingInfo>();
         }
 
         [Serializable]
         public class SerializableLibraryData
         {
-            public List<SerializableBookData> books = new List<SerializableBookData>();
+            public List<SerializableBookData> Books = new List<SerializableBookData>();
             // Add other fields from LibraryDataSO that you want to include
         }
 
         [Serializable]
         public class SerializableLendingInfoPairs
         {
-            public List<SerializableLendingPair> lendingPairs = new List<SerializableLendingPair>();
+            public List<SerializableLendingPair> LendingPairs = new List<SerializableLendingPair>();
             // Add other fields from LendingInfoPairsSO that you want to include
         }
 
-        public SerializableLibraryData libraryData;
-        public SerializableLendingInfoPairs lendingInfoPairs;
+        public SerializableLibraryData LibraryData;
+        public SerializableLendingInfoPairs LendingInfoPairs;
 
         // Convert actual instances to serializable data
         public void ConvertFromActualData(LibraryDataSO libraryData, LendingInfoPairsSO lendingInfoPairs)
         {
-            this.libraryData = new SerializableLibraryData
+            this.LibraryData = new SerializableLibraryData
             {
-                books = libraryData.books.Select(book => new SerializableBookData
+                Books = libraryData.Books.Select(book => new SerializableBookData
                 {
-                    bookTitle = book.bookTitle,
-                    bookAuthor = book.bookAuthor,
-                    bookIsbn = book.bookIsbn,
-                    bookCount = book.bookCount
+                    BookTitle = book.BookTitle,
+                    BookAuthor = book.BookAuthor,
+                    BookIsbn = book.BookIsbn,
+                    BookCount = book.BookCount
                 }).ToList(),
                 // Add other data conversion logic
             };
 
-            this.lendingInfoPairs = new SerializableLendingInfoPairs
+            this.LendingInfoPairs = new SerializableLendingInfoPairs
             {
-                lendingPairs = lendingInfoPairs.lendingPairs.Select(pair => new SerializableLendingPair
+                LendingPairs = lendingInfoPairs.LendingPairs.Select(pair => new SerializableLendingPair
                 {
-                    book = new SerializableBookData
+                    Book = new SerializableBookData
                     {
-                        bookTitle = pair.book.bookTitle,
-                        bookAuthor = pair.book.bookAuthor,
-                        bookIsbn = pair.book.bookIsbn,
-                        bookCount = pair.book.bookCount
+                        BookTitle = pair.Book.BookTitle,
+                        BookAuthor = pair.Book.BookAuthor,
+                        BookIsbn = pair.Book.BookIsbn,
+                        BookCount = pair.Book.BookCount
                     },
-                    totalLendedBookCount = pair.totalLendedBookCount,
-                    lendingInfoList = pair.lendingInfoList.Select(info => new SerializableLendingInfo
+                   // totalLendedBookCount = pair.TotalLentBookCount,
+                    LendingInfoList = pair.LendingInfoList.Select(info => new SerializableLendingInfo
                     {
-                        borrowerName = info.borrowerName,
-                        returnCode = info.returnCode,
-                        expectedReturnDateTicks = info.expectedReturnDateTicks
+                        BorrowerName = info.BorrowerName,
+                        ReturnCode = info.ReturnCode,
+                        ExpectedReturnDateTicks = info.ExpectedReturnDateTicks
                     }).ToList()
                 }).ToList(),
                 // Add other data conversion logic
@@ -109,7 +108,7 @@ public static class ImportExportManager
 
     public static void ExportToJsonForBackup()
     {
-        ExportToJson(ImportExportManager.CombinedData.filePathBackup);
+        ExportToJson(ImportExportManager.CombinedData.FilePathForBackup);
 
         string popupResonseMessage = "Json Successfully exported.";
         PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
@@ -118,7 +117,7 @@ public static class ImportExportManager
     public static void ExportToJsonForRuntime()
     {
         //this is the version we will use for every single new update that occurs. LibraryManager.cs hase SaveData method for that.
-        ExportToJson(ImportExportManager.CombinedData.filePathRuntime);
+        ExportToJson(ImportExportManager.CombinedData.FilePathForRuntime);
     }
 
         public static void ExportToJson(string filePath)
@@ -146,7 +145,7 @@ public static class ImportExportManager
 
     public static void ImportFromJsonForBackup()
     {
-        ImportFromJson(ImportExportManager.CombinedData.filePathBackup);
+        ImportFromJson(ImportExportManager.CombinedData.FilePathForBackup);
 
         string popupResonseMessage = "Json Successfully Imported.";
         PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
@@ -154,7 +153,7 @@ public static class ImportExportManager
 
     public static void ImportFromJsonForRuntime()
     {
-        ImportFromJson(ImportExportManager.CombinedData.filePathRuntime);
+        ImportFromJson(ImportExportManager.CombinedData.FilePathForRuntime);
     }
 
     public static void ImportFromJson(string filePath)
@@ -167,45 +166,45 @@ public static class ImportExportManager
 
             //Deserializing and making scriptable object for library data
             LibraryDataSO libraryData = ScriptableObject.CreateInstance<LibraryDataSO>();
-            foreach (CombinedData.SerializableBookData serializableBookData in combinedData.libraryData.books)
+            foreach (CombinedData.SerializableBookData serializableBookData in combinedData.LibraryData.Books)
             {
                 BookData bookData = new BookData
                 {
-                    bookTitle = serializableBookData.bookTitle,
-                    bookAuthor = serializableBookData.bookAuthor,
-                    bookIsbn = serializableBookData.bookIsbn,
-                    bookCount = serializableBookData.bookCount
+                    BookTitle = serializableBookData.BookTitle,
+                    BookAuthor = serializableBookData.BookAuthor,
+                    BookIsbn = serializableBookData.BookIsbn,
+                    BookCount = serializableBookData.BookCount
                 };
-                libraryData.books.Add(bookData);
+                libraryData.Books.Add(bookData);
             }
 
             //Deserializing and making scriptable object for lendingInfoPairs
             LendingInfoPairsSO lendingInfoPairs = ScriptableObject.CreateInstance<LendingInfoPairsSO>();
-            foreach (ImportExportManager.CombinedData.SerializableLendingPair serializableLendingPair in combinedData.lendingInfoPairs.lendingPairs)
+            foreach (ImportExportManager.CombinedData.SerializableLendingPair serializableLendingPair in combinedData.LendingInfoPairs.LendingPairs)
             {
                 LendingInfoPairsSO.LendingPair lendingPair = new LendingInfoPairsSO.LendingPair
                 {
-                    book = new BookData
+                    Book = new BookData
                     {
-                        bookTitle = serializableLendingPair.book.bookTitle,
-                        bookAuthor = serializableLendingPair.book.bookAuthor,
-                        bookIsbn = serializableLendingPair.book.bookIsbn,
-                        bookCount = serializableLendingPair.book.bookCount
+                        BookTitle = serializableLendingPair.Book.BookTitle,
+                        BookAuthor = serializableLendingPair.Book.BookAuthor,
+                        BookIsbn = serializableLendingPair.Book.BookIsbn,
+                        BookCount = serializableLendingPair.Book.BookCount
                     },
-                    totalLendedBookCount = serializableLendingPair.totalLendedBookCount
+                   // TotalLentBookCount = serializableLendingPair.totalLendedBookCount
                 };
-                lendingPair.lendingInfoList.Clear();
-                foreach (ImportExportManager.CombinedData.SerializableLendingInfo serializableLendingInfo in serializableLendingPair.lendingInfoList)
+                lendingPair.LendingInfoList.Clear();
+                foreach (ImportExportManager.CombinedData.SerializableLendingInfo serializableLendingInfo in serializableLendingPair.LendingInfoList)
                 {
                     LendingInfo lendingInfo = new LendingInfo
                     {
-                        borrowerName = serializableLendingInfo.borrowerName,
-                        returnCode = serializableLendingInfo.returnCode,
-                        expectedReturnDateTicks = serializableLendingInfo.expectedReturnDateTicks
+                        BorrowerName = serializableLendingInfo.BorrowerName,
+                        ReturnCode = serializableLendingInfo.ReturnCode,
+                        ExpectedReturnDateTicks = serializableLendingInfo.ExpectedReturnDateTicks
                     };
-                    lendingPair.lendingInfoList.Add(lendingInfo);
+                    lendingPair.LendingInfoList.Add(lendingInfo);
                 }
-                lendingInfoPairs.lendingPairs.Add(lendingPair);
+                lendingInfoPairs.LendingPairs.Add(lendingPair);
             }
             //sending them to libraryManager to set the library data accordingly and save it
 

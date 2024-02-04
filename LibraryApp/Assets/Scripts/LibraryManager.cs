@@ -1,14 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using Unity.Burst.Intrinsics;
-using Unity.Collections;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 public class LibraryManager : MonoBehaviour
 {
@@ -16,8 +8,8 @@ public class LibraryManager : MonoBehaviour
 
     public event EventHandler<EventArgs> OnLibraryDataUpdatedForLists;
 
-    [SerializeField] private LibraryDataSO libraryData;
-    [SerializeField] private LendingInfoPairsSO lendingInfoPairsList;
+    [SerializeField] private LibraryDataSO _libraryData;
+    [SerializeField] private LendingInfoPairsSO _lendingInfoPairsList;
 
     private void Awake()
     {
@@ -35,10 +27,10 @@ public class LibraryManager : MonoBehaviour
     {
         BookData newBookData = new BookData
         {
-            bookTitle = bookTitle,
-            bookAuthor = bookAuthor,
-            bookIsbn = bookIsbn,
-            bookCount = 1
+            BookTitle = bookTitle,
+            BookAuthor = bookAuthor,
+            BookIsbn = bookIsbn,
+            BookCount = 1
         };
         return newBookData;
     }
@@ -56,7 +48,7 @@ public class LibraryManager : MonoBehaviour
 
     private void AddNewBookToLibrary(BookData bookData)
     {
-        libraryData.books.Add(bookData);
+        _libraryData.Books.Add(bookData);
         SaveLibraryData();
     }
 
@@ -74,7 +66,7 @@ public class LibraryManager : MonoBehaviour
         {
             for (int i = 0; i < amountToIncrease; i++)
             {
-                existingBook.bookCount++;
+                existingBook.BookCount++;
             }
 
             SaveLibraryData();
@@ -91,9 +83,9 @@ public class LibraryManager : MonoBehaviour
             int decreaseAmount = 0;
             for (int i = 0; i < amountToDecrease; i++)
             {
-                if (existingBook.bookCount > 0)
+                if (existingBook.BookCount > 0)
                 {
-                    existingBook.bookCount--;
+                    existingBook.BookCount--;
                     decreaseAmount++;
                 }
                 else
@@ -114,7 +106,7 @@ public class LibraryManager : MonoBehaviour
         IncreaseBookCountByAmount(bookData, increaseAmount);
 
         OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
-        string responseMessage = $"Number of copies of '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') increased by '{numberOfBooksToIncrease}'.";
+        string responseMessage = $"Number of copies of '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') increased by '{numberOfBooksToIncrease}'.";
         PopupPanelUI.Instance.ShowResponse(responseMessage);
 
     }
@@ -127,7 +119,7 @@ public class LibraryManager : MonoBehaviour
 
         //Update the list and show response message
         OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
-        string responseMessage = $"Number of copies of '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') decreased by '{actualDecreaseAmount}'.";
+        string responseMessage = $"Number of copies of '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') decreased by '{actualDecreaseAmount}'.";
         PopupPanelUI.Instance.ShowResponse(responseMessage);
     }
 
@@ -135,21 +127,21 @@ public class LibraryManager : MonoBehaviour
     {
         BookData existingBook = GetExistingBook(bookData);
 
-        if (libraryData.books.Contains(bookData))
+        if (_libraryData.Books.Contains(bookData))
         {
-            libraryData.books.Remove(bookData);
+            _libraryData.Books.Remove(bookData);
         }
 
         //now remove the book data from lending pair list, first we need to find the index
 
-        for (int i = 0; i < lendingInfoPairsList.lendingPairs.Count; i++)
+        for (int i = 0; i < _lendingInfoPairsList.LendingPairs.Count; i++)
         {
-            LendingInfoPairsSO.LendingPair lendingPair = lendingInfoPairsList.lendingPairs[i];
+            LendingInfoPairsSO.LendingPair lendingPair = _lendingInfoPairsList.LendingPairs[i];
 
             //if I did book = bookData it might not find it due to how count is stored and if it doesnt match it skips it
-            if (lendingPair.book.bookIsbn == bookData.bookIsbn)
+            if (lendingPair.Book.BookIsbn == bookData.BookIsbn)
             {
-                lendingInfoPairsList.lendingPairs.RemoveAt(i);
+                _lendingInfoPairsList.LendingPairs.RemoveAt(i);
                 i--;
             }
             else
@@ -160,25 +152,25 @@ public class LibraryManager : MonoBehaviour
         SaveLibraryData();
 
         OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
-        string responseMessage = $"Book Data about '{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') and all the related info is deleted from the library.";
+        string responseMessage = $"Book Data about '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') and all the related info is deleted from the library.";
         PopupPanelUI.Instance.ShowResponse(responseMessage);
     }
     public void LendABook(BookData bookData, string borrowerName)
     {
         //Checks If bookData is already in the lendingInfoPairsSO List, checks from book ISBN to avoid addition of multiple book-lendingInfoPairs
-        LendingInfoPairsSO.LendingPair lendingPair = lendingInfoPairsList.lendingPairs.Find(pair => pair.book.bookIsbn.Equals(bookData.bookIsbn));
+        LendingInfoPairsSO.LendingPair lendingPair = _lendingInfoPairsList.LendingPairs.Find(pair => pair.Book.BookIsbn.Equals(bookData.BookIsbn));
 
         if (lendingPair == null)
         {
             // If the bookData doesn't exist, create a new lending pair
             lendingPair = new LendingInfoPairsSO.LendingPair
             {
-                book = bookData,
-                totalLendedBookCount = 0,
-                lendingInfoList = new List<LendingInfo>()
+                Book = bookData,
+               // TotalLentBookCount = 0,
+                LendingInfoList = new List<LendingInfo>()
             };
 
-            lendingInfoPairsList.lendingPairs.Add(lendingPair);
+            _lendingInfoPairsList.LendingPairs.Add(lendingPair);
         }
 
         // Generate a unique return code from the static class 
@@ -187,22 +179,22 @@ public class LibraryManager : MonoBehaviour
         // Create a new lending info
         LendingInfo lendingInfo = new LendingInfo
         {
-            borrowerName = borrowerName,
-            returnCode = returnCode,
-            expectedReturnDateTicks = DateTime.Now.AddDays(30).Ticks // Assuming a 30-day lending period
+            BorrowerName = borrowerName,
+            ReturnCode = returnCode,
+            ExpectedReturnDateTicks = DateTime.Now.AddDays(30).Ticks // Assuming a 30-day lending period
         };
 
-        lendingPair.lendingInfoList.Add(lendingInfo);
-        lendingPair.totalLendedBookCount++;
+        lendingPair.LendingInfoList.Add(lendingInfo);
+        //lendingPair.TotalLentBookCount++;
 
         //this is because we check if this book is available before loading the lendable book list 
-        bookData.bookCount--;
+        bookData.BookCount--;
         // Save changes to the ScriptableObject
         SaveLibraryData();
 
-        DateTime deserializeDate = new DateTime(lendingInfo.expectedReturnDateTicks);
+        DateTime deserializeDate = new DateTime(lendingInfo.ExpectedReturnDateTicks);
 
-        string lendingSuccessfulResponseMessage = $"'{bookData.bookTitle}' (ISBN: '{bookData.bookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.returnCode}'\n Return Due Date: {deserializeDate.ToString("MM/dd/yyyy")}";
+        string lendingSuccessfulResponseMessage = $"'{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.ReturnCode}'\n Return Due Date: {deserializeDate.ToString("MM/dd/yyyy")}";
         
 
         PopupPanelUI.Instance.ShowResponse(lendingSuccessfulResponseMessage);
@@ -211,7 +203,7 @@ public class LibraryManager : MonoBehaviour
     public void TryReturnLentBookFromTheList(LendingInfo lendingInfo)
     {
 
-        TryReturnLentBookByReturnCode(lendingInfo.returnCode);
+        TryReturnLentBookByReturnCode(lendingInfo.ReturnCode);
 
         OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
     }
@@ -222,27 +214,27 @@ public class LibraryManager : MonoBehaviour
 
         if (matchingPair != null)
         {
-            BookData returnedBook = matchingPair.book;
-            LendingInfo lendingInfoToRemove = matchingPair.lendingInfoList.Find(info => info.returnCode == returnCode);
+            BookData returnedBook = matchingPair.Book;
+            LendingInfo lendingInfoToRemove = matchingPair.LendingInfoList.Find(info => info.ReturnCode == returnCode);
 
-            BookData libraryBook = libraryData.books.Find(book => book.bookIsbn.Equals(returnedBook.bookIsbn));
+            BookData libraryBook = _libraryData.Books.Find(book => book.BookIsbn.Equals(returnedBook.BookIsbn));
 
             if (libraryBook != null)
             {
-                libraryBook.bookCount++;
+                libraryBook.BookCount++;
                 // Remove lending info
-                matchingPair.lendingInfoList.Remove(lendingInfoToRemove);
+                matchingPair.LendingInfoList.Remove(lendingInfoToRemove);
 
                 // If no lending info remains for the book, remove the entire LendingPair
-                if (matchingPair.lendingInfoList.Count == 0)
+                if (matchingPair.LendingInfoList.Count == 0)
                 {
-                    lendingInfoPairsList.lendingPairs.Remove(matchingPair);
+                    _lendingInfoPairsList.LendingPairs.Remove(matchingPair);
                 }
 
                 SaveLibraryData();
             }
             //Should add if due date has passed, penalty fee maybe?
-            string returnSuccessfulResponseMessage = $"'{returnedBook.bookTitle}' (ISBN: '{returnedBook.bookIsbn}') borrowed by '{lendingInfoToRemove.borrowerName}' returned successfully.";
+            string returnSuccessfulResponseMessage = $"'{returnedBook.BookTitle}' (ISBN: '{returnedBook.BookIsbn}') borrowed by '{lendingInfoToRemove.BorrowerName}' returned successfully.";
 
             PopupPanelUI.Instance.ShowResponse(returnSuccessfulResponseMessage);
 
@@ -262,24 +254,24 @@ public class LibraryManager : MonoBehaviour
 
     public LendingInfoPairsSO GetLendingInfoPairs()
     {
-        if (lendingInfoPairsList == null)
+        if (_lendingInfoPairsList == null)
         {
             Debug.LogWarning("LendingInfoPairsList data is null. Make sure it has been assigned.");
             string errorMessage = "Lending Pairs data not found.";
             PopupPanelUI.Instance.ShowError(errorMessage);
         }
-        return lendingInfoPairsList;
+        return _lendingInfoPairsList;
     }
 
     public LibraryDataSO GetLibraryData()
     {
-        if (libraryData == null)
+        if (_libraryData == null)
         {
             Debug.LogWarning("Library data is null. Make sure it has been assigned.");
             string errorMessage = "Library data not found.";
             PopupPanelUI.Instance.ShowError(errorMessage);
         }
-        return libraryData;
+        return _libraryData;
     }
     public BookData GetExistingBook(BookData bookData)
     {
@@ -295,20 +287,27 @@ public class LibraryManager : MonoBehaviour
 
     private BookData FindBookInLibrary(BookData bookData)
     {
-        return SearchManager.FindBookIfItExistsInTheLibrary(bookData.bookTitle, bookData.bookAuthor, bookData.bookIsbn, checkDifferentIsbn: false);
+        return SearchManager.FindBookIfItExistsInTheLibrary(bookData.BookTitle, bookData.BookAuthor, bookData.BookIsbn, checkDifferentIsbn: false);
     }
     #endregion
 
     #region SavingDeletingAndRelatedOperationMethods
     private void SaveLibraryData()
     {
-        ImportExportManager.ExportToJsonForRuntime();
-
-       // Saving the ScriptableObject asset(only available for Unity Editor version) 
-       // UnityEditor.EditorUtility.SetDirty(libraryData);
-       // UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
-       // UnityEditor.AssetDatabase.SaveAssets();
-       // UnityEditor.AssetDatabase.Refresh();
+        try
+        {
+            ImportExportManager.ExportToJsonForRuntime();
+        }catch (Exception ex)
+        {
+            Debug.LogError("An error occurred while trying to save: " + ex.Message);
+            string errorResponse = "An error occurred while trying to save: " + ex.Message;
+            PopupPanelUI.Instance.ShowError(errorResponse);
+        }
+        // Saving the ScriptableObject asset(only available for Unity Editor version) 
+        // UnityEditor.EditorUtility.SetDirty(libraryData);
+        // UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
+        // UnityEditor.AssetDatabase.SaveAssets();
+        // UnityEditor.AssetDatabase.Refresh();
     }
 
     public void UpdateLibraryDataFromJsonData(LibraryDataSO libraryData, LendingInfoPairsSO lendingInfoPairs)
@@ -316,8 +315,8 @@ public class LibraryManager : MonoBehaviour
         ClearLocalLibraryData();
 
         //addrange method to avoid changing the reference this.libraryData = libraryData would change the reference
-        this.libraryData.books.AddRange(libraryData.books);
-        this.lendingInfoPairsList.lendingPairs.AddRange(lendingInfoPairs.lendingPairs);
+        this._libraryData.Books.AddRange(libraryData.Books);
+        this._lendingInfoPairsList.LendingPairs.AddRange(lendingInfoPairs.LendingPairs);
 
         SaveLibraryData();
     }
@@ -342,8 +341,8 @@ public class LibraryManager : MonoBehaviour
 
     private void ClearLocalLibraryData()
     {
-        libraryData.books.Clear();
-        lendingInfoPairsList.lendingPairs.Clear();
+        _libraryData.Books.Clear();
+        _lendingInfoPairsList.LendingPairs.Clear();
         SaveLibraryData();
     }
 

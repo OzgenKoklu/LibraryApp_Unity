@@ -4,5 +4,6 @@ using System.Collections.Generic;
 [CreateAssetMenu(fileName = "LibraryData", menuName = "Library/Create Library Data SO", order = 1)]
 public class LibraryDataSO : ScriptableObject
 {
-    public List<BookData> books = new List<BookData>();
+    //list of book data. 
+    public List<BookData> Books = new List<BookData>();
 }
