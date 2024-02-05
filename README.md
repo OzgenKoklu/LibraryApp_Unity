@@ -40,7 +40,11 @@ Remade the whole UI setup to handle most operations in PopupPanelUI and ListPane
 
 [![Youtube Link](https://img.youtube.com/vi/TtaJFg9EAHs/0.jpg)](https://youtu.be/TtaJFg9EAHs)
 
+05.02.2024 Working windows build:
 
+UI sounds, colors added. Admin panel added. Main panel now shows the time, sound can be turned on or off, saved in the player prefs. Supports 21.9 ultra wide displays and more: 
+
+[![Youtube Link](https://img.youtube.com/vi/bxVtJ_iJaIY/0.jpg)](https://youtu.be/bxVtJ_iJaIY)
 
 ----------
 
@@ -66,3 +70,14 @@ Feedback Optimizations:
 
 A non profit project. 
 
+Assets in use:
+
+MouseClick - mouse-click-153941 - CC0 - https://pixabay.com/sound-effects/mouse-click-153941/
+
+WarningSound - CC0 - https://pixabay.com/sound-effects/error-when-entering-the-game-menu-132111/
+
+SuccessSound - interface-124464 - CC0 - https://pixabay.com/sound-effects/interface-124464/
+
+ErrorSound - CC0 - https://pixabay.com/sound-effects/error-126627/
+
+Sound on / off image - CC0 - https://opengameart.org/content/sound-onoff-images

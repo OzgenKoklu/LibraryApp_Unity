@@ -60,13 +60,15 @@ public class PopupPanelUI : MonoBehaviour
         _closeButton.onClick.AddListener(Hide);
         _windowTint.GetComponent<Image>().color = _defaultWindowTintColor;
         OnInvalidInputEntered += PopupPanelUI_OnInvalidInputEntered;
-        Hide();
+        
     }
 
     //State Machine for object activation
     public void SetPopupComponents(PopupType popupType)
     {
         gameObject.SetActive(true);
+        //Not related to setting any components. I think this is placed in the wrong place.
+        
 
         _currentPopupType = popupType;
 
@@ -126,6 +128,7 @@ public class PopupPanelUI : MonoBehaviour
 
     public void Hide()
     {
+        PlayMouseClickSoundOnWindow();
         if (_currentPopupType == PopupType.ShowResponse)
         {
             _actionButton.onClick.RemoveAllListeners();
@@ -150,6 +153,7 @@ public class PopupPanelUI : MonoBehaviour
         SetPopupComponents(PopupType.ShowResponse);
         //title text might change
         _titleText.text = "Warning!!!";
+        PlayWarningSound();
         _mainText.text = responseMessage;
         _windowTint.GetComponent<Image>().color = _warningWindowTintColor;
 
@@ -171,8 +175,24 @@ public class PopupPanelUI : MonoBehaviour
         SetPopupComponents(PopupType.ShowResponse);
         //title text might change
         _titleText.text = "Success!!!";
+        PlaySuccessSound();
         _windowTint.GetComponent<Image>().color = _successWindowTintColor;
         _mainText.text = responseMessage;
+    }
+
+    private void PlaySuccessSound()
+    {
+        SoundManager.Instance.PlaySuccessSound();
+    }
+
+    private void PlayErrorSound()
+    {
+        SoundManager.Instance.PlayErrorSound();
+    }
+
+    private void PlayWarningSound()
+    {
+        SoundManager.Instance.PlayWarningSound();
     }
 
     //this is truely under utilized. Should actually use this for error handling (not directly using Popuppanel.Instance.ShowError like I do a looot
@@ -185,6 +205,7 @@ public class PopupPanelUI : MonoBehaviour
         SetPopupComponents(PopupType.ShowError);
         //title text might change
         _titleText.text = "Error!!!";
+        PlayErrorSound();
         _mainText.text = responseMessage;
     }
     void LimitToInteger(string newValue)
@@ -313,6 +334,7 @@ public class PopupPanelUI : MonoBehaviour
     public void ShowAboutInfo()
     {
         SetPopupComponents(PopupType.ShowResponse);
+        PlayMouseClickSoundOnWindow();
         _titleText.text = "About";
         _mainText.text = "Made by Özgen Köklü\n\nFor Velo Games\n\nAs a Task Project\n\n2024 All Rights Reserved";
         _actionButtonText.text = "Return";
@@ -330,6 +352,11 @@ public class PopupPanelUI : MonoBehaviour
         _actionButton.onClick.AddListener(() => OnUserLoginButtonClick(userName.text, userPassword.text));
     }
 
+    private void PlayMouseClickSoundOnWindow()
+    {
+        SoundManager.Instance.PlayMouseClick();
+    }
+
     private void OnUserLoginButtonClick(string userName, string userPassword)
     {
         if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userPassword))
@@ -339,12 +366,19 @@ public class PopupPanelUI : MonoBehaviour
                 _actionButton.onClick.RemoveAllListeners();
                 Hide();
             }
-            //password - username combo is not correct
-            _mainText.text = "Info did not match.";
+            else
+            {
+                //password - username combo is not correct
+                _mainText.text = "Info did not match.";
+                PlayWarningSound();
+                _windowTint.GetComponent<Image>().color = _warningWindowTintColor;
+            }
         }
         else
         {
             _mainText.text = "Username or password can't be empty";
+            PlayWarningSound();
+            _windowTint.GetComponent<Image>().color = _warningWindowTintColor;
         }
     }
 

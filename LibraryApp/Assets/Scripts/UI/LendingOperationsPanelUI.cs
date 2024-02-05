@@ -13,7 +13,11 @@ public class LendingOperationsPanelUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        _closeButton.onClick.AddListener(Hide);
+        _closeButton.onClick.AddListener(() =>
+        {
+            PlayMouseClickSoundOnWindow();
+            Hide();
+        });
 
         _lendBookButton.onClick.AddListener(ShowLendABookList);
 
@@ -42,6 +46,12 @@ public class LendingOperationsPanelUI : MonoBehaviour
     public void Show()
     {
         gameObject.SetActive(true);
+        PlayMouseClickSoundOnWindow();
+    }
+
+    private void PlayMouseClickSoundOnWindow()
+    {
+        SoundManager.Instance.PlayMouseClick();
     }
 
     private void Hide()

@@ -5,25 +5,25 @@
                 "BookTitle": "asdsa",
                 "BookAuthor": "asdas",
                 "BookIsbn": "1234345622",
-                "BookCount": 21
-            },
-            {
-                "BookTitle": "sad",
-                "BookAuthor": "asd",
-                "BookIsbn": "1231234323",
-                "BookCount": 457
+                "BookCount": 66
             },
             {
                 "BookTitle": "asda ",
                 "BookAuthor": "asda s",
                 "BookIsbn": "3456765545",
-                "BookCount": 32
+                "BookCount": 5376
+            },
+            {
+                "BookTitle": "asdasd123",
+                "BookAuthor": "123",
+                "BookIsbn": "2346789099",
+                "BookCount": 455
             },
             {
                 "BookTitle": "asa",
                 "BookAuthor": "123",
                 "BookIsbn": "1234432234",
-                "BookCount": 433
+                "BookCount": 434
             },
             {
                 "BookTitle": "asdfa",
@@ -35,7 +35,7 @@
                 "BookTitle": "asdfa",
                 "BookAuthor": "212",
                 "BookIsbn": "3234232233223",
-                "BookCount": 32
+                "BookCount": 3456
             },
             {
                 "BookTitle": "asaa",
@@ -74,9 +74,21 @@
                 "BookCount": 1
             },
             {
-                "BookTitle": "asda",
-                "BookAuthor": "asdaf",
-                "BookIsbn": "1234567543",
+                "BookTitle": "adfas",
+                "BookAuthor": "1234a",
+                "BookIsbn": "2342342341",
+                "BookCount": 1
+            },
+            {
+                "BookTitle": "asdf",
+                "BookAuthor": "asda",
+                "BookIsbn": "1234324334",
+                "BookCount": 1
+            },
+            {
+                "BookTitle": "asd",
+                "BookAuthor": "asd",
+                "BookIsbn": "1244543432",
                 "BookCount": 1
             }
         ]
@@ -95,16 +107,6 @@
                         "BorrowerName": "asda asda",
                         "ReturnCode": "73342",
                         "ExpectedReturnDateTicks": 638452635204989295
-                    },
-                    {
-                        "BorrowerName": "asda sada",
-                        "ReturnCode": "04116",
-                        "ExpectedReturnDateTicks": 638452635292664040
-                    },
-                    {
-                        "BorrowerName": "3123",
-                        "ReturnCode": "50280",
-                        "ExpectedReturnDateTicks": 638453203869822896
                     }
                 ]
             },
@@ -120,6 +122,11 @@
                         "BorrowerName": "assaa a",
                         "ReturnCode": "45856",
                         "ExpectedReturnDateTicks": 638452644095353256
+                    },
+                    {
+                        "BorrowerName": "Özgen Köklü",
+                        "ReturnCode": "78250",
+                        "ExpectedReturnDateTicks": 638453262858418952
                     }
                 ]
             },
@@ -140,31 +147,16 @@
             },
             {
                 "Book": {
-                    "BookTitle": "sad",
-                    "BookAuthor": "asd",
-                    "BookIsbn": "1231234323",
-                    "BookCount": 22
-                },
-                "LendingInfoList": [
-                    {
-                        "BorrowerName": "asda a",
-                        "ReturnCode": "58450",
-                        "ExpectedReturnDateTicks": 638452644233578769
-                    }
-                ]
-            },
-            {
-                "Book": {
-                    "BookTitle": "asa",
+                    "BookTitle": "asdasd123",
                     "BookAuthor": "123",
-                    "BookIsbn": "1234432234",
-                    "BookCount": 433
+                    "BookIsbn": "2346789099",
+                    "BookCount": 0
                 },
                 "LendingInfoList": [
                     {
-                        "BorrowerName": "asda",
-                        "ReturnCode": "17529",
-                        "ExpectedReturnDateTicks": 638453202615542305
+                        "BorrowerName": "asd",
+                        "ReturnCode": "18886",
+                        "ExpectedReturnDateTicks": 638452670519951811
                     }
                 ]
             }

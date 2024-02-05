@@ -59,7 +59,11 @@ public class ListPanelUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        _closeButton.onClick.AddListener(Hide);
+        _closeButton.onClick.AddListener(() =>
+        {
+            PlayMouseClickSoundOnWindow();
+            Hide();
+        });
 
         _searchButton.onClick.AddListener(() =>
         {
@@ -77,6 +81,9 @@ public class ListPanelUI : MonoBehaviour
     public void Show(ListType listType)
     {
         gameObject.SetActive(true);
+        //not at the click but at the show. a little mind boggling but I did not want to add it to every single button click. Which I add and remove a lot of listeners.
+        //Maybe should have done a button script like buttonSound.cs and triggered this there.
+        PlayMouseClickSoundOnWindow();
 
         //sets current list type so that we will unsub from the right events
         _currentListType = listType;
@@ -148,6 +155,7 @@ public class ListPanelUI : MonoBehaviour
     {
         //search toggle reset
         _selectedListing = null;
+       
 
         if (_currentListType == ListType.AllLentBooksList)
         {
@@ -169,6 +177,11 @@ public class ListPanelUI : MonoBehaviour
 
         _searchTermInputField.text = "";
         gameObject.SetActive(false);
+    }
+
+    private void PlayMouseClickSoundOnWindow()
+    {
+        SoundManager.Instance.PlayMouseClick();
     }
 
     #region General Purpose Methods 

@@ -15,7 +15,11 @@ public class DataOperationsPanelUI : MonoBehaviour
     {
         Instance = this;
 
-        _closeButton.onClick.AddListener(Hide);
+        _closeButton.onClick.AddListener(() =>
+        {
+            PlayMouseClickSoundOnWindow();
+            Hide();
+        });
 
         _importFromJsonButton.onClick.AddListener(OnImportFromJsonButtonClick);
 
@@ -49,9 +53,15 @@ public class DataOperationsPanelUI : MonoBehaviour
         LibraryManager.Instance.DeleteLocalLibraryDataFromUserPrompt();
         //This way, additional logic can start here (like another response)
     }
+
+    private void PlayMouseClickSoundOnWindow()
+    {
+        SoundManager.Instance.PlayMouseClick();
+    }
     public void Show()
     {
         gameObject.SetActive(true);
+        PlayMouseClickSoundOnWindow();
     }
 
     private void Hide()

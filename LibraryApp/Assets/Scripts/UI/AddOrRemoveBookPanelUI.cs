@@ -18,7 +18,11 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        _closeButton.onClick.AddListener(Hide);
+        _closeButton.onClick.AddListener(() =>
+        {
+            PlayMouseClickSoundOnWindow();
+            Hide();
+        });
         _addBookButton.onClick.AddListener(TryAddingBook);
         _addOrRemoveFromList.onClick.AddListener(() =>
         {
@@ -48,7 +52,10 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
         }
     }
 
-
+    private void PlayMouseClickSoundOnWindow()
+    {
+        SoundManager.Instance.PlayMouseClick();
+    }
 
     private string GenerateErrorMessage()
     {
@@ -121,6 +128,7 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
     public void Show()
     {
         gameObject.SetActive(true);
+        PlayMouseClickSoundOnWindow();
     }
 
     private void Hide()
