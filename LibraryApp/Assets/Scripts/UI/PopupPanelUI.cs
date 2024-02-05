@@ -12,6 +12,7 @@ public class PopupPanelUI : MonoBehaviour
         ShowError,
         ShowPrompt,
         ShowBookAddOrRemovePanel,
+        ShowLoginPanel,
     }
     public static PopupPanelUI Instance { get; private set; }
 
@@ -45,6 +46,10 @@ public class PopupPanelUI : MonoBehaviour
     [SerializeField] private Color _successWindowTintColor;
     [SerializeField] private Color _warningWindowTintColor;
 
+    //For login panel
+    [SerializeField] Transform _loginPanelGameObjects;
+    [SerializeField] private TMP_InputField _loginPanelUserNameInputField;
+
 
     private PopupType _currentPopupType;
 
@@ -70,6 +75,8 @@ public class PopupPanelUI : MonoBehaviour
             case PopupType.ShowPrompt:
                 _popupPanelInputField.gameObject.SetActive(true);
                 _actionButton.gameObject.SetActive(true);
+                _closeButton.gameObject.SetActive(true);
+                _loginPanelGameObjects.gameObject.SetActive(false);
                 _actionButtonText.text = "Enter";
                 _addOrRemoveBookSubpanel.gameObject.SetActive(false);
                 _windowTint.GetComponent<Image>().color = _defaultWindowTintColor;
@@ -78,6 +85,8 @@ public class PopupPanelUI : MonoBehaviour
             case PopupType.ShowError:
                 _popupPanelInputField.gameObject.SetActive(false);
                 _actionButton.gameObject.SetActive(false);
+                _closeButton.gameObject.SetActive(true);
+                _loginPanelGameObjects.gameObject.SetActive(false);
                 _addOrRemoveBookSubpanel.gameObject.SetActive(false);
                 _windowTint.GetComponent<Image>().color = _errorWindowTintColor;
 
@@ -85,6 +94,8 @@ public class PopupPanelUI : MonoBehaviour
             case PopupType.ShowResponse:
                 _popupPanelInputField.gameObject.SetActive(false);
                 _actionButton.gameObject.SetActive(true);
+                _closeButton.gameObject.SetActive(true);
+                _loginPanelGameObjects.gameObject.SetActive(false);
                 _actionButtonText.text = "Confirm";
                 _addOrRemoveBookSubpanel.gameObject.SetActive(false);
                 _windowTint.GetComponent<Image>().color = _defaultWindowTintColor;
@@ -92,13 +103,24 @@ public class PopupPanelUI : MonoBehaviour
                 break;
             case PopupType.ShowBookAddOrRemovePanel:
                 _addOrRemoveBookSubpanel.gameObject.SetActive(true);
+                _closeButton.gameObject.SetActive(true);
+                _loginPanelGameObjects.gameObject.SetActive(false);
                 _bookCountInputField.onValueChanged.AddListener(LimitToInteger);
                 _windowTint.GetComponent<Image>().color = _defaultWindowTintColor;
                 _actionButton.gameObject.SetActive(false);
                 _popupPanelInputField.gameObject.SetActive(false);
                 _bookCountInputField.text = "";
                 break;
-
+            case PopupType.ShowLoginPanel:
+                _popupPanelInputField.gameObject.SetActive(true);
+                _loginPanelGameObjects.gameObject.SetActive(true);
+                _loginPanelUserNameInputField.gameObject.SetActive(true);
+                _addOrRemoveBookSubpanel.gameObject.SetActive(false);
+                _closeButton.gameObject.SetActive(false);
+                _actionButton.gameObject.SetActive(true);
+                _popupPanelInputField.text = "";
+                _loginPanelUserNameInputField.text = "";
+                break;
         }
     }
 
@@ -295,4 +317,36 @@ public class PopupPanelUI : MonoBehaviour
         _mainText.text = "Made by Özgen Köklü\n\nFor Velo Games\n\nAs a Task Project\n\n2024 All Rights Reserved";
         _actionButtonText.text = "Return";
     }
+
+    public void ShowLoginPanel()
+    {
+        SetPopupComponents(PopupType.ShowLoginPanel);
+        _actionButtonText.text = "Login";
+        _titleText.text = "Please Login";
+        _mainText.text = "Enter Your Credentials.";
+
+        TMP_InputField userName = _loginPanelUserNameInputField;
+        TMP_InputField userPassword = _popupPanelInputField;
+        _actionButton.onClick.AddListener(() => OnUserLoginButtonClick(userName.text, userPassword.text));
+    }
+
+    private void OnUserLoginButtonClick(string userName, string userPassword)
+    {
+        if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(userPassword))
+        {
+            if (LoginCredentialChecker.CheckCredentials(userName, userPassword))
+            {
+                _actionButton.onClick.RemoveAllListeners();
+                Hide();
+            }
+            //password - username combo is not correct
+            _mainText.text = "Info did not match.";
+        }
+        else
+        {
+            _mainText.text = "Username or password can't be empty";
+        }
+    }
+
+
 }

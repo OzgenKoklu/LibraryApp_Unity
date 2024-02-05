@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,11 @@ public class MainPanelUI : MonoBehaviour
         _lendingOperationsButton.onClick.AddListener(ShowLendingOperationsPanel);
         _dataOperationsButton.onClick.AddListener(ShowDataOperationsPanel);
         _aboutProjectButton.onClick.AddListener(ShowAboutInfo);
+    }
+
+    private void Start()
+    {
+        PopupPanelUI.Instance.ShowLoginPanel();
     }
 
     private void ShowAddOrRemoveBookPanel()
