@@ -49,6 +49,7 @@ public class LibraryManager : MonoBehaviour
     private void AddNewBookToLibrary(BookData bookData)
     {
         _libraryData.Books.Add(bookData);
+        HandleBookAmountChange($"{bookData.BookTitle} by {bookData.BookAuthor} is added to the library successfully.");
         SaveLibraryData();
     }
 
@@ -105,10 +106,9 @@ public class LibraryManager : MonoBehaviour
 
         IncreaseBookCountByAmount(bookData, increaseAmount);
 
-        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
         string responseMessage = $"Number of copies of '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') increased by '{numberOfBooksToIncrease}'.";
-        PopupPanelUI.Instance.ShowResponse(responseMessage);
 
+        HandleBookAmountChange(responseMessage);
     }
 
     public void DecreaseTheNumberOfBooks(BookData bookData, string numberOfBooksToDecrease)
@@ -117,11 +117,11 @@ public class LibraryManager : MonoBehaviour
         string actualDecreaseAmount;
         DecreaseBookCountByAmount(bookData, decreaseAmount, out actualDecreaseAmount);
 
-        //Update the list and show response message
-        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
         string responseMessage = $"Number of copies of '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') decreased by '{actualDecreaseAmount}'.";
-        PopupPanelUI.Instance.ShowResponse(responseMessage);
+
+        HandleBookAmountChange(responseMessage);
     }
+
 
     public void DeleteSingleBookDataInformation(BookData bookData)
     {
@@ -151,9 +151,10 @@ public class LibraryManager : MonoBehaviour
         }
         SaveLibraryData();
 
-        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
+       
         string responseMessage = $"Book Data about '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') and all the related info is deleted from the library.";
-        PopupPanelUI.Instance.ShowResponse(responseMessage);
+
+        HandleBookAmountChange(responseMessage);
     }
     public void LendABook(BookData bookData, string borrowerName)
     {
@@ -194,18 +195,46 @@ public class LibraryManager : MonoBehaviour
 
         DateTime deserializeDate = new DateTime(lendingInfo.ExpectedReturnDateTicks);
 
-        string lendingSuccessfulResponseMessage = $"'{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.ReturnCode}'\n Return Due Date: {deserializeDate.ToString("MM/dd/yyyy")}";
-        
 
-        PopupPanelUI.Instance.ShowResponse(lendingSuccessfulResponseMessage);
-        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);   
+        string lendingSuccessfulResponseMessage = $"'{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') borrowed by '{borrowerName}' successfully. \n If there are any issues or concerns, please contact the library.\n Return Code: '{lendingInfo.ReturnCode}'\n Return Due Date: {deserializeDate.ToString("MM/dd/yyyy")}";
+
+        HandleBookLent(lendingSuccessfulResponseMessage);
     }
+
+
+    private void HandleBookLent(string responseMessage)
+    {
+        HandleBookAction(responseMessage);
+    }
+    private void HandleBookAmountChange(string responseMessage)
+    {
+        HandleBookAction(responseMessage);
+    }
+    private void HandleBookRetun(string responseMessage)
+    {
+        HandleBookAction(responseMessage);
+    }
+    private void HandleBookAction(string responseMessage)
+    {
+        // Common logic for both book lending and amount change, and return response
+        // Popup will show the response message
+        UiManager.ShowResponse(responseMessage);
+
+        // List will update after a book action (lending, count change, etc.), not necessary when handleLibraryAction or HandleBookReturn(only when from return 
+        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
+    }
+    private void HandleLibraryAction(string responseMessage)
+    {
+        UiManager.ShowResponse(responseMessage);
+    }
+    private void HandleError(string errorMessage)
+    {
+        UiManager.ShowError(errorMessage);
+    }
+
     public void TryReturnLentBookFromTheList(LendingInfo lendingInfo)
     {
-
         TryReturnLentBookByReturnCode(lendingInfo.ReturnCode);
-
-        OnLibraryDataUpdatedForLists?.Invoke(this, EventArgs.Empty);
     }
     public void TryReturnLentBookByReturnCode(string returnCode)
     {
@@ -236,15 +265,15 @@ public class LibraryManager : MonoBehaviour
             //Should add if due date has passed, penalty fee maybe?
             string returnSuccessfulResponseMessage = $"'{returnedBook.BookTitle}' (ISBN: '{returnedBook.BookIsbn}') borrowed by '{lendingInfoToRemove.BorrowerName}' returned successfully.";
 
-            PopupPanelUI.Instance.ShowResponse(returnSuccessfulResponseMessage);
-
+            //this one updates the list also, but if there is no subs it should not be a problem since we do "?." null check.
+            HandleBookRetun(returnSuccessfulResponseMessage);
 
         }
         else
         {
             string errorMessage = "Return Code you provided(" + returnCode + ") not found.";
 
-            PopupPanelUI.Instance.ShowError(errorMessage);
+            HandleError(errorMessage);
         }
 
     }
@@ -258,7 +287,7 @@ public class LibraryManager : MonoBehaviour
         {
             Debug.LogWarning("LendingInfoPairsList data is null. Make sure it has been assigned.");
             string errorMessage = "Lending Pairs data not found.";
-            PopupPanelUI.Instance.ShowError(errorMessage);
+            HandleError(errorMessage);
         }
         return _lendingInfoPairsList;
     }
@@ -269,7 +298,7 @@ public class LibraryManager : MonoBehaviour
         {
             Debug.LogWarning("Library data is null. Make sure it has been assigned.");
             string errorMessage = "Library data not found.";
-            PopupPanelUI.Instance.ShowError(errorMessage);
+            HandleError(errorMessage);
         }
         return _libraryData;
     }
@@ -301,13 +330,8 @@ public class LibraryManager : MonoBehaviour
         {
             Debug.LogError("An error occurred while trying to save: " + ex.Message);
             string errorResponse = "An error occurred while trying to save: " + ex.Message;
-            PopupPanelUI.Instance.ShowError(errorResponse);
+            HandleError(errorResponse);
         }
-        // Saving the ScriptableObject asset(only available for Unity Editor version) 
-        // UnityEditor.EditorUtility.SetDirty(libraryData);
-        // UnityEditor.EditorUtility.SetDirty(lendingInfoPairsList);
-        // UnityEditor.AssetDatabase.SaveAssets();
-        // UnityEditor.AssetDatabase.Refresh();
     }
 
     public void UpdateLibraryDataFromJsonData(LibraryDataSO libraryData, LendingInfoPairsSO lendingInfoPairs)
@@ -328,14 +352,14 @@ public class LibraryManager : MonoBehaviour
             ClearLocalLibraryData();
 
             string popupResonseMessage = "Library Data successfully deleted.";
-            PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
-
+           
+            HandleLibraryAction(popupResonseMessage);
         }
         catch (Exception ex)
         {
             Debug.LogError("An error occurred while deleting library data: " + ex.Message);
             string errorResponse = "An error occurred while deleting library data. Please try again.";
-            PopupPanelUI.Instance.ShowError(errorResponse);
+            HandleError(errorResponse);
         }
     }
 

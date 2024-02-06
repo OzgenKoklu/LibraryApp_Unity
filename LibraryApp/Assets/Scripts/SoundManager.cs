@@ -69,6 +69,11 @@ public class SoundManager : MonoBehaviour
         PlaySound(_audioClipRefsSO.MouseClick, _cameraTransform.transform.position);
     }
 
+    public void PlayClickSound()
+    {
+        PlaySound(_audioClipRefsSO.MouseClick, _cameraTransform.transform.position);
+    }
+
     private void PlaySound(AudioClip audioclip, Vector3 position)
     {
         AudioSource.PlayClipAtPoint(audioclip, position, volume);

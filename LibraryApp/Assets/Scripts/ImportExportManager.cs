@@ -111,7 +111,8 @@ public static class ImportExportManager
         ExportToJson(ImportExportManager.CombinedData.FilePathForBackup);
 
         string popupResonseMessage = "Json Successfully exported.";
-        PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
+
+        HandleResponse(popupResonseMessage);
     }
 
     public static void ExportToJsonForRuntime()
@@ -139,8 +140,18 @@ public static class ImportExportManager
         {
             Debug.LogError("An error occurred while exporting to Json: " + ex.Message);
             string errorResponse = "An error occurred while exporting to Json. Please try again.";
-            PopupPanelUI.Instance.ShowError(errorResponse);
+            HandleError(errorResponse);
         }
+    }
+
+    public static void HandleResponse(string responseMessage)
+    {
+        UiManager.ShowResponse(responseMessage);  
+    }
+
+    public static void HandleError(string errorMessage)
+    {
+        UiManager.ShowError(errorMessage);
     }
 
     public static void ImportFromJsonForBackup()
@@ -148,7 +159,8 @@ public static class ImportExportManager
         ImportFromJson(ImportExportManager.CombinedData.FilePathForBackup);
 
         string popupResonseMessage = "Json Successfully Imported.";
-        PopupPanelUI.Instance.ShowResponse(popupResonseMessage);
+   
+        HandleResponse(popupResonseMessage);
     }
 
     public static void ImportFromJsonForRuntime()
@@ -215,11 +227,7 @@ public static class ImportExportManager
         {
             Debug.LogError("An error occurred while importing from Json: " + ex.Message);
             string errorResponse = "An error occurred while importing from Json. Please try again.";
-            PopupPanelUI.Instance.ShowError(errorResponse);
+            HandleError(errorResponse);
         }
     }
-
-
-
-
 }

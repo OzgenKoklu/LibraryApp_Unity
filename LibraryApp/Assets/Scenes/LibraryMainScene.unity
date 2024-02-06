@@ -10126,7 +10126,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1186876273}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.6453115
+  m_Size: 0.64531153
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -12068,6 +12068,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1188586560}
   m_CullTransparentMesh: 1
+--- !u!1 &1203148315
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1203148316}
+  - component: {fileID: 1203148317}
+  m_Layer: 0
+  m_Name: UiManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1203148316
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1203148315}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1203148317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1203148315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abce22b753adc974287ac5620eb98857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1210056903
 GameObject:
   m_ObjectHideFlags: 0
@@ -16769,7 +16813,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 72443771}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.63156587
+  m_Size: 0.6315659
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -19034,6 +19078,7 @@ GameObject:
   - component: {fileID: 2027929489}
   - component: {fileID: 2027929488}
   - component: {fileID: 2027929487}
+  - component: {fileID: 2027929490}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -19144,6 +19189,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2027929485}
   m_CullTransparentMesh: 1
+--- !u!114 &2027929490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027929485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab518ac30226724ab477574626d8ed4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2030220215
 GameObject:
   m_ObjectHideFlags: 0
@@ -19749,7 +19806,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1020117477}
   m_HandleRect: {fileID: 1020117476}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -20467,7 +20524,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 170377663}
   m_HandleRect: {fileID: 170377662}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

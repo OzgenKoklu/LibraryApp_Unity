@@ -12,6 +12,7 @@ public class PopupPanelUI : MonoBehaviour
         ShowError,
         ShowPrompt,
         ShowBookAddOrRemovePanel,
+        ShowResponseWithCallback,
         ShowLoginPanel,
     }
     public static PopupPanelUI Instance { get; private set; }
@@ -60,7 +61,6 @@ public class PopupPanelUI : MonoBehaviour
         _closeButton.onClick.AddListener(Hide);
         _windowTint.GetComponent<Image>().color = _defaultWindowTintColor;
         OnInvalidInputEntered += PopupPanelUI_OnInvalidInputEntered;
-        
     }
 
     //State Machine for object activation
@@ -85,6 +85,7 @@ public class PopupPanelUI : MonoBehaviour
 
                 break;
             case PopupType.ShowError:
+                Debug.Log("showerror");
                 _popupPanelInputField.gameObject.SetActive(false);
                 _actionButton.gameObject.SetActive(false);
                 _closeButton.gameObject.SetActive(true);
@@ -94,6 +95,7 @@ public class PopupPanelUI : MonoBehaviour
 
                 break;
             case PopupType.ShowResponse:
+                Debug.Log("showresponse");
                 _popupPanelInputField.gameObject.SetActive(false);
                 _actionButton.gameObject.SetActive(true);
                 _closeButton.gameObject.SetActive(true);
@@ -102,6 +104,15 @@ public class PopupPanelUI : MonoBehaviour
                 _addOrRemoveBookSubpanel.gameObject.SetActive(false);
                 _windowTint.GetComponent<Image>().color = _defaultWindowTintColor;
                 _actionButton.onClick.AddListener(Hide);
+                break;
+            case PopupType.ShowResponseWithCallback:
+                _popupPanelInputField.gameObject.SetActive(false);
+                _actionButton.gameObject.SetActive(true);
+                _closeButton.gameObject.SetActive(true);
+                _loginPanelGameObjects.gameObject.SetActive(false);
+                _actionButtonText.text = "Confirm";
+                _addOrRemoveBookSubpanel.gameObject.SetActive(false);
+                _windowTint.GetComponent<Image>().color = _defaultWindowTintColor;              
                 break;
             case PopupType.ShowBookAddOrRemovePanel:
                 _addOrRemoveBookSubpanel.gameObject.SetActive(true);
@@ -129,10 +140,16 @@ public class PopupPanelUI : MonoBehaviour
     public void Hide()
     {
         PlayMouseClickSoundOnWindow();
+        if (_currentPopupType == PopupType.ShowResponseWithCallback)
+        {
+            _actionButton.onClick.RemoveAllListeners();
+        }
+
         if (_currentPopupType == PopupType.ShowResponse)
         {
             _actionButton.onClick.RemoveAllListeners();
         }
+
 
         if (_currentPopupType == PopupType.ShowBookAddOrRemovePanel)
         {
@@ -148,9 +165,9 @@ public class PopupPanelUI : MonoBehaviour
     #region All Purpose Methods
 
     //response with a confirmationCallback
-    public void ShowResponse(string responseMessage, PopupPanelUI.ConfirmationCallback callback)
+    public void ShowResponseWithCallback(string responseMessage, PopupPanelUI.ConfirmationCallback callback)
     {
-        SetPopupComponents(PopupType.ShowResponse);
+        SetPopupComponents(PopupType.ShowResponseWithCallback);
         //title text might change
         _titleText.text = "Warning!!!";
         PlayWarningSound();
@@ -301,7 +318,7 @@ public class PopupPanelUI : MonoBehaviour
         {
             RemoveListenerForAddorRemoveBookPanel();
             string responseMessage = $"You are about to decrease the number of copies of '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') by '{bookCountToDerease}'. Please Confirm: ";
-            PopupPanelUI.Instance.ShowResponse(responseMessage, () => LibraryManager.Instance.DecreaseTheNumberOfBooks(bookData, bookCountToDerease));
+            PopupPanelUI.Instance.ShowResponseWithCallback(responseMessage, () => LibraryManager.Instance.DecreaseTheNumberOfBooks(bookData, bookCountToDerease));
         }
     }
     private void OnPlusButtonClicked(BookData bookData, string bookCountToIncrease)
@@ -310,7 +327,7 @@ public class PopupPanelUI : MonoBehaviour
         {
             RemoveListenerForAddorRemoveBookPanel();
             string responseMessage = $"You are about to increase the number of copies of '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') by '{bookCountToIncrease}'. Please Confirm: ";
-            PopupPanelUI.Instance.ShowResponse(responseMessage, () => LibraryManager.Instance.IncreaseTheNumberOfBooks(bookData, bookCountToIncrease));
+            PopupPanelUI.Instance.ShowResponseWithCallback(responseMessage, () => LibraryManager.Instance.IncreaseTheNumberOfBooks(bookData, bookCountToIncrease));
         }
     }
 
@@ -318,7 +335,7 @@ public class PopupPanelUI : MonoBehaviour
     {
         RemoveListenerForAddorRemoveBookPanel();
         string responseMessage = $"You are about to remove any data related with '{bookData.BookTitle}' (ISBN: '{bookData.BookIsbn}') including the lending information stored about this book. Continue?";
-        PopupPanelUI.Instance.ShowResponse(responseMessage, () => LibraryManager.Instance.DeleteSingleBookDataInformation(bookData));
+        PopupPanelUI.Instance.ShowResponseWithCallback(responseMessage, () => LibraryManager.Instance.DeleteSingleBookDataInformation(bookData));
     }
 
     public void RemoveListenerForAddorRemoveBookPanel()

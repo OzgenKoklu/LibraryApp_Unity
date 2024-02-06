@@ -14,11 +14,11 @@ public class ScrollViewListBoundsLimiter : MonoBehaviour
     {
         if (_containerGameObject != null)
         {
-            CorrectContentListRektIfOutOfBounds();
+            LimitContentListRektIfOutOfBounds();
         }    
     }
 
-    private void CorrectContentListRektIfOutOfBounds()
+    private void LimitContentListRektIfOutOfBounds()
     {
         if (_containerRect.anchoredPosition.y < _anchoredPositionLimitForListTop)
         {
@@ -44,7 +44,9 @@ public class ScrollViewListBoundsLimiter : MonoBehaviour
     }
     private float GetAnchoredPositionLimitForListBottom(int childObjectCount)
     {
-        //These numbers are measured during runtime. 56 is pixel count needed when 1920x1080 reference pixel size for UI canvas is selected. Might need a change in case of a canvas update
+        //These numbers are measured during runtime. 56 is pixel count needed when 1920x1080 reference pixel size for UI canvas is selected.
+        // 11 is the number for objects that can fit in the page measured with this reference
+        //Might need a change in case of a canvas update
         int maxNumberOfObjectsThatFitInOnePage = 11;
         float anchoredPositionLimitForListBottom = 0;
         float listingVerticalSize = 56;

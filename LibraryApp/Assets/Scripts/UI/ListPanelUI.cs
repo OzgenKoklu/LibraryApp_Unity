@@ -414,7 +414,7 @@ public class ListPanelUI : MonoBehaviour
 
 
         //passing in function as a delegate for the next UI pop Up to trigger, we can actually use the return code now that we have a function to get the return code. may simplify things
-        PopupPanelUI.Instance.ShowResponse(returnConfirmationMessage, () =>
+        PopupPanelUI.Instance.ShowResponseWithCallback(returnConfirmationMessage, () =>
 
         LibraryManager.Instance.TryReturnLentBookFromTheList(lendingPair.LendingInfoList[lendingInfoListIndex])
 

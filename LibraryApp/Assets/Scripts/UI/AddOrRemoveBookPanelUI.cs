@@ -20,17 +20,17 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
         Instance = this;
         _closeButton.onClick.AddListener(() =>
         {
-            PlayMouseClickSoundOnWindow();
+            //PlayMouseClickSoundOnWindow();
             Hide();
         });
         _addBookButton.onClick.AddListener(TryAddingBook);
-        _addOrRemoveFromList.onClick.AddListener(() =>
-        {
-            ListPanelUI.Instance.Show(ListPanelUI.ListType.AddOrRemovePanelList);
-        });
+        _addOrRemoveFromList.onClick.AddListener(ShowAddOrRemoveList);
         Hide();
     }
-
+    private void ShowAddOrRemoveList()
+    {
+        UiManager.ShowList(ListPanelUI.ListType.AddOrRemovePanelList);
+    }
 
     public void TryAddingBook()
     {
@@ -101,12 +101,12 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
 
     private void ShowErrorPopup(string errorMessage)
     {
-        PopupPanelUI.Instance.ShowError(errorMessage);
+        UiManager.ShowError(errorMessage);
     }
 
     private void ShowResponsePopup(string responseMessage)
     {
-        PopupPanelUI.Instance.ShowResponse(responseMessage);
+        UiManager.ShowResponse(responseMessage);
         CleanInputFields();
     }
 
@@ -128,7 +128,7 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
     public void Show()
     {
         gameObject.SetActive(true);
-        PlayMouseClickSoundOnWindow();
+       // PlayMouseClickSoundOnWindow();
     }
 
     private void Hide()
@@ -136,5 +136,6 @@ public class AddOrRemoveBookPanelUI : MonoBehaviour
         CleanInputFields();
         gameObject.SetActive(false);
     }
+
 }
 
